@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{041fa78b-4f1f-4c73-a206-db6cfd371db8}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Device.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DriverBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GpuDeviceContext.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Synchronizable.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_file.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_mm.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_str.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\VariablesBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Device.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DriverBase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GpuDeviceContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernelBase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuTypes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Synchronizable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_file.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_misc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_mm.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_str.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariableKind.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariablesBase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step1.cl" />
+    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step2.cl" />
+    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_up.cl" />
+  </ItemGroup>
+</Project>

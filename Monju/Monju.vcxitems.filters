@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_file.cpp">
+      <Filter>ユーティリティ</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_mm.cpp">
+      <Filter>ユーティリティ</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_str.cpp">
+      <Filter>ユーティリティ</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp">
+      <Filter>共通</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Synchronizable.cpp">
+      <Filter>共通</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.cpp">
+      <Filter>行列データ永続化</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp">
+      <Filter>行列データ永続化</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp">
+      <Filter>行列データ永続化</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Device.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DriverBase.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GpuDeviceContext.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\VariablesBase.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp">
+      <Filter>BESOM</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.cpp">
+      <Filter>BESOM</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceBuffer.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\PlatformContext.cpp">
+      <Filter>プラットフォーム</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\DeviceKernelBase.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
+      <Filter>ユーティリティ</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_file.h">
+      <Filter>ユーティリティ</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_misc.h">
+      <Filter>ユーティリティ</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_mm.h">
+      <Filter>ユーティリティ</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_str.h">
+      <Filter>ユーティリティ</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuTypes.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuException.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Synchronizable.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.h">
+      <Filter>行列データ永続化</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.h">
+      <Filter>行列データ永続化</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h">
+      <Filter>行列データ永続化</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h">
+      <Filter>行列データ永続化</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.h">
+      <Filter>行列データ永続化</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Device.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DriverBase.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GpuDeviceContext.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariablesBase.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.h">
+      <Filter>BESOM</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.h">
+      <Filter>BESOM</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariableKind.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceBuffer.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\PlatformContext.h">
+      <Filter>プラットフォーム</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\DeviceKernelBase.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ユーティリティ">
+      <UniqueIdentifier>{79a2dcca-bfab-4416-a541-f838005f3aba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="共通">
+      <UniqueIdentifier>{506a4dc0-000b-42ad-8acb-3ea338da50d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="行列データ永続化">
+      <UniqueIdentifier>{55e423e4-bf82-4039-b80d-72cd0a659a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenCLカーネル">
+      <UniqueIdentifier>{1cecda12-019b-4e04-b5c0-dec01e7e3195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BESOM">
+      <UniqueIdentifier>{b62f59e6-0bd9-4881-a171-1d5ade8d1d21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="大規模計算コンポーネント%28OpenCL%29">
+      <UniqueIdentifier>{2e2f5d92-3a19-4a22-9544-efd498de59ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="プラットフォーム">
+      <UniqueIdentifier>{33dbe1ab-6a0f-4f19-82de-a65afb0921e0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step1.cl">
+      <Filter>OpenCLカーネル</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step2.cl">
+      <Filter>OpenCLカーネル</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_up.cl">
+      <Filter>OpenCLカーネル</Filter>
+    </None>
+  </ItemGroup>
+</Project>
