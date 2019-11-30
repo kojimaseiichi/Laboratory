@@ -4,7 +4,6 @@
 
 #include <CL/cl.h>
 
-
 namespace monju {
 
 	/// <summary>計算デバイス<br>
@@ -38,7 +37,9 @@ namespace monju {
 		cl_command_queue	getCommandQueue() const { return _command_queue; }
 
 	public:
+		// OpenCLデバイス初期化
 		void				create(cl_context context, cl_device_id device_id);
+		// OpenCLデバイス解放
 		void				release();
 
 	};

@@ -7,7 +7,7 @@ monju::DriverBase::DriverBase()
 	_p_device = nullptr;
 }
 
-monju::DriverBase::DriverBase(GpuDeviceContext & context, Device & device)
+monju::DriverBase::DriverBase(DeviceContext & context, Device & device)
 {
 	_p_context = &context;
 	_p_device = &device;
@@ -18,13 +18,13 @@ monju::DriverBase::~DriverBase()
 {
 }
 
-void monju::DriverBase::_create(GpuDeviceContext & dc, Device & device)
+void monju::DriverBase::_create(DeviceContext & dc, Device & device)
 {
 	_p_context = &dc;
 	_p_device = &device;
 }
 
-monju::GpuDeviceContext & monju::DriverBase::context()
+monju::DeviceContext & monju::DriverBase::context()
 {
 	return *_p_context;
 }

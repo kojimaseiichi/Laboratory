@@ -14,10 +14,10 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Device.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DriverBase.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GpuDeviceContext.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
@@ -33,10 +33,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Device.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DriverBase.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GpuDeviceContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernelBase.h" />

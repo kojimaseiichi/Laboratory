@@ -69,6 +69,14 @@ namespace monju {
 		{
 			saveJson();
 		}
+
+		// プロパティ
+	public:
+		std::string workspaceDir()
+		{
+			return _work_folder.string();
+		}
+
 	};
 
 }

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_COMPUTE_RESOURCE_H__
-#define _MONJU_COMPUTE_RESOURCE_H__
+#ifndef _MONJU_DEVICE_CONTEXT_H__
+#define _MONJU_DEVICE_CONTEXT_H__
 
 #include <vector>
 #include <atomic>
@@ -12,8 +12,10 @@
 
 namespace monju {
 
-	/// <summary>OpenCLの計算資源を取得</summary>
-	class GpuDeviceContext
+	// 計算デバイスのコンテキスト
+	// 一つのOpenCLプラットフォームを保持
+	// 複数のOpenCLデバイスを所有
+	class DeviceContext
 	{
 	private:
 		cl_platform_id				_platform_id;
@@ -23,13 +25,13 @@ namespace monju {
 
 		// 生成・初期化
 	public:
-		GpuDeviceContext();
-		~GpuDeviceContext();
+		DeviceContext();
+		~DeviceContext();
 
 		// コピー禁止
 	private:
-		GpuDeviceContext(const GpuDeviceContext& o);
-		GpuDeviceContext& operator=(const GpuDeviceContext& o);
+		DeviceContext(const DeviceContext& o);
+		DeviceContext& operator=(const DeviceContext& o);
 
 	private:
 		// プラットフォームをヒューリスティックに取得したいが、方法が思いつかないので最初のプラットフォームを取得
@@ -44,17 +46,24 @@ namespace monju {
 
 
 	public:
+		// OpenCLプラットフォーム初期化
+		// プラットフォームIDはシステム固有で外部から与えられる
 		void						create(int platform_idx);
+		// OpenCLプラットフォーム解放
 		void						release();
 
 		// プロパティ
 	public:
+		// OpenCLプラットフォームID
 		cl_platform_id				getPlatformId() const;
+		// OpenCLコンテキスト（複数のデバイスを含む）
 		cl_context					getContext() const;
+		// デバイス数
 		int							numDevices() const;
+		// デバイスを取得（GPU１ボード）
 		Device&						getDevice(int idx) const;
 	};
 
 } // namespace monju
 
-#endif // _MONJU_COMPUTE_RESOURCE_H__
+#endif // _MONJU_DEVICE_CONTEXT_H__

@@ -3,7 +3,7 @@
 #define _MONJU_DRIVE_BASE_H__
 
 #include <stdint.h>
-#include "GpuDeviceContext.h"
+#include "DeviceContext.h"
 #include "Device.h"
 
 namespace monju {
@@ -11,17 +11,17 @@ namespace monju {
 	class DriverBase
 	{
 	protected:
-		GpuDeviceContext*	_p_context;
+		DeviceContext*	_p_context;
 		Device*				_p_device;
 
 	protected:
 		DriverBase();
-		DriverBase(GpuDeviceContext& context, Device& device);
+		DriverBase(DeviceContext& context, Device& device);
 		virtual ~DriverBase();
 
-		void _create(GpuDeviceContext& dc, Device& device);
+		void _create(DeviceContext& dc, Device& device);
 	public:
-		GpuDeviceContext& context();
+		DeviceContext& context();
 		Device& device();
 
 	public:

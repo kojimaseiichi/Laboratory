@@ -87,7 +87,7 @@ std::string monju::DeviceKernelBase::_editSource(std::string source, std::map<st
 
 // プログラムコンパイル(CLファイル)、カーネル生成
 
-inline void monju::DeviceKernelBase::_create(GpuDeviceContext& context, Device& device, std::string source_path, std::string kernel_name)
+inline void monju::DeviceKernelBase::_create(DeviceContext& context, Device& device, std::string source_path, std::string kernel_name)
 {
 	_source_path = source_path;
 	_kernel_name = kernel_name;

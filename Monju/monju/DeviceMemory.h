@@ -10,7 +10,7 @@
 
 #include "MonjuTypes.h"
 #include "GridMatrixStorage.h"
-#include "GpuDeviceContext.h"
+#include "DeviceContext.h"
 #include "Device.h"
 #include "VariableKind.h"
 #include "util_misc.h"
@@ -19,7 +19,7 @@ namespace monju {
 
 	// 特定のデバイス（GPU）のメモリを管理
 	// デバイスメモリとホストメモリ間のデータ転送を管理
-	class DeviceBuffer
+	class DeviceMemory
 	{
 	protected:
 		// OpenCLメモリオブジェクト
@@ -32,7 +32,7 @@ namespace monju {
 
 		// データ
 	protected:
-		GpuDeviceContext* _p_dc;
+		DeviceContext* _p_dc;
 		Device* _p_device;
 		// 編集の種類ごとにホストメモリとデバイスメモリを保持
 		std::unordered_map<VariableKind, MemAttr> _map_mem;
@@ -41,17 +41,17 @@ namespace monju {
 
 		// 初期化・生成
 	protected:
-		DeviceBuffer();
-		virtual ~DeviceBuffer();
+		DeviceMemory();
+		virtual ~DeviceMemory();
 
 		// コピー禁止
 	protected:
-		DeviceBuffer(const DeviceBuffer&) = delete;
-		DeviceBuffer& operator=(const DeviceBuffer&) = delete;
+		DeviceMemory(const DeviceMemory&) = delete;
+		DeviceMemory& operator=(const DeviceMemory&) = delete;
 
 		// プロパティ
 	public:
-		GpuDeviceContext& deviceContext() { return *_p_dc; }
+		DeviceContext& deviceContext() { return *_p_dc; }
 		Device& device() { return *_p_device; }
 		boost::dynamic_bitset<> read_required() { return _read_required; }
 		boost::dynamic_bitset<> write_required() { return _write_required; }
@@ -86,7 +86,7 @@ namespace monju {
 		// 公開関数
 	public:
 		// 初期化
-		void	create(GpuDeviceContext& dc, Device& device);
+		void	create(DeviceContext& dc, Device& device);
 		// ホストメモリからデバイスメモリへ書き込み
 		void	writeBuffer(Device& device, boost::dynamic_bitset<> variableKindSet);
 		// ホストメモリからデバイスメモリへ書き込み
@@ -103,12 +103,14 @@ namespace monju {
 		void	flushWrite();
 		// デバイスメモリからホストメモリへすべてのメモリオブジェクトを読み込む
 		void	flushRead();
+		template <class Matrix>
+		void	addMemory(VariableKind kind, Matrix& m);
 		// 指定した変数のメモリオブジェクトを取得
-		cl_mem	getClMem(VariableKind v);
+		cl_mem	getMemory(VariableKind v);
 	};
 
 	template <typename T>
-	void monju::DeviceBuffer::_queueWriteBuffer(cl_command_queue queue, cl_mem mem, size_t size, const T* p_data)
+	void monju::DeviceMemory::_queueWriteBuffer(cl_command_queue queue, cl_mem mem, size_t size, const T* p_data)
 	{
 		clEnqueueWriteBuffer(
 			queue,
@@ -123,7 +125,7 @@ namespace monju {
 	}
 
 	template <typename T>
-	void monju::DeviceBuffer::_queueReadBuffer(cl_command_queue queue, cl_mem mem, size_t size, T* p_data)
+	void monju::DeviceMemory::_queueReadBuffer(cl_command_queue queue, cl_mem mem, size_t size, T* p_data)
 	{
 		clEnqueueReadBuffer(
 			queue,
@@ -137,7 +139,7 @@ namespace monju {
 			nullptr);
 	}
 	template<class Matrix>
-	void DeviceBuffer::_queueTransferBuffer(cl_command_queue queue, cl_mem mem, Matrix& matrix, bool write)
+	void DeviceMemory::_queueTransferBuffer(cl_command_queue queue, cl_mem mem, Matrix& matrix, bool write)
 	{
 		if (write)
 			_queueWriteBuffer<typename Matrix::Scalar>(queue, mem, matrix.size(), matrix.data());
@@ -145,12 +147,17 @@ namespace monju {
 			_queueReadBuffer<typename Matrix::Scalar>(queue, mem, matrix.size(), matrix.data());
 	}
 	template<class Matrix>
-	void DeviceBuffer::_addNewClMem(VariableKind v, Matrix& m)
+	void DeviceMemory::_addNewClMem(VariableKind v, Matrix& m)
 	{
 		int bytes = sizeof(typename Matrix::Scalar) * m.size();
 		cl_mem mem = clCreateBuffer(_p_dc->getContext(), CL_MEM_READ_WRITE, bytes, nullptr, nullptr);
 		MemAttr ma = { m.data(), mem, bytes };
 		_map_mem.insert(std::pair<VariableType, MemAttr>(v, ma));
+	}
+	template<class Matrix>
+	inline void DeviceMemory::addMemory(VariableKind kind, Matrix& m)
+	{
+		_addNewClMem(kind, m);
 	}
 } // namespace monju
 

@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 #include <CL/cl.h>
-#include "GpuDeviceContext.h"
+#include "DeviceContext.h"
 #include "Device.h"
 
 namespace monju {
@@ -30,7 +30,7 @@ namespace monju {
 
 	protected:
 		// 外部依存リソース
-		GpuDeviceContext* _p_dc;
+		DeviceContext* _p_dc;
 		Device* _p_device;
 		std::string			_source_path;	// CLファイル名
 		std::string			_kernel_name;
@@ -53,7 +53,7 @@ namespace monju {
 		// カーネルソース内のテンプレート変数を具体化
 		std::string			_editSource(std::string source, std::map<std::string, std::string> params);
 		// プログラムコンパイル(CLファイル)、カーネル生成
-		void				_create(GpuDeviceContext& context, Device& device, std::string source_path, std::string kernel_name);
+		void				_create(DeviceContext& context, Device& device, std::string source_path, std::string kernel_name);
 		// デバイス上に配置済みのカーネルプログラムを実行
 		// 引数は事前に設定しておく必要がある
 		cl_int				_run(cl_int dim, const size_t* global_work_size, const size_t* local_work_size);
@@ -63,7 +63,7 @@ namespace monju {
 
 		// プロパティ
 	public:
-		GpuDeviceContext*	getDeviceContext() const { return _p_dc; }
+		DeviceContext*	getDeviceContext() const { return _p_dc; }
 		Device*				getDevice() const { return _p_device; }
 		std::string			getSourceName() const { return _source_path; }
 		std::string			getKernelName() const { return _kernel_name; }
@@ -75,7 +75,7 @@ namespace monju {
 		// 公開関数
 	public:
 		virtual void		create(
-			GpuDeviceContext& context,
+			DeviceContext& context,
 			Device& device,
 			std::string source_path,
 			std::string kernel_name,
@@ -87,7 +87,7 @@ namespace monju {
 			_setWorkItem(global_work_size, local_work_size);
 		}
 		virtual void		create(
-			GpuDeviceContext& context,
+			DeviceContext& context,
 			Device& device,
 			std::string source_path,
 			std::string kernel_name,
@@ -101,9 +101,9 @@ namespace monju {
 		virtual void		compute()
 		{
 			_run(
-				_global_work_size.size(),
+				(cl_int)_global_work_size.size(),
 				_global_work_size.data(),
-				_local_work_size.size() == 0 ? nullptr : _local_work_size.data()
+				_local_work_size.size() == (size_t)0 ? nullptr : _local_work_size.data()
 			);
 		}
 
