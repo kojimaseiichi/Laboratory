@@ -1,16 +1,16 @@
-#include "DeviceKernelBase.h"
+#include "DeviceKernel.h"
 #include "MonjuException.h" 
 #include <fstream>
 #include <map>
 #include <boost/regex.hpp>
 
-monju::DeviceKernelBase::DeviceKernelBase()
+monju::DeviceKernel::DeviceKernel()
 {
 	_program = nullptr;
 }
 
 
-monju::DeviceKernelBase::~DeviceKernelBase()
+monju::DeviceKernel::~DeviceKernel()
 {
 	release();
 }
@@ -19,7 +19,7 @@ monju::DeviceKernelBase::~DeviceKernelBase()
 // カーネルコンパイルしてカーネルプログラムを生成（この状態では実行できない）
 // OpenCLカーネルソースを読み込み、テンプレート変数の具体化、カーネルコンパイル
 
-inline cl_program monju::DeviceKernelBase::_compileProgram(cl_context context, cl_device_id device_id, std::string file_path, params_map params)
+inline cl_program monju::DeviceKernel::_compileProgram(cl_context context, cl_device_id device_id, std::string file_path, params_map params)
 {
 	std::string plain_source = _getSource(file_path);
 	std::string edited_source = _editSource(plain_source, params);
@@ -46,7 +46,7 @@ inline cl_program monju::DeviceKernelBase::_compileProgram(cl_context context, c
 
 // コンパイル済みカーネルプログラムをデバイスに配置して実行可能な状態に遷移
 
-inline cl_kernel monju::DeviceKernelBase::_createKernel(cl_program program, std::string kernel_name)
+inline cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string kernel_name)
 {
 	cl_kernel kernel = clCreateKernel(program, kernel_name.c_str(), NULL);
 	if (kernel == nullptr)
@@ -56,7 +56,7 @@ inline cl_kernel monju::DeviceKernelBase::_createKernel(cl_program program, std:
 
 // カーネルを実行可能な状態に遷移（_compileProgram、_createKernel）
 
-inline void monju::DeviceKernelBase::_initKernel(cl_context context, cl_device_id device_id, std::string source_path, std::string kernel_name, params_map params)
+inline void monju::DeviceKernel::_initKernel(cl_context context, cl_device_id device_id, std::string source_path, std::string kernel_name, params_map params)
 {
 	_program = _compileProgram(context, device_id, source_path, params);
 	_kernel = _createKernel(_program, kernel_name);
@@ -64,14 +64,14 @@ inline void monju::DeviceKernelBase::_initKernel(cl_context context, cl_device_i
 
 // カーネルソースの内容を文字列で取得
 
-inline std::string monju::DeviceKernelBase::_getSource(std::string souce_path)
+inline std::string monju::DeviceKernel::_getSource(std::string souce_path)
 {
 	std::ifstream input(souce_path, std::ifstream::in | std::ifstream::binary);
 	std::string cl_source_original((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
 	return cl_source_original;
 }
 
-std::string monju::DeviceKernelBase::_editSource(std::string source, std::map<std::string, std::string> params)
+std::string monju::DeviceKernel::_editSource(std::string source, std::map<std::string, std::string> params)
 {
 	auto callback = [&params](boost::match_results<std::string::const_iterator> const& m)->std::string {
 		std::string key = m[1];
@@ -87,7 +87,7 @@ std::string monju::DeviceKernelBase::_editSource(std::string source, std::map<st
 
 // プログラムコンパイル(CLファイル)、カーネル生成
 
-inline void monju::DeviceKernelBase::_create(DeviceContext& context, Device& device, std::string source_path, std::string kernel_name)
+inline void monju::DeviceKernel::_create(DeviceContext& context, Device& device, std::string source_path, std::string kernel_name)
 {
 	_source_path = source_path;
 	_kernel_name = kernel_name;
@@ -95,7 +95,7 @@ inline void monju::DeviceKernelBase::_create(DeviceContext& context, Device& dev
 	_p_device = &device;
 }
 
-inline cl_int monju::DeviceKernelBase::_run(cl_int dim, const size_t* global_work_size, const size_t* local_work_size)
+inline cl_int monju::DeviceKernel::_run(cl_int dim, const size_t* global_work_size, const size_t* local_work_size)
 {
 	return clEnqueueNDRangeKernel(
 		_p_device->getCommandQueue(),	// OpenCLキュー
@@ -109,21 +109,12 @@ inline cl_int monju::DeviceKernelBase::_run(cl_int dim, const size_t* global_wor
 		nullptr);						// event
 }
 
-inline void monju::DeviceKernelBase::_setWorkItem(std::vector<size_t>& global_work_size)
+inline void monju::DeviceKernel::create(DeviceContext& context, Device& device, std::string source_path, std::string kernel_name)
 {
-	_global_work_size = global_work_size;
-	_local_work_size.resize(0);
+	_create(context, device, source_path, kernel_name);
 }
 
-inline void monju::DeviceKernelBase::_setWorkItem(std::vector<size_t>& global_work_size, std::vector<size_t>& local_work_size)
-{
-	if (global_work_size.size() != local_work_size.size())
-		throw MonjuException("");
-	_global_work_size = global_work_size;
-	_local_work_size = local_work_size;
-}
-
-inline void monju::DeviceKernelBase::release()
+inline void monju::DeviceKernel::release()
 {
 	if (_kernel != nullptr)
 	{
@@ -141,3 +132,22 @@ inline void monju::DeviceKernelBase::release()
 	_kernel_name = "";
 }
 
+inline void monju::DeviceKernel::compute(std::vector<size_t>& global_work_size)
+{
+	_run(
+		(cl_int)global_work_size.size(),
+		global_work_size.data(),
+		nullptr
+	);
+}
+
+inline void monju::DeviceKernel::compute(std::vector<size_t>& global_work_size, std::vector<size_t>& local_work_size)
+{
+	if (global_work_size.size() != local_work_size.size())
+		throw MonjuException("global_work_sizeとlocal_work_sizeの次元が一致しない");
+	_run(
+		(cl_int)global_work_size.size(),
+		global_work_size.data(),
+		local_work_size.data()
+	);
+}

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_DEVICE_KERNEL_BASE_H__
-#define _MONJU_DEVICE_KERNEL_BASE_H__
+#ifndef _MONJU_DEVICE_KERNEL_H__
+#define _MONJU_DEVICE_KERNEL_H__
 
 #include <string>
 #include <map>
@@ -12,7 +12,7 @@ namespace monju {
 
 	// OpenCLのカーネルラッパー基本クラス
 	// カーネルソースのテンプレート変数の反映、コンパイル、実行を管理
-	class DeviceKernelBase
+	class DeviceKernel
 	{
 		// 型
 	protected:
@@ -20,13 +20,13 @@ namespace monju {
 
 		// 生成・初期化・破棄
 	public:
-		DeviceKernelBase();
-		virtual ~DeviceKernelBase();
+		DeviceKernel();
+		virtual ~DeviceKernel();
 
 		// コピー禁止
 	protected:
-		DeviceKernelBase(const DeviceKernelBase&) = delete;
-		DeviceKernelBase& operator=(const DeviceKernelBase&) = delete;
+		DeviceKernel(const DeviceKernel&) = delete;
+		DeviceKernel& operator=(const DeviceKernel&) = delete;
 
 	protected:
 		// 外部依存リソース
@@ -34,8 +34,6 @@ namespace monju {
 		Device* _p_device;
 		std::string			_source_path;	// CLファイル名
 		std::string			_kernel_name;
-		std::vector<size_t> _global_work_size;
-		std::vector<size_t> _local_work_size;
 		// 責任範囲のリソース
 		cl_program			_program;
 		cl_kernel			_kernel;
@@ -57,9 +55,6 @@ namespace monju {
 		// デバイス上に配置済みのカーネルプログラムを実行
 		// 引数は事前に設定しておく必要がある
 		cl_int				_run(cl_int dim, const size_t* global_work_size, const size_t* local_work_size);
-		// 
-		void				_setWorkItem(std::vector<size_t>& global_work_size);
-		void				_setWorkItem(std::vector<size_t>& global_work_size, std::vector<size_t>& local_work_size);
 
 		// プロパティ
 	public:
@@ -69,45 +64,26 @@ namespace monju {
 		std::string			getKernelName() const { return _kernel_name; }
 		cl_program			getProgram() const { return _program; }
 		cl_kernel			getKernel() const { return _kernel; }
-		std::vector<size_t>	getGlobalWorkSize() const { return _global_work_size; }
-		std::vector<size_t>	getLocalWorkSize() const { return _local_work_size; }
 
 		// 公開関数
 	public:
-		virtual void		create(
+		// OpenCLカーネル生成
+		void		create(
 			DeviceContext& context,
 			Device& device,
 			std::string source_path,
-			std::string kernel_name,
+			std::string kernel_name
+		);
+		void		release();
+		void		compute(
+			std::vector<size_t>& global_work_size
+		);
+		void		compute(
 			std::vector<size_t>& global_work_size,
 			std::vector<size_t>& local_work_size
-		)
-		{
-			_create(context, device, source_path, kernel_name);
-			_setWorkItem(global_work_size, local_work_size);
-		}
-		virtual void		create(
-			DeviceContext& context,
-			Device& device,
-			std::string source_path,
-			std::string kernel_name,
-			std::vector<size_t>& global_work_size
-		)
-		{
-			_create(context, device, source_path, kernel_name);
-			_setWorkItem(global_work_size);
-		}
-		virtual void		release();
-		virtual void		compute()
-		{
-			_run(
-				(cl_int)_global_work_size.size(),
-				_global_work_size.data(),
-				_local_work_size.size() == (size_t)0 ? nullptr : _local_work_size.data()
-			);
-		}
+		);
 
-	}; // class DeviceKernelBase
+	}; // class DeviceKernel
 } // namespace monju
 
 #endif // _MONJU_KERNEL_BASE_H__

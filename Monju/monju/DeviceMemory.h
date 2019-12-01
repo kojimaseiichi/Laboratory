@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_BUFFER_BASE_H__
-#define _MONJU_BUFFER_BASE_H__
+#ifndef _MONJU_DEVICE_MEMORY_H__
+#define _MONJU_DEVICE_MEMORY_H__
 
 #include <string>
 #include <CL/cl.h>
@@ -19,6 +19,7 @@ namespace monju {
 
 	// 特定のデバイス（GPU）のメモリを管理
 	// デバイスメモリとホストメモリ間のデータ転送を管理
+	// DeviceKernelと連携してカーネルの実行を実現する
 	class DeviceMemory
 	{
 	protected:
@@ -87,11 +88,11 @@ namespace monju {
 	public:
 		// 初期化
 		void	create(DeviceContext& dc, Device& device);
-		// ホストメモリからデバイスメモリへ書き込み
+		// ホストメモリからデバイスメモリへ書き込み（デバイス指定）
 		void	writeBuffer(Device& device, boost::dynamic_bitset<> variableKindSet);
 		// ホストメモリからデバイスメモリへ書き込み
 		void	writeBuffer(boost::dynamic_bitset<> variableKindSet);
-		// デバイスメモリからホストメモリへ読み込み
+		// デバイスメモリからホストメモリへ読み込み（デバイス指定）
 		void	readBuffer(Device& device, boost::dynamic_bitset<> variableKindSet);
 		// デバイスメモリからホストメモリへ読み込み
 		void	readBuffer(boost::dynamic_bitset<> variableKindSet);
@@ -161,4 +162,4 @@ namespace monju {
 	}
 } // namespace monju
 
-#endif // _MONJU_BUFFER_BASE_H__
+#endif // _MONJU_DEVICE_MEMORY_H__

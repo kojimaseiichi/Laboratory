@@ -18,7 +18,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Device.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DriverBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceContext.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp" />
@@ -39,7 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernelBase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuTypes.h" />
@@ -61,5 +61,6 @@
     <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step1.cl" />
     <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step2.cl" />
     <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_up.cl" />
+    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\test.cl" />
   </ItemGroup>
 </Project>
