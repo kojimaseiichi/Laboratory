@@ -43,14 +43,23 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp">
       <Filter>プラットフォーム</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\DeviceContext.cpp">
-      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.cpp">
       <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\DeviceKernel.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceContext.cpp">
       <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_math.cpp">
+      <Filter>ユーティリティ</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClException.cpp">
+      <Filter>共通</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -114,14 +123,23 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h">
       <Filter>プラットフォーム</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\DeviceContext.h">
-      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.h">
       <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\kurum\Source\Repos\Laboratory\Monju\monju\DeviceKernel.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceContext.h">
       <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_math.h">
+      <Filter>ユーティリティ</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClException.h">
+      <Filter>共通</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -134,9 +152,6 @@
     <Filter Include="行列データ永続化">
       <UniqueIdentifier>{55e423e4-bf82-4039-b80d-72cd0a659a58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="OpenCLカーネル">
-      <UniqueIdentifier>{1cecda12-019b-4e04-b5c0-dec01e7e3195}</UniqueIdentifier>
-    </Filter>
     <Filter Include="BESOM">
       <UniqueIdentifier>{b62f59e6-0bd9-4881-a171-1d5ade8d1d21}</UniqueIdentifier>
     </Filter>
@@ -146,22 +161,5 @@
     <Filter Include="プラットフォーム">
       <UniqueIdentifier>{33dbe1ab-6a0f-4f19-82de-a65afb0921e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="テストカーネル">
-      <UniqueIdentifier>{56b755d3-1a7f-402c-b34a-1bd8397a4c91}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step1.cl">
-      <Filter>OpenCLカーネル</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_down_step2.cl">
-      <Filter>OpenCLカーネル</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\oobp3_up.cl">
-      <Filter>OpenCLカーネル</Filter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)monju\opencl_kernel\test.cl">
-      <Filter>テストカーネル</Filter>
-    </None>
   </ItemGroup>
 </Project>

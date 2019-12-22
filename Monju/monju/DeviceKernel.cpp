@@ -7,6 +7,7 @@
 monju::DeviceKernel::DeviceKernel()
 {
 	_program = nullptr;
+	_kernel = nullptr;
 }
 
 
@@ -19,19 +20,28 @@ monju::DeviceKernel::~DeviceKernel()
 // カーネルコンパイルしてカーネルプログラムを生成（この状態では実行できない）
 // OpenCLカーネルソースを読み込み、テンプレート変数の具体化、カーネルコンパイル
 
-inline cl_program monju::DeviceKernel::_compileProgram(cl_context context, cl_device_id device_id, std::string file_path, params_map params)
+// コンパイル済みカーネルプログラムをデバイスに配置して実行可能な状態に遷移
+
+
+// カーネルコンパイルしてカーネルプログラムを生成（この状態では実行できない）
+// OpenCLカーネルソースを読み込み、テンプレート変数の具体化、カーネルコンパイル
+
+cl_program monju::DeviceKernel::_compileProgram(cl_context context, cl_device_id device_id, std::string file_path, params_map& params)
 {
 	std::string plain_source = _getSource(file_path);
-	std::string edited_source = _editSource(plain_source, params);
+	std::string edited_source = _parameterize(plain_source, params);
 
 	const char* p_source = edited_source.c_str();
 	const size_t source_size = edited_source.size();
 
 	// プログラムのコンパイル
-	cl_program program = clCreateProgramWithSource(context, 1, (const char**)&p_source, (const size_t*)&source_size, nullptr);
-	cl_int err = clBuildProgram(program, 1, &device_id, nullptr, nullptr, nullptr);
+	cl_int error_code;
+	cl_program program = clCreateProgramWithSource(context, 1, (const char**)&p_source, (const size_t*)&source_size, &error_code);
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
+	error_code = clBuildProgram(program, 1, &device_id, nullptr, nullptr, nullptr);
 	// コンパイルに失敗した場合はエラー内容を表示
-	if (err != CL_SUCCESS)
+	if (error_code != CL_SUCCESS)
 	{
 		size_t logSize;
 		clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, 0, nullptr, &logSize);
@@ -44,11 +54,10 @@ inline cl_program monju::DeviceKernel::_compileProgram(cl_context context, cl_de
 	return program;
 }
 
-// コンパイル済みカーネルプログラムをデバイスに配置して実行可能な状態に遷移
-
-inline cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string kernel_name)
+cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string kernel_name, params_map& params)
 {
-	cl_kernel kernel = clCreateKernel(program, kernel_name.c_str(), NULL);
+	std::string parameterized_kernel_name = _parameterize(kernel_name, params);
+	cl_kernel kernel = clCreateKernel(program, parameterized_kernel_name.c_str(), NULL);
 	if (kernel == nullptr)
 		throw MonjuException("カーネルの作成に失敗");
 	return kernel;
@@ -56,22 +65,26 @@ inline cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::str
 
 // カーネルを実行可能な状態に遷移（_compileProgram、_createKernel）
 
-inline void monju::DeviceKernel::_initKernel(cl_context context, cl_device_id device_id, std::string source_path, std::string kernel_name, params_map params)
+void monju::DeviceKernel::_initKernel(cl_context context, cl_device_id device_id, std::string source_path, std::string kernel_name, params_map& params)
 {
 	_program = _compileProgram(context, device_id, source_path, params);
-	_kernel = _createKernel(_program, kernel_name);
+	_kernel = _createKernel(_program, kernel_name, params);
 }
+
+// カーネルを実行可能な状態に遷移（_compileProgram、_createKernel）
 
 // カーネルソースの内容を文字列で取得
 
-inline std::string monju::DeviceKernel::_getSource(std::string souce_path)
+std::string monju::DeviceKernel::_getSource(std::string souce_path)
 {
 	std::ifstream input(souce_path, std::ifstream::in | std::ifstream::binary);
 	std::string cl_source_original((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
 	return cl_source_original;
 }
 
-std::string monju::DeviceKernel::_editSource(std::string source, std::map<std::string, std::string> params)
+// カーネルソース内のテンプレート変数を具体化
+
+std::string monju::DeviceKernel::_parameterize(std::string source, params_map& params)
 {
 	auto callback = [&params](boost::match_results<std::string::const_iterator> const& m)->std::string {
 		std::string key = m[1];
@@ -87,18 +100,21 @@ std::string monju::DeviceKernel::_editSource(std::string source, std::map<std::s
 
 // プログラムコンパイル(CLファイル)、カーネル生成
 
-inline void monju::DeviceKernel::_create(DeviceContext& context, Device& device, std::string source_path, std::string kernel_name)
+void monju::DeviceKernel::_create(Device& device, std::string source_path, std::string kernel_name, params_map& params)
 {
 	_source_path = source_path;
 	_kernel_name = kernel_name;
-	_p_dc = &context;
 	_p_device = &device;
+	_initKernel(device.getClContext(), device.getClDeviceId(), source_path, kernel_name, params);
 }
 
-inline cl_int monju::DeviceKernel::_run(cl_int dim, const size_t* global_work_size, const size_t* local_work_size)
+// デバイス上に配置済みのカーネルプログラムを実行
+// 引数は事前に設定しておく必要がある
+
+void monju::DeviceKernel::_run(cl_int dim, const size_t* global_work_size, const size_t* local_work_size)
 {
-	return clEnqueueNDRangeKernel(
-		_p_device->getCommandQueue(),	// OpenCLキュー
+	cl_int error_code = clEnqueueNDRangeKernel(
+		_p_device->getClCommandQueue(),	// OpenCLキュー
 		_kernel,						// カーネル
 		dim,							// 2次元
 		nullptr,						// global work offset
@@ -107,14 +123,25 @@ inline cl_int monju::DeviceKernel::_run(cl_int dim, const size_t* global_work_si
 		0,								// number of events in wait list
 		nullptr,						// event wait list
 		nullptr);						// event
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
 }
 
-inline void monju::DeviceKernel::create(DeviceContext& context, Device& device, std::string source_path, std::string kernel_name)
+// プログラムコンパイル(CLファイル)、カーネル生成
+
+// プログラムコンパイル(CLファイル)、カーネル生成
+
+// OpenCLカーネル生成
+
+
+// OpenCLカーネル生成
+
+void monju::DeviceKernel::create(Device& device, std::string source_path, std::string kernel_name, params_map& params)
 {
-	_create(context, device, source_path, kernel_name);
+	_create(device, source_path, kernel_name, params);
 }
 
-inline void monju::DeviceKernel::release()
+void monju::DeviceKernel::release()
 {
 	if (_kernel != nullptr)
 	{
@@ -126,13 +153,12 @@ inline void monju::DeviceKernel::release()
 		clReleaseProgram(_program);
 		_program = nullptr;
 	}
-	_p_dc = nullptr;
 	_p_device = nullptr;
 	_source_path = "";
 	_kernel_name = "";
 }
 
-inline void monju::DeviceKernel::compute(std::vector<size_t>& global_work_size)
+void monju::DeviceKernel::compute(std::vector<size_t>& global_work_size)
 {
 	_run(
 		(cl_int)global_work_size.size(),
@@ -141,7 +167,7 @@ inline void monju::DeviceKernel::compute(std::vector<size_t>& global_work_size)
 	);
 }
 
-inline void monju::DeviceKernel::compute(std::vector<size_t>& global_work_size, std::vector<size_t>& local_work_size)
+void monju::DeviceKernel::compute(std::vector<size_t>& global_work_size, std::vector<size_t>& local_work_size)
 {
 	if (global_work_size.size() != local_work_size.size())
 		throw MonjuException("global_work_sizeとlocal_work_sizeの次元が一致しない");

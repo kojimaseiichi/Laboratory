@@ -3,6 +3,7 @@
 #define _MONJU_DEVICE_H__
 
 #include <CL/cl.h>
+#include "OpenClException.h"
 
 namespace monju {
 
@@ -26,15 +27,11 @@ namespace monju {
 		Device(const Device& o) = delete;
 		Device& operator=(const Device& o) = delete;
 
-	private:
-		// 初期化
-		cl_command_queue	_createCommandQueue(cl_context context, cl_device_id device_id);
-
 		// プロパティ
 	public:
-		cl_context			getContext() const { return _context; }
-		cl_device_id		getDeviceId() const	{ return _device_id; }
-		cl_command_queue	getCommandQueue() const { return _command_queue; }
+		cl_context			getClContext() const { return _context; }
+		cl_device_id		getClDeviceId() const	{ return _device_id; }
+		cl_command_queue	getClCommandQueue() const { return _command_queue; }
 
 	public:
 		// OpenCLデバイス初期化

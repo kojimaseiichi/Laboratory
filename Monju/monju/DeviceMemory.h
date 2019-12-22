@@ -6,8 +6,9 @@
 #include <CL/cl.h>
 #include <fstream>
 #include <map>
-#include <boost/dynamic_bitset.hpp>
+#include <unordered_set>
 
+#include "OpenClException.h"
 #include "MonjuTypes.h"
 #include "GridMatrixStorage.h"
 #include "DeviceContext.h"
@@ -33,16 +34,20 @@ namespace monju {
 
 		// データ
 	protected:
-		DeviceContext* _p_dc;
 		Device* _p_device;
 		// 編集の種類ごとにホストメモリとデバイスメモリを保持
-		std::unordered_map<VariableKind, MemAttr> _map_mem;
-		boost::dynamic_bitset<>		_read_required;
-		boost::dynamic_bitset<>		_write_required;
+		std::unordered_map<VariableKind, MemAttr>	_map_mem;
+		std::unordered_set<VariableKind>			_read_required;
+		std::unordered_set<VariableKind>			_write_required;
 
 		// 初期化・生成
-	protected:
-		DeviceMemory();
+	public:
+		DeviceMemory(Device& device) :
+			_read_required(),
+			_write_required()
+		{
+			_p_device = &device;
+		}
 		virtual ~DeviceMemory();
 
 		// コピー禁止
@@ -52,10 +57,9 @@ namespace monju {
 
 		// プロパティ
 	public:
-		DeviceContext& deviceContext() { return *_p_dc; }
 		Device& device() { return *_p_device; }
-		boost::dynamic_bitset<> read_required() { return _read_required; }
-		boost::dynamic_bitset<> write_required() { return _write_required; }
+		std::unordered_set<VariableKind> read_required() { return _read_required; }
+		std::unordered_set<VariableKind> write_required() { return _write_required; }
 
 		// ヘルパ
 	protected:
@@ -86,16 +90,14 @@ namespace monju {
 
 		// 公開関数
 	public:
-		// 初期化
-		void	create(DeviceContext& dc, Device& device);
 		// ホストメモリからデバイスメモリへ書き込み（デバイス指定）
-		void	writeBuffer(Device& device, boost::dynamic_bitset<> variableKindSet);
+		void	writeBuffer(Device& device, std::unordered_set<VariableKind> variableKindSet);
 		// ホストメモリからデバイスメモリへ書き込み
-		void	writeBuffer(boost::dynamic_bitset<> variableKindSet);
+		void	writeBuffer(std::unordered_set<VariableKind> variableKindSet);
 		// デバイスメモリからホストメモリへ読み込み（デバイス指定）
-		void	readBuffer(Device& device, boost::dynamic_bitset<> variableKindSet);
+		void	readBuffer(Device& device, std::unordered_set<VariableKind> variableKindSet);
 		// デバイスメモリからホストメモリへ読み込み
-		void	readBuffer(boost::dynamic_bitset<> variableKindSet);
+		void	readBuffer(std::unordered_set<VariableKind> variableKindSet);
 		// デバイスメモリからホストメモリへ読み込みが必要
 		void	requireRead(VariableKind v);
 		// ホストメモリからデバイスメモリへ書き込みが必要
@@ -113,31 +115,35 @@ namespace monju {
 	template <typename T>
 	void monju::DeviceMemory::_queueWriteBuffer(cl_command_queue queue, cl_mem mem, size_t size, const T* p_data)
 	{
-		clEnqueueWriteBuffer(
+		cl_int error_code = clEnqueueWriteBuffer(
 			queue,
 			mem,
 			CL_TRUE,
 			0,
-			sizeof(T) * size,
+			size,
 			p_data,
 			0,
 			nullptr,
 			nullptr);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
 	}
 
 	template <typename T>
 	void monju::DeviceMemory::_queueReadBuffer(cl_command_queue queue, cl_mem mem, size_t size, T* p_data)
 	{
-		clEnqueueReadBuffer(
+		cl_int error_code = clEnqueueReadBuffer(
 			queue,
 			mem,
 			CL_TRUE,
 			0,
-			sizeof(T) * size,
+			size,
 			p_data,
 			0,
 			nullptr,
 			nullptr);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
 	}
 	template<class Matrix>
 	void DeviceMemory::_queueTransferBuffer(cl_command_queue queue, cl_mem mem, Matrix& matrix, bool write)
@@ -151,9 +157,12 @@ namespace monju {
 	void DeviceMemory::_addNewClMem(VariableKind v, Matrix& m)
 	{
 		int bytes = sizeof(typename Matrix::Scalar) * m.size();
-		cl_mem mem = clCreateBuffer(_p_dc->getContext(), CL_MEM_READ_WRITE, bytes, nullptr, nullptr);
-		MemAttr ma = { m.data(), mem, bytes };
-		_map_mem.insert(std::pair<VariableType, MemAttr>(v, ma));
+		cl_int error_code;
+		cl_mem mem = clCreateBuffer(_p_device->getClContext(), CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, bytes, m.data(), &error_code);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
+		MemAttr ma = { m.data(), mem, (size_t)bytes };
+		_map_mem.insert(std::pair<VariableKind, MemAttr>(v, ma));
 	}
 	template<class Matrix>
 	inline void DeviceMemory::addMemory(VariableKind kind, Matrix& m)

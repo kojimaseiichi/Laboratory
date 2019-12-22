@@ -1,14 +1,5 @@
 #include "DeviceMemory.h"
-
-
-monju::DeviceMemory::DeviceMemory() :
-	_read_required(),
-	_write_required()
-{
-	_p_dc = nullptr;
-	_p_device = nullptr;
-}
-
+#include "util_math.h"
 
 monju::DeviceMemory::~DeviceMemory()
 {
@@ -18,7 +9,11 @@ monju::DeviceMemory::~DeviceMemory()
 void monju::DeviceMemory::_clearAllClMem()
 {
 	for (auto&& e : _map_mem)
-		clReleaseMemObject(e.second.mem);
+	{
+		cl_int error_code = clReleaseMemObject(e.second.mem);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
+	}
 }
 
 bool monju::DeviceMemory::_findClMem(VariableKind t, MemAttr* out)
@@ -26,7 +21,7 @@ bool monju::DeviceMemory::_findClMem(VariableKind t, MemAttr* out)
 	auto it = _map_mem.find(t);
 	if (it != _map_mem.end())
 	{
-		out = &(it->second);
+		*out = it->second;
 		return true;
 	}
 	return false;
@@ -34,8 +29,8 @@ bool monju::DeviceMemory::_findClMem(VariableKind t, MemAttr* out)
 
 bool monju::DeviceMemory::_checkReadWriteConflict()
 {
-	boost::dynamic_bitset<> conflict = _read_required & _write_required;
-	if (conflict.any())
+	bool conflicted = util_math::has_intersection(_read_required, _write_required);
+	if (conflicted)
 		return false;
 	return true;
 }
@@ -46,77 +41,68 @@ void monju::DeviceMemory::release()
 	_map_mem.clear();
 }
 
-inline void monju::DeviceMemory::create(DeviceContext& dc, Device& device)
+void monju::DeviceMemory::writeBuffer(Device& device, std::unordered_set<monju::VariableKind> variableKindSet)
 {
-	_p_dc = &dc;
-	_p_device = &device;
-}
-
-void monju::DeviceMemory::writeBuffer(Device& device, boost::dynamic_bitset<> variableKindSet)
-{
-	for (size_t i = 0; i < variableKindSet.size(); i++)
+	for (const auto& kind : variableKindSet)
 	{
-		if (variableKindSet.test(i) == false)
-			continue;
 		MemAttr ma;
-		if (_findClMem(static_cast<VariableKind>(i), &ma) == false)
+		if (_findClMem(kind, &ma) == false)
 			continue;
-		_queueWriteBuffer(device.getCommandQueue(), ma.mem, ma.bytes, ma.p);
+		_queueWriteBuffer(device.getClCommandQueue(), ma.mem, ma.bytes, ma.p);
 	}
 }
 
-void monju::DeviceMemory::writeBuffer(boost::dynamic_bitset<> variableKindSet)
+void monju::DeviceMemory::writeBuffer(std::unordered_set<monju::VariableKind> variableKindSet)
 {
 	writeBuffer(*_p_device, variableKindSet);
+	_write_required.erase(variableKindSet.begin(), variableKindSet.end());
 
 }
 
-void monju::DeviceMemory::readBuffer(Device& device, boost::dynamic_bitset<> variableKindSet)
+void monju::DeviceMemory::readBuffer(Device& device, std::unordered_set<monju::VariableKind> variableKindSet)
 {
-	for (size_t i = 0; i < variableKindSet.size(); i++)
+	for (const auto& kind : variableKindSet)
 	{
-		if (variableKindSet.test(i) == false)
-			continue;
 		MemAttr ma;
-		if (_findClMem(static_cast<VariableKind>(i), &ma) == false)
+		if (_findClMem(kind, &ma) == false)
 			continue;
-		_queueReadBuffer(device.getCommandQueue(), ma.mem, ma.bytes, ma.p);
+		_queueReadBuffer(device.getClCommandQueue(), ma.mem, ma.bytes, ma.p);
 	}
 }
 
-void monju::DeviceMemory::readBuffer(boost::dynamic_bitset<> variableKindSet)
+void monju::DeviceMemory::readBuffer(std::unordered_set<monju::VariableKind> variableKindSet)
 {
 	readBuffer(*_p_device, variableKindSet);
-	_read_required &= variableKindSet;
+	_read_required.erase(variableKindSet.begin(), variableKindSet.end());
 }
 
 void monju::DeviceMemory::requireRead(VariableKind v)
 {
-	boost::dynamic_bitset<> flags(static_cast<uint64_t>(v));
-	_read_required |= flags;
+	_read_required.insert(v);
 }
 
 void monju::DeviceMemory::requireWrite(VariableKind v)
 {
-	boost::dynamic_bitset<> flags(static_cast<uint64_t>(v));
-	_write_required |= flags;
+	_write_required.insert(v);
 }
 
 void monju::DeviceMemory::flushWrite()
 {
-	_checkReadWriteConflict();
+	if (_checkReadWriteConflict() == false)
+		throw MonjuException("read/write conflict");
 	writeBuffer(_write_required);
 }
 
 void monju::DeviceMemory::flushRead()
 {
-	_checkReadWriteConflict();
+	if (_checkReadWriteConflict() == false)
+		throw MonjuException("read/write conflict");
 	readBuffer(_read_required);
 }
 
 // 指定した変数のメモリオブジェクトを取得
 
-inline cl_mem monju::DeviceMemory::getMemory(VariableKind v)
+cl_mem monju::DeviceMemory::getMemory(VariableKind v)
 {
 	auto it = _map_mem.find(v);
 	if (it != _map_mem.end())

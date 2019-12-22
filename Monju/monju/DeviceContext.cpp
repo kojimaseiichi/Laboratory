@@ -19,22 +19,15 @@ monju::DeviceContext::~DeviceContext()
 	release();
 }
 
-monju::DeviceContext::DeviceContext(const DeviceContext & o)
-{
-}
-
-monju::DeviceContext& monju::DeviceContext::operator=(const monju::DeviceContext& o)
-{
-	return *this;
-}
-
 // プラットフォームをヒューリスティックに取得したいが、方法が思いつかないので最初のプラットフォームを取得
 
 cl_platform_id monju::DeviceContext::_findPlatform(int platform_idx)
 {
 	cl_uint num_platforms = 0;
 	cl_platform_id platforms_buff[2];
-	clGetPlatformIDs(2, platforms_buff, &num_platforms);
+	cl_int error_code = clGetPlatformIDs(2, platforms_buff, &num_platforms);
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
 	if (platform_idx >= static_cast<int>(num_platforms))
 		throw MonjuException();
 	// プラットフォーム選択
@@ -48,14 +41,20 @@ std::vector<cl_device_id> monju::DeviceContext::_listDevices(cl_platform_id plat
 {
 	cl_uint num_devices = 0;
 	cl_device_id devices_buff[4];
-	clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_GPU, 4, devices_buff, &num_devices);
+	cl_int error_code = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_GPU, 4, devices_buff, &num_devices);
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
 	return std::vector<cl_device_id>(devices_buff, devices_buff + num_devices);
 }
 
 void monju::DeviceContext::_releaseDevices(std::vector<cl_device_id>* p_device_id_vec)
 {
 	for (cl_device_id p : *p_device_id_vec)
-		clReleaseDevice(p);
+	{
+		cl_int error_code = clReleaseDevice(p);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
+	}
 	p_device_id_vec->clear();
 }
 
@@ -100,7 +99,9 @@ void monju::DeviceContext::release()
 	_freeDeviceVec(&_device_vec);
 	if (_context != nullptr)
 	{
-		clReleaseContext(_context);
+		cl_int error_code = clReleaseContext(_context);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
 		_context = nullptr;
 	}
 	_device_id_vec.clear();

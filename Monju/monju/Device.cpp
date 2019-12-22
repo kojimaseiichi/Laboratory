@@ -12,24 +12,25 @@ monju::Device::~Device()
 {
 }
 
-cl_command_queue monju::Device::_createCommandQueue(cl_context context, cl_device_id device_id)
-{
-	cl_command_queue queue = clCreateCommandQueueWithProperties(context, device_id, 0, nullptr);
-	return queue;
-}
-
 void monju::Device::create(cl_context context, cl_device_id device_id)
 {
 	_context = context;
 	_device_id = device_id;
-	_command_queue = clCreateCommandQueueWithProperties(context, device_id, NULL, 0);
+
+	cl_int error_code;
+	_command_queue = clCreateCommandQueueWithProperties(context, device_id, nullptr, &error_code);
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
+
 }
 
 void monju::Device::release()
 {
 	if (_command_queue != nullptr)
 	{
-		clReleaseCommandQueue(_command_queue);
+		cl_int error_code = clReleaseCommandQueue(_command_queue);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
 		_command_queue = nullptr;
 	}
 	_context = nullptr;
