@@ -27,27 +27,12 @@ std::string monju::DeviceProgram::_getSource(std::string souce_path)
 	return cl_source_original;
 }
 
-// カーネルソース内のテンプレート変数を具体化
-
-std::string monju::DeviceProgram::_parameterize(std::string source, params_map& params)
-{
-	auto callback = [&params](boost::match_results<std::string::const_iterator> const& m)->std::string {
-		std::string key = m[1];
-		auto itr = params.find(key);
-		if (itr != params.end())
-			return itr->second;
-		return "";
-	};
-	boost::basic_regex<char> reg(R"(\$\{([a-zA-Z_]+)\})");
-	return boost::regex_replace(source, reg, callback);
-}
-
 // プレースホルダ置換済みソースコードを取得
 
 std::string monju::DeviceProgram::_getEditedSource(std::string file_path, params_map params)
 {
 	std::string plain_source = _getSource(file_path);
-	std::string edited_source = _parameterize(plain_source, params);
+	std::string edited_source = util_str::parameterizePlaceholders(plain_source, params);
 	return edited_source;
 }
 
@@ -96,9 +81,31 @@ void monju::DeviceProgram::_create(DeviceContext& context, std::vector<Device*>&
 	_program = _compileProgram(context.getContext(), device_id_set, source_path, params);
 }
 
+monju::DeviceProgram::DeviceProgram()
+{
+	_p_context = nullptr;
+	_program = nullptr;
+}
+
+monju::DeviceProgram::~DeviceProgram()
+{
+	release();
+}
+
 // プログラムを初期化
 
 void monju::DeviceProgram::create(DeviceContext& context, std::vector<Device*>& device_set, std::string cl_file_path, params_map& params)
 {
 	_create(context, device_set, cl_file_path, params);
+}
+
+void monju::DeviceProgram::release()
+{
+	if (_program != nullptr)
+	{
+		cl_int error_code = clReleaseProgram(_program);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
+		_program = nullptr;
+	}
 }

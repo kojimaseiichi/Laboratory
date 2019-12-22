@@ -9,7 +9,7 @@
 #include <boost/regex.hpp>
 #include "DeviceContext.h"
 #include "OpenClException.h"
-
+#include "util_str.h"
 
 namespace monju {
 
@@ -35,11 +35,6 @@ namespace monju {
 		// カーネルソースの内容を文字列で取得
 		std::string			_getSource(
 			std::string souce_path);
-
-		// カーネルソース内のテンプレート変数を具体化
-		std::string			_parameterize(
-			std::string source,
-			params_map& params);
 
 		// プレースホルダ置換済みソースコードを取得
 		std::string			_getEditedSource(
@@ -68,12 +63,22 @@ namespace monju {
 
 	public:
 
+		DeviceProgram();
+
+		~DeviceProgram();
+
+		DeviceProgram(const DeviceProgram&) = delete;
+
+		DeviceProgram& operator=(const DeviceProgram&) = delete;
+
 		// プログラムを初期化
 		void	create(
 			DeviceContext& context,
 			std::vector<Device*>& device_set,
 			std::string cl_file_path,
 			params_map& params);
+
+		void	release();
 
 	public: // プロパティ
 		DeviceContext&	deviceContext() const { return *_p_context; }
