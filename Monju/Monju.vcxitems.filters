@@ -61,6 +61,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClException.cpp">
       <Filter>共通</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceProgram.cpp">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -140,6 +143,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClException.h">
       <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceProgram.h">
+      <Filter>大規模計算コンポーネント%28OpenCL%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

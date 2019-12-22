@@ -49,7 +49,7 @@ cl_program monju::DeviceKernel::_compileProgram(cl_context context, cl_device_id
 		clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, logSize, buildLog, nullptr);
 		std::string message = buildLog == nullptr ? "" : buildLog;
 		free(buildLog);
-		throw MonjuException(message);
+		throw OpenClException(error_code, message);
 	}
 	return program;
 }
@@ -57,9 +57,10 @@ cl_program monju::DeviceKernel::_compileProgram(cl_context context, cl_device_id
 cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string kernel_name, params_map& params)
 {
 	std::string parameterized_kernel_name = _parameterize(kernel_name, params);
-	cl_kernel kernel = clCreateKernel(program, parameterized_kernel_name.c_str(), NULL);
-	if (kernel == nullptr)
-		throw MonjuException("カーネルの作成に失敗");
+	cl_int error_code;
+	cl_kernel kernel = clCreateKernel(program, parameterized_kernel_name.c_str(), &error_code);
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
 	return kernel;
 }
 
@@ -95,7 +96,6 @@ std::string monju::DeviceKernel::_parameterize(std::string source, params_map& p
 	};
 	boost::basic_regex<char> reg(R"(\$\{([a-zA-Z_]+)\})");
 	return boost::regex_replace(source, reg, callback);
-
 }
 
 // プログラムコンパイル(CLファイル)、カーネル生成
@@ -127,14 +127,6 @@ void monju::DeviceKernel::_run(cl_int dim, const size_t* global_work_size, const
 		throw OpenClException(error_code);
 }
 
-// プログラムコンパイル(CLファイル)、カーネル生成
-
-// プログラムコンパイル(CLファイル)、カーネル生成
-
-// OpenCLカーネル生成
-
-
-// OpenCLカーネル生成
 
 void monju::DeviceKernel::create(Device& device, std::string source_path, std::string kernel_name, params_map& params)
 {
@@ -145,12 +137,16 @@ void monju::DeviceKernel::release()
 {
 	if (_kernel != nullptr)
 	{
-		clReleaseKernel(_kernel);
+		cl_int error_code = clReleaseKernel(_kernel);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
 		_kernel = nullptr;
 	}
 	if (_program != nullptr)
 	{
-		clReleaseProgram(_program);
+		cl_int error_code = clReleaseProgram(_program);
+		if (error_code != CL_SUCCESS)
+			throw OpenClException(error_code);
 		_program = nullptr;
 	}
 	_p_device = nullptr;

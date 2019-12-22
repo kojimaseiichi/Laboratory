@@ -74,9 +74,9 @@ namespace monju {
 		GridMatrixRowMajorAccessor(Eigen::Matrix<ElemType, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>& r) :
 			_kGridRows(1),
 			_kGridCols(1),
-			_kMatRows(r.rows()),
-			_kMatCols(r.cols()),
-			_kCellSize(r.rows() * r.cols())
+			_kMatRows(static_cast<int>(r.rows())),
+			_kMatCols(static_cast<int>(r.cols())),
+			_kCellSize(static_cast<int>(r.rows() * r.cols()))
 		{
 			_p = &r;
 		}
@@ -163,9 +163,9 @@ namespace monju {
 		GridMatrixColMajorAccessor(Eigen::Matrix<ElemType, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>& r) :
 			_kGridRows(1),
 			_kGridCols(1),
-			_kMatRows(r.rows()),
-			_kMatCols(r.cols()),
-			_kCellSize(r.rows() * r.cols())
+			_kMatRows(static_cast<int>(r.rows())),
+			_kMatCols(static_cast<int>(r.cols())),
+			_kCellSize(static_cast<int>(r.rows() * r.cols()))
 		{
 			_p = &r;
 		}

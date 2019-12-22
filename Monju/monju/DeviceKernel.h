@@ -18,7 +18,7 @@ namespace monju {
 	{
 		// 型
 	public:
-		using params_map = std::map<std::string, std::string>;
+using params_map = std::map<std::string, std::string>;
 
 		// 生成・初期化・破棄
 	public:
@@ -33,10 +33,10 @@ namespace monju {
 	protected:
 		// 外部依存リソース
 		Device* _p_device;
-		std::string			_source_path;	// CLファイル名
-		std::string			_kernel_name;
-		// 責任範囲のリソース
-		cl_program			_program;
+std::string			_source_path;	// CLファイル名
+std::string			_kernel_name;
+
+cl_program			_program;
 		cl_kernel			_kernel;
 
 	protected:

@@ -69,14 +69,15 @@ namespace MonjuTest
 			mem.addMemory(monju::VariableKind::C, c);
 
 			// カーネル引数設定
-			monju::DeviceKernelArguments args(kernel, mem);
-			args.push(monju::VariableKind::A);
-			args.push(monju::VariableKind::B);
-			args.push(monju::VariableKind::C);
+			monju::DeviceKernelArguments args(mem);
+			args.push(monju::VariableKind::A, false);
+			args.push(monju::VariableKind::B, false);
+			args.push(monju::VariableKind::C, true);
+			args.stackArguments(kernel);
 
 			// カーネル実行
 			kernel.compute(global_work_size, local_work_size);
-			mem.requireRead(monju::VariableKind::C);
+			mem.requireRead(args.outputParams());
 
 			mem.flushRead(); // 問題あり
 

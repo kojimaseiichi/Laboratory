@@ -18,6 +18,8 @@ namespace monju {
 		MonjuException(std::string message);
 		~MonjuException();
 
+		std::string message() const { return _message; }
+
 	}; // class MonjuException
 
 } // namespace monju

@@ -13,6 +13,8 @@ namespace monju {
 
 	public:
 		OpenClException(int opencl_error_code);
+		OpenClException(int opencl_error_code, std::string message);
+		~OpenClException();
 
 		// プロパティ
 	public:
