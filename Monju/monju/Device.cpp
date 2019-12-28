@@ -10,6 +10,7 @@ monju::Device::Device()
 
 monju::Device::~Device()
 {
+	release();
 }
 
 void monju::Device::create(cl_context context, cl_device_id device_id)

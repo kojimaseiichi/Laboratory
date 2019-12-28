@@ -128,3 +128,10 @@ monju::Device& monju::DeviceContext::getDevice(int idx) const
 {
 	return *(_device_vec.at(static_cast<size_t>(idx)));
 }
+
+// すべてのデバイスを取得
+
+std::vector<monju::Device*> monju::DeviceContext::getAllDevices() const
+{
+	return _device_vec;
+}

@@ -62,6 +62,8 @@ namespace monju {
 		int							numDevices() const;
 		// デバイスを取得（GPU１ボード）
 		Device&						getDevice(int idx) const;
+		// すべてのデバイスを取得
+		std::vector<Device*>		getAllDevices() const;
 	};
 
 } // namespace monju

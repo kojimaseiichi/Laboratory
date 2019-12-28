@@ -63,8 +63,7 @@ namespace monju {
 	public:
 
 		DeviceProgram();
-
-		~DeviceProgram();
+		virtual ~DeviceProgram();
 
 		DeviceProgram(const DeviceProgram&) = delete;
 

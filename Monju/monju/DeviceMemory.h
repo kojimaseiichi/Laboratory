@@ -42,12 +42,7 @@ namespace monju {
 
 		// 初期化・生成
 	public:
-		DeviceMemory(Device& device) :
-			_read_required(),
-			_write_required()
-		{
-			_p_device = &device;
-		}
+		DeviceMemory(Device& device);
 		virtual ~DeviceMemory();
 
 		// コピー禁止
