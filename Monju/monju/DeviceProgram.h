@@ -9,7 +9,6 @@
 #include <boost/regex.hpp>
 #include "DeviceContext.h"
 #include "OpenClException.h"
-#include "util_str.h"
 
 namespace monju {
 

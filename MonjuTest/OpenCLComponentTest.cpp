@@ -35,6 +35,10 @@ namespace MonjuTest
 			platformContext.open(R"(C:\dev\test)");
 			monju::Device& device = platformContext.deviceContext().getDevice(0);
 
+			// デバイスセット
+			std::vector<monju::Device*> device_set;
+			device_set.push_back(&device);
+
 			// 計算データ c←ab
 			monju::MatrixCm<float> a, b, c;
 			a.resize(M, N);
@@ -45,14 +49,19 @@ namespace MonjuTest
 			b.setOnes();
 			c.setZero();
 
-			// カーネル初期化
-			monju::DeviceKernel kernel;
-			monju::DeviceKernel::params_map params_map;
+			// プログラム初期化
+			std::map<std::string, std::string> params_map;
 			params_map["M"] = boost::lexical_cast<std::string>(M);
 			params_map["N"] = boost::lexical_cast<std::string>(N);
 			params_map["K"] = boost::lexical_cast<std::string>(K);
 			params_map["TS"] = boost::lexical_cast<std::string>(TS);
-			kernel.create(device, source_file, kernel_name, params_map);
+
+			monju::DeviceProgram program;
+			program.create(platformContext.deviceContext(), device_set, source_file, params_map);
+
+			// カーネル初期化
+			monju::DeviceKernel kernel;
+			kernel.create(program, kernel_name, params_map);
 
 			// カーネル実行（ワークアイテム設定）
 			std::vector<size_t> global_work_size;
@@ -76,7 +85,7 @@ namespace MonjuTest
 			args.stackArguments(kernel);
 
 			// カーネル実行
-			kernel.compute(global_work_size, local_work_size);
+			kernel.compute(*(device_set[0]), global_work_size, local_work_size);
 			mem.requireRead(args.outputParams());
 
 			mem.flushRead(); // 問題あり

@@ -1,4 +1,6 @@
 #include "DeviceProgram.h"
+#include "util_str.h"
+
 
 // プログラムビルド時の情報を取得
 
