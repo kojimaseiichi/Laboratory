@@ -28,7 +28,7 @@ namespace MonjuTest
 		{
 			// 固定のパラメータ
 			const int M = 10, N = 10, K = 10, TS = 2;
-			std::string source_file = R"(C:\monju\kernel\mat_mul.cl)";
+			std::string source_file = R"(C:\monju\kernels\test\mat_mul.cl)";
 			std::string kernel_name = "mat_mul_M${M}_N${N}_K${K}_TS${TS}";
 			// プラットフォームを作成してデバイスを取得
 			monju::PlatformContext platformContext;
@@ -82,10 +82,11 @@ namespace MonjuTest
 			args.stackArguments(kernel);
 
 			// カーネル実行
-			kernel.compute(platformContext.deviceContext().getDevice(0), global_work_size, local_work_size);
+			kernel.compute(device, global_work_size, local_work_size);
 			mem.requireRead(args.outputParams());
 
-			mem.flushRead(); // 問題あり
+			// カーネルの実行結果を読み込み
+			mem.flushRead();
 
 			Assert::AreEqual(c(0, 0), 10.f);
 		}
