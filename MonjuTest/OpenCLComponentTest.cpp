@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "monju/DeviceMemory.h"
-
 #include "monju/PlatformContext.h"
 #include "monju/DeviceContext.h"
 #include "monju/DeviceKernel.h"
