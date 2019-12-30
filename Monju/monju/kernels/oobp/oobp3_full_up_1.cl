@@ -49,9 +49,9 @@ __kernel oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     {
         __global float* g_y_lambda_offset = ig_y_lambda + (kWIRow * ${YU});
         __global float* g_y_pi_offset = ig_y_pi + (kWIRow * ${YU});
-        event_t event_copy = async_work_group_copy(lo_y_lambda, g_y_lambda_offset, ${YU}, 0);
-        event_copy = async_work_group_copy(lo_y_pi, g_y_pi_offset, ${YU}, event_copy);
-        wait_group_events(1, &event_copy);
+        event_t e_copy = async_work_group_copy(lo_y_lambda, g_y_lambda_offset, ${YU}, 0);
+        e_copy = async_work_group_copy(lo_y_pi, g_y_pi_offset, ${YU}, e_copy);
+        wait_group_events(1, &e_copy);
     }
 
     barrier(CLK_LOCAL_MEM_FENCE);
