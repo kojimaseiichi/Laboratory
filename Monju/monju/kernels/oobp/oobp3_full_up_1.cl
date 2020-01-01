@@ -24,16 +24,14 @@
     ig_w_cpt        the CPT matrix that intervenes between two bases
     ig_w_kappa      KAPPA variable that intervenes between two bases and is near the lower basis
     og_w_lambda     LAMBDA variable that intervenes between two bases and is near the upper basis
-    og_x_lambda     LAMBDA variable in the upper basis
 
  */
-__kernel oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
+__kernel void oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     __global float* ig_y_lambda,
     __global float* ig_y_pi,
     __global float* ig_w_cpt,
     __global float* ig_w_kappa,
-    __global float* og_w_lambda,
-    __global float* og_x_lambda
+    __global float* og_w_lambda
 )
 {
     const size_t kWIRow = get_global_id(0);
@@ -49,9 +47,14 @@ __kernel oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     {
         __global float* g_y_lambda_offset = ig_y_lambda + (kWIRow * ${YU});
         __global float* g_y_pi_offset = ig_y_pi + (kWIRow * ${YU});
-        event_t e_copy = async_work_group_copy(lo_y_lambda, g_y_lambda_offset, ${YU}, 0);
-        e_copy = async_work_group_copy(lo_y_pi, g_y_pi_offset, ${YU}, e_copy);
-        wait_group_events(1, &e_copy);
+        for (int n = 0; n < ${YU}; n ++)
+        {
+            lo_y_lambda[n] = g_y_lambda_offset[n];
+            lo_y_pi[n] = g_y_pi_offset[n];
+        }
+        // event_t e_copy = async_work_group_copy(lo_y_lambda, g_y_lambda_offset, ${YU}, 0);
+        // e_copy = async_work_group_copy(lo_y_pi, g_y_pi_offset, ${YU}, e_copy);
+        // wait_group_events(1, &e_copy);
     }
 
     barrier(CLK_LOCAL_MEM_FENCE);
@@ -66,7 +69,9 @@ __kernel oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
         __global float* g_w_cpt_offset_col = g_w_cpt_offset + ${YU} * j;
         float sum = 0.0f;
         for (int i = 0; i < ${YU}; i ++)
+        {
             sum += lo_y_lambda[i] * (lo_y_pi[i] - g_w_kappa_offset[i] + g_w_cpt_offset_col[i]);
+        }
         w_lambda[j] = sum;
         outer_sum += sum;
     }

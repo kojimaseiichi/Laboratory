@@ -27,10 +27,9 @@ namespace monju {
 
 		std::vector<_Argument> _arguments;
 		std::set<VariableKind> _outputParams;
-		DeviceMemory* _p_memory;
 
 	public:
-		DeviceKernelArguments(DeviceMemory& memory);
+		DeviceKernelArguments();
 		~DeviceKernelArguments();
 
 		// ÉRÉsÅ[ã÷é~
@@ -46,7 +45,7 @@ namespace monju {
 		std::set<VariableKind> outputParams() const { return _outputParams; }
 
 	public:
-		void push(VariableKind kind, bool output);
+		void push(DeviceMemory& mem, VariableKind kind, bool output);
 		void push(cl_float value);
 		void push(cl_int value);
 		void stackArguments(DeviceKernel& kernel);

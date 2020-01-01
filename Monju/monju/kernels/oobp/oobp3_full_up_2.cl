@@ -20,7 +20,7 @@
     og_x_lambda     LAMBDA variable in the upper basis
 
  */
-__kernel oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}(
+__kernel void oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}(
     __global float* ig_w_lambda,
     __global float* og_x_lambda
 )

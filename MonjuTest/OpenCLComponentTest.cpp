@@ -74,10 +74,10 @@ namespace MonjuTest
 			mem.addMemory(monju::VariableKind::C, c);
 
 			// カーネル引数設定
-			monju::DeviceKernelArguments args(mem);
-			args.push(monju::VariableKind::A, false);
-			args.push(monju::VariableKind::B, false);
-			args.push(monju::VariableKind::C, true);
+			monju::DeviceKernelArguments args;
+			args.push(mem, monju::VariableKind::A, false);
+			args.push(mem, monju::VariableKind::B, false);
+			args.push(mem, monju::VariableKind::C, true);
 			args.stackArguments(kernel);
 
 			// カーネル実行

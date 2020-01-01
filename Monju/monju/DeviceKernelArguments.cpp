@@ -1,8 +1,7 @@
 #include "DeviceKernelArguments.h"
 
-monju::DeviceKernelArguments::DeviceKernelArguments(DeviceMemory& memory)
+monju::DeviceKernelArguments::DeviceKernelArguments()
 {
-	_p_memory = &memory;
 }
 
 monju::DeviceKernelArguments::~DeviceKernelArguments()
@@ -16,9 +15,9 @@ void monju::DeviceKernelArguments::_clSetKernelArg(cl_kernel kernel, cl_uint arg
 		throw OpenClException(error_code);
 }
 
-void monju::DeviceKernelArguments::push(VariableKind kind, bool output)
+void monju::DeviceKernelArguments::push(monju::DeviceMemory& mem, VariableKind kind, bool output)
 {
-	cl_mem m = _p_memory->getMemory(kind);
+	cl_mem m = mem.getMemory(kind);
 	_Argument arg;
 	arg.arg_size = sizeof(cl_mem);
 	arg.arg_value.__cl_mem = m;

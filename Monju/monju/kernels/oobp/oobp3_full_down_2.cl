@@ -20,7 +20,7 @@
     og_y_pi         PI variable in the lower basis
 
  */
-__kernel oobp3_full_down_2_U${U}_X${X}_UU${UU}_XU${XU}(
+__kernel void oobp3_full_down_2_X${X}_Y${Y}_XU${XU}_YU${YU}(
     __global float* ig_w_kappa,
     __global float* og_y_pi
 )

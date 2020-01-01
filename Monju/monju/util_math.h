@@ -18,6 +18,8 @@ namespace monju {
 			intersect(a, b, r);
 			return r.size() != 0;
 		}
+
+		float round_n(float number, int n);
 	}
 }
 
