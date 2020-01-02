@@ -86,19 +86,19 @@ namespace monju {
 		// 公開関数
 	public:
 		// ホストメモリからデバイスメモリへ書き込み（デバイス指定）
-		void	writeBuffer(Device& device, std::set<VariableKind> variableKindSet);
+		void	writeBuffer(Device& device, std::set<VariableKind>& variableKindSet);
 		// ホストメモリからデバイスメモリへ書き込み
-		void	writeBuffer(std::set<VariableKind> variableKindSet);
+		void	writeBuffer(std::set<VariableKind>& variableKindSet);
 		// デバイスメモリからホストメモリへ読み込み（デバイス指定）
-		void	readBuffer(Device& device, std::set<VariableKind> variableKindSet);
+		void	readBuffer(Device& device, std::set<VariableKind>& variableKindSet);
 		// デバイスメモリからホストメモリへ読み込み
-		void	readBuffer(std::set<VariableKind> variableKindSet);
+		void	readBuffer(std::set<VariableKind>& variableKindSet);
 		// デバイスメモリからホストメモリへ読み込みが必要
 		void	requireRead(VariableKind v);
-		void	requireRead(std::set<VariableKind> variablesToRead);
+		void	requireRead(std::set<VariableKind>& variablesToRead);
 		// ホストメモリからデバイスメモリへ書き込みが必要
 		void	requireWrite(VariableKind v);
-		void	requireWrite(std::set<VariableKind> variablesToWrite);
+		void	requireWrite(std::set<VariableKind>& variablesToWrite);
 		// ホストメモリからデバイスメモリへすべてのメモリオブジェクトを書き込み
 		void	flushWrite();
 		// デバイスメモリからホストメモリへすべてのメモリオブジェクトを読み込む

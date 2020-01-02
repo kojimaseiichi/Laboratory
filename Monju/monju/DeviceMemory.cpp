@@ -48,7 +48,7 @@ void monju::DeviceMemory::release()
 	_map_mem.clear();
 }
 
-void monju::DeviceMemory::writeBuffer(Device& device, std::set<monju::VariableKind> variableKindSet)
+void monju::DeviceMemory::writeBuffer(Device& device, std::set<monju::VariableKind>& variableKindSet)
 {
 	for (const auto& kind : variableKindSet)
 	{
@@ -59,14 +59,14 @@ void monju::DeviceMemory::writeBuffer(Device& device, std::set<monju::VariableKi
 	}
 }
 
-void monju::DeviceMemory::writeBuffer(std::set<monju::VariableKind> variableKindSet)
+void monju::DeviceMemory::writeBuffer(std::set<monju::VariableKind>& variableKindSet)
 {
 	writeBuffer(*_p_device, variableKindSet);
 	_write_required.erase(variableKindSet.begin(), variableKindSet.end());
 
 }
 
-void monju::DeviceMemory::readBuffer(Device& device, std::set<monju::VariableKind> variableKindSet)
+void monju::DeviceMemory::readBuffer(Device& device, std::set<monju::VariableKind>& variableKindSet)
 {
 	for (const auto& kind : variableKindSet)
 	{
@@ -77,7 +77,7 @@ void monju::DeviceMemory::readBuffer(Device& device, std::set<monju::VariableKin
 	}
 }
 
-void monju::DeviceMemory::readBuffer(std::set<monju::VariableKind> variableKindSet)
+void monju::DeviceMemory::readBuffer(std::set<monju::VariableKind>& variableKindSet)
 {
 	readBuffer(*_p_device, variableKindSet);
 	_read_required.erase(variableKindSet.begin(), variableKindSet.end());
@@ -88,7 +88,7 @@ void monju::DeviceMemory::requireRead(VariableKind v)
 	_read_required.insert(v);
 }
 
-void monju::DeviceMemory::requireRead(std::set<VariableKind> variablesToRead)
+void monju::DeviceMemory::requireRead(std::set<VariableKind>& variablesToRead)
 {
 	for (auto const e : variablesToRead)
 		requireRead(e);
@@ -99,7 +99,7 @@ void monju::DeviceMemory::requireWrite(VariableKind v)
 	_write_required.insert(v);
 }
 
-void monju::DeviceMemory::requireWrite(std::set<VariableKind> variablesToWrite)
+void monju::DeviceMemory::requireWrite(std::set<VariableKind>& variablesToWrite)
 {
 	for (auto const e : variablesToWrite)
 		requireWrite(e);

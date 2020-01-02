@@ -27,22 +27,30 @@ namespace MonjuTest
 			std::string kernel_name1 = "oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}";
 			std::string source_file2 = R"(C:\monju\kernels\oobp\oobp3_full_up_2.cl)";
 			std::string kernel_name2 = "oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}";
+			std::string source_file_bel = R"(C:\monju\kernels\oobp\oobp3_bel.cl)";
+			std::string kernel_name_bel = "oobp3_bel_X${X}_XU${XU}";
+
 			// プラットフォームを作成してデバイスを取得
 			monju::PlatformContext platformContext;
 			platformContext.open(R"(C:\dev\test)");
 			monju::Device& device = platformContext.deviceContext().getDevice(0);
 
 			// Y基底データ
-			monju::MatrixRm<float> x_lambda, x_pi, x_rho,
-				y_lambda, y_pi, y_rho;
+			monju::MatrixRm<float> x_lambda, x_pi, x_rho, x_r, x_bel,
+				y_lambda, y_pi, y_rho, y_r, y_bel;
 			monju::MatrixCm<float> w_lambda, w_kappa, w_cpt;
 
 			x_lambda.resize(X, XU);
 			x_pi.resize(X, XU);
 			x_rho.resize(X, XU);
+			x_r.resize(X, XU);
+			x_bel.resize(X, 1);
+
 			y_lambda.resize(Y, YU);
 			y_pi.resize(Y, YU);
 			y_rho.resize(Y, YU);
+			y_r.resize(Y, YU);
+			y_bel.resize(Y, 1);
 
 			w_lambda.resize(Y * XU, X);
 			w_kappa.resize(Y * YU, X);
@@ -53,6 +61,9 @@ namespace MonjuTest
 			w_kappa.setConstant(0.5f);
 			w_cpt.setConstant(0.5f);
 			w_lambda.setConstant(0.0f);
+			x_lambda.setConstant(0.5f);
+			x_pi.setConstant(0.5f);
+			x_r.setConstant(1.f);
 
 			w_cpt(0, 0) = 0.2f;
 
@@ -70,11 +81,18 @@ namespace MonjuTest
 			monju::DeviceProgram program2;
 			program2.create(platformContext.deviceContext(), platformContext.deviceContext().getAllDevices(), source_file2, params_map);
 
+			monju::DeviceProgram programBel;
+			programBel.create(platformContext.deviceContext(), platformContext.deviceContext().getAllDevices(), source_file_bel, params_map);
+
 			// カーネル初期化
 			monju::DeviceKernel kernel1;
 			kernel1.create(program1, kernel_name1, params_map);
+
 			monju::DeviceKernel kernel2;
 			kernel2.create(program2, kernel_name2, params_map);
+
+			monju::DeviceKernel kernelBel;
+			kernelBel.create(programBel, kernel_name_bel, params_map);
 
 			// カーネル実行（ワークアイテム設定）
 			std::vector<size_t> global_work_size1;
@@ -88,16 +106,23 @@ namespace MonjuTest
 			global_work_size2.push_back(1);
 			global_work_size2.push_back(X);
 
+			std::vector<size_t> global_work_size_bel;
+			global_work_size_bel.push_back(X);
+
 			// カーネルメモリ設定
 			monju::DeviceMemory memx(device);
 			memx.addMemory(monju::VariableKind::lambda, x_lambda);
 			memx.addMemory(monju::VariableKind::pi, x_pi);
 			memx.addMemory(monju::VariableKind::rho, x_rho);
+			memx.addMemory(monju::VariableKind::R, x_r);
+			memx.addMemory(monju::VariableKind::BEL, x_bel);
 
 			monju::DeviceMemory memy(device);
 			memy.addMemory(monju::VariableKind::lambda, y_lambda);
 			memy.addMemory(monju::VariableKind::pi, y_pi);
 			memy.addMemory(monju::VariableKind::rho, y_rho);
+			memy.addMemory(monju::VariableKind::R, y_r);
+			memy.addMemory(monju::VariableKind::BEL, y_bel);
 
 			monju::DeviceMemory memw(device);
 			memw.addMemory(monju::VariableKind::lambda, w_lambda);
@@ -115,8 +140,17 @@ namespace MonjuTest
 
 			monju::DeviceKernelArguments args2;
 			args2.push(memw, monju::VariableKind::lambda, false);
+			args2.push(memx, monju::VariableKind::R, false);
 			args2.push(memx, monju::VariableKind::lambda, true);
 			args2.stackArguments(kernel2);
+
+			monju::DeviceKernelArguments args_bel;
+			args_bel.push(memx, monju::VariableKind::lambda, false);
+			args_bel.push(memx, monju::VariableKind::pi, false);
+			args_bel.push(memx, monju::VariableKind::rho, true);
+			args_bel.push(memx, monju::VariableKind::BEL, true);
+			args_bel.stackArguments(kernelBel);
+
 
 			// カーネル実行
 			kernel1.compute(device, global_work_size1, local_work_size1);
@@ -124,6 +158,9 @@ namespace MonjuTest
 
 			kernel2.compute(device, global_work_size2);
 			memx.requireRead(args2.outputParams());
+
+			kernelBel.compute(device, global_work_size_bel);
+			memx.requireRead(args_bel.outputParams());
 
 			// カーネルの実行結果を読み込み
 			memw.flushRead();

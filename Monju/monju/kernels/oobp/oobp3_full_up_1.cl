@@ -1,11 +1,14 @@
 /*
+ # ATTENTION!
+    You can write this source only with Latin-1 character set. DO NOT use Japanese characters.
+
  # SUMMARY
     This kernel is to compute the beysian stochastic propagation that is performed through the full-connected network by OOBP algorithm.
     You may need to call oobp3_full_up_2() to obtain LAMBDA from "og_w_lambda" in the basis after this kernel execution done
 
  # WORK ITEM
-    [0] threads for every units in the lower basis (number of rows)
-    [1] threads for every units in the upper basis (number of columns)
+    [0] threads for every nodes in the lower basis (number of rows)
+    [1] threads for every nodes in the upper basis (number of columns)
 
  # WORK GROUP
     [0] 1

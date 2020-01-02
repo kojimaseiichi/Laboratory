@@ -1,9 +1,12 @@
 /*
+ # ATTENTION!
+    You can write this source only with Latin-1 character set. DO NOT use Japanese characters.
+
  # SUMMARY
     This kernel is called posterior from function "oobp_full_down_1"
 
  # WORK ITEM
-    [0] threads for every units in the lower basis (number of rows)
+    [0] threads for every nodes in the lower basis (number of rows)
     [1] 1
 
  # WORK GROUP
