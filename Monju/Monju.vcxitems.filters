@@ -64,6 +64,21 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp">
+      <Filter>共通</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\TaskPenaltyCalc.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -147,6 +162,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\TaskPenaltyCalc.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">
@@ -163,6 +196,9 @@
     </Filter>
     <Filter Include="計算基盤%28OpenCL%29">
       <UniqueIdentifier>{2e2f5d92-3a19-4a22-9544-efd498de59ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="皮質モジュール">
+      <UniqueIdentifier>{9bd9280e-2f53-498e-b61d-0a95d6503a40}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

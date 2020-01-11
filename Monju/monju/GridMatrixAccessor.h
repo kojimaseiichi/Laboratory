@@ -18,6 +18,76 @@ namespace monju {
 		virtual void	writeCell(const ElemType* p) = 0;
 	};
 
+	template <typename ElemType>
+	class MatrixRowMajorAccessor : public MatrixAccessor<ElemType>
+	{
+	private:
+		const int _kMatRows, _kMatCols;
+
+	private:
+		MatrixRm<ElemType>* _p;
+
+	public:
+		MatrixRowMajorAccessor(MatrixRm<ElemType>& r) :
+			_kMatRows(r.rows()),
+			_kMatCols(r.cols())
+		{
+			_p = &r;
+		}
+
+		int getMatRows() override { return _kMatRows; }
+		int getMatCols() override { return _kMatCols; }
+		int getCellSize() override { return _kMatRows * _kMatCols; }
+		void readCell(ElemType* p) override
+		{
+			const int bytes = _kMatRows* _kMatCols * sizeof(ElemType);
+			memcpy(p, _p->data(), bytes);
+		}
+		void writeCell(const ElemType* p)
+		{
+			const int bytes = _kMatRows * _kMatCols * sizeof(ElemType);
+			memcpy(_p->data(), p, bytes);
+		}
+	};
+
+	template <typename ElemType>
+	class MatrixColMajorAccessor : public MatrixAccessor<ElemType>
+	{
+	private:
+		const int _kMatRows, _kMatCols;
+
+	private:
+		MatrixCm<ElemType>* _p;
+
+	public:
+		MatrixColMajorAccessor(MatrixCm<ElemType>& r) :
+			_kMatRows(r.rows()),
+			_kMatCols(r.cols())
+		{
+			_p = &r;
+		}
+
+		int getMatRows() override { return _kMatRows; }
+		int getMatCols() override { return _kMatCols; }
+		int getCellSize() override { return _kMatRows * _kMatCols; }
+		void readCell(ElemType* p) override
+		{
+			for (int i = 0; i < _kMatRows; i++)
+			{
+				for (int j = 0; j < _kmatcol; j++)
+					*(p++) = _p->coeff(i, j);
+			}
+		}
+		void writeCell(const ElemType* p)
+		{
+			for (int i = 0; i < _kMatRows; i++)
+			{
+				for (int j = 0; j < _kmatcol; j++)
+					_p->coeffRef(i, j) = *(p++);.
+			}
+		}
+	};
+
 	// グリッドの行列にアクセス
 	template <typename ElemType>
 	class GridMatrixAccessor

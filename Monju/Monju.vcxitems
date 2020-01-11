@@ -14,6 +14,10 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Device.cpp" />
@@ -28,6 +32,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Synchronizable.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\TaskPenaltyCalc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_math.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_mm.cpp" />
@@ -37,6 +42,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Device.h" />
@@ -54,6 +64,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Synchronizable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\TaskPenaltyCalc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_file.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_math.h" />

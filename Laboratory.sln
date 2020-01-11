@@ -9,10 +9,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Monju", "Monju\Monju.vcxite
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MonjuTest", "MonjuTest\MonjuTest.vcxproj", "{880C526A-B4A4-49F8-ACE2-108537C0D4B8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleTest", "ConsoleTest\ConsoleTest.vcxproj", "{A989F06A-AB48-4331-9902-20BDD3A148D8}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Monju\Monju.vcxitems*{041fa78b-4f1f-4c73-a206-db6cfd371db8}*SharedItemsImports = 9
 		Monju\Monju.vcxitems*{880c526a-b4a4-49f8-ace2-108537c0d4b8}*SharedItemsImports = 4
+		Monju\Monju.vcxitems*{a989f06a-ab48-4331-9902-20bdd3a148d8}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -37,6 +40,14 @@ Global
 		{880C526A-B4A4-49F8-ACE2-108537C0D4B8}.Release|x64.Build.0 = Release|x64
 		{880C526A-B4A4-49F8-ACE2-108537C0D4B8}.Release|x86.ActiveCfg = Release|Win32
 		{880C526A-B4A4-49F8-ACE2-108537C0D4B8}.Release|x86.Build.0 = Release|Win32
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Debug|x64.ActiveCfg = Debug|x64
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Debug|x64.Build.0 = Debug|x64
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Debug|x86.ActiveCfg = Debug|Win32
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Debug|x86.Build.0 = Debug|Win32
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Release|x64.ActiveCfg = Release|x64
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Release|x64.Build.0 = Release|x64
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Release|x86.ActiveCfg = Release|Win32
+		{A989F06A-AB48-4331-9902-20BDD3A148D8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
