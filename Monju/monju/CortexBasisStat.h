@@ -5,7 +5,7 @@
 #include "GridMatrixStorage.h"
 #include "Closable.h"
 #include "ConcurrencyContext.h"
-#include "TaskPenaltyCalc.h"
+#include "PenaltyCalcTask.h"
 
 namespace monju {
 
@@ -75,12 +75,12 @@ namespace monju {
 
 		std::future<void> calcPenalty()
 		{
-			TaskPenaltyCalc* p = new TaskPenaltyCalc(_kNodes, _kUnitsPerNode, _kUnitsPerNode, _storage, 10.f, 10.f);
-			const auto task = [=](TaskPenaltyCalc* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
+			PenaltyCalcTask* p = new PenaltyCalcTask(_kNodes, _kUnitsPerNode, _kUnitsPerNode, _storage, 10.f, 10.f);
+			const auto task = [=](PenaltyCalcTask* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
 			{
 				// LOCK -----------------------------
 				ReadGuard g(_synch);
-				std::unique_ptr<TaskPenaltyCalc> p(pr);
+				std::unique_ptr<PenaltyCalcTask> p(pr);
 				p->calcPenalty(win, lat, penalty);
 			};
 			return _conc.threadPool().submit(task, p, _win, _lat, _penalty);

@@ -12,7 +12,7 @@ namespace monju {
 	　・一様な勝率となるようなペナルティ
 	　・ノード同士が独立となるようなペナルティ
 	*/
-	class TaskPenaltyCalc
+	class PenaltyCalcTask
 	{
 		// 定数
 	private:
@@ -26,7 +26,7 @@ namespace monju {
 		std::weak_ptr<TriangularGridMatrixStorage<int32_t>> _pStorage;
 
 	public:
-		TaskPenaltyCalc(
+		PenaltyCalcTask(
 			int num_of_nodes,
 			int num_of_units,
 			int active_num_of_nodes,
@@ -43,8 +43,8 @@ namespace monju {
 			_pStorage = pStorage;
 		}
 
-		TaskPenaltyCalc(const TaskPenaltyCalc&) = delete;
-		TaskPenaltyCalc& operator=(const TaskPenaltyCalc&) = delete;
+		PenaltyCalcTask(const PenaltyCalcTask&) = delete;
+		PenaltyCalcTask& operator=(const PenaltyCalcTask&) = delete;
 
 		/// <summary>ペナルティを計算</summary>
 		bool calcPenalty(

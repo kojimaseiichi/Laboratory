@@ -76,9 +76,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp">
       <Filter>共通</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\TaskPenaltyCalc.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -177,9 +175,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h">
       <Filter>共通</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\TaskPenaltyCalc.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">

@@ -3,7 +3,7 @@
 #include <iostream>
 #include "monju/MonjuTypes.h"
 #include "monju/GridMatrixStorage.h"
-#include "monju/TaskPenaltyCalc.h"
+#include "monju/PenaltyCalcTask.h"
 
 int main()
 {
@@ -16,7 +16,7 @@ int main()
 	storage->writeCell(acc, 1, 0);
 	storage->writeCell(acc, 1, 1);
 
-	monju::TaskPenaltyCalc task(2, 2, 2, storage, 100.f, 100.f);
+	monju::PenaltyCalcTask task(2, 2, 2, storage, 100.f, 100.f);
 
 	auto win = std::make_shared <monju::MatrixRm<float_t>>(2, 2);
 	auto lat = std::make_shared <monju::MatrixRm<float_t>>(2, 2);

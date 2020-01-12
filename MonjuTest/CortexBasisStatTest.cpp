@@ -3,7 +3,7 @@
 #include <iostream>
 #include "monju/MonjuTypes.h"
 #include "monju/GridMatrixStorage.h"
-#include "monju/TaskPenaltyCalc.h"
+#include "monju/PenaltyCalcTask.h"
 #include "monju/util_math.h"
 #include "monju/CortexBasisStat.h"
 

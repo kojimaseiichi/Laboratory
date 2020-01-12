@@ -3,7 +3,7 @@
 #include <iostream>
 #include "monju/MonjuTypes.h"
 #include "monju/GridMatrixStorage.h"
-#include "monju/TaskPenaltyCalc.h"
+#include "monju/PenaltyCalcTask.h"
 #include "monju/util_math.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -31,7 +31,7 @@ namespace MonjuTest
 			storage->readCell(a, 1, 0);
 			storage->readCell(a, 1, 1);
 
-			monju::TaskPenaltyCalc task(2, 2, 2, storage, 10.f, 10.f);
+			monju::PenaltyCalcTask task(2, 2, 2, storage, 10.f, 10.f);
 
 			auto win = std::make_shared <monju::MatrixRm<float_t>>(2, 2);
 			auto lat = std::make_shared <monju::MatrixRm<float_t>>(2, 2);
