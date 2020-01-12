@@ -58,29 +58,29 @@ namespace monju {
 			// MPEカウントをファイルから取得
 			_loadWinCount(/*out*/mpe_count);
 
-			//// 勝率計算→KL距離計算→勝率ペナルティ計算（ハイパーパラメタ）
+			// 勝率計算→KL距離計算→勝率ペナルティ計算（ハイパーパラメタ）
 			if (auto p = winRateRestriction.lock())
-				_calcWinKLDistance(mpe_count, kCoeWinPenalty, /*out*/*p);
+				_calcWinKLDistance(mpe_count, /*out*/*p);
 			else
 				throw MonjuException(ErrorCode::WeakPointerExpired);
 
-			//// 同時勝率計算→相互情報量計算→側抑制ペナルティ計算（ハイパーパラメタ）
+			// 同時勝率計算→相互情報量計算→側抑制ペナルティ計算（ハイパーパラメタ）
 			if (auto p = lateralInhibition.lock())
-				_calcLateralMutualInfo(mpe_count, kCoeLatPenalty, /*out*/*p);
+				_calcLateralMutualInfo(/*out*/*p);
 			else
 				return false;
 	
-			//// ペナルティを計算
-			//{
-			//	auto
-			//		win = winRateRestriction.lock(),
-			//		lat = lateralInhibition.lock(),
-			//		pe = penalty.lock();
-			//	if (win != nullptr && lat != nullptr && pe != nullptr)
-			//		pe->array() = (win->array() + lat->array()).exp();
-			//	else
-			//		return false;
-			//}	
+			// ペナルティを計算
+			{
+				auto
+					win = winRateRestriction.lock(),
+					lat = lateralInhibition.lock(),
+					pe = penalty.lock();
+				if (win != nullptr && lat != nullptr && pe != nullptr)
+					pe->array() = (-(win->array() * kCoeWinPenalty + lat->array() * kCoeLatPenalty) / (mpe_count.cast<float_t>().array() + 1.f)).exp();
+				else
+					return false;
+			}	
 			
 			return true;
 		}
@@ -110,6 +110,7 @@ namespace monju {
 			// Σ_i P(i) = 1
 			// P(i,j) = C(i,j) / Σ_i C(i,j))
 			prob = mpe_count.cast<float_t>();
+			prob.array() += 0.001f;
 			prob.array().colwise() /= prob.rowwise().sum().array();
 		}
 
@@ -139,7 +140,6 @@ namespace monju {
 
 		void _calcWinKLDistance(
 			MatrixRm<int32_t>& mpe_count,
-			const float_t coefficient_win_penalty,
 			/*out*/MatrixRm<float_t>& message)
 		{
 			// カウンティングデータから各ノードのKL距離を計算
@@ -153,9 +153,13 @@ namespace monju {
 			// KL距離を計算
 			// 目標勝率
 			const float_t Q = static_cast<float_t>(kNumActiveNodes) / static_cast<float_t>(kNumNodes * kNumUnits);
-			message.resizeLike(win_prob); // P
-			message.setConstant(Q);
-			message.array() =  message.array() * message.array().log() * kCoeWinPenalty * static_cast<float>(kNumUnits) / (mpe_count.array().cast<float_t>() + 1.f);
+			message = win_prob;
+			message.array() = Q / message.array();
+			message.array() = message.array() * message.array().log() * kNumUnits;
+
+			//message.resizeLike(win_prob); // P
+			//message.setConstant(Q);
+			//message.array() =  message.array() * message.array().log() * kCoeWinPenalty * static_cast<float>(kNumUnits) / (mpe_count.array().cast<float_t>() + 1.f);
 		}
 
 		///// <summary>φ値ユニットの勝率の確率分布</summary>
@@ -183,10 +187,9 @@ namespace monju {
 		//}
 
 		void _calcLateralMutualInfo(
-			MatrixRm<int32_t>& count,
-			const float coefficient_lat_penalty,
 			/*out*/MatrixRm<float_t>& restriction)
 		{
+			MatrixRm<int32_t> count(kNumNodes, kNumUnits);
 			restriction.resizeLike(count);
 
 			// ノードのすべての組み合わせに対して相互情報量を計算
@@ -195,7 +198,7 @@ namespace monju {
 				for (int V = 0; V < U; V++)
 					_sumLateralMutualInfo(U, V, count, /*out*/restriction);
 			}
-			restriction.array() = coefficient_lat_penalty * restriction.array() / (count.array() + 1).cast<float_t>();
+			// restriction.array() = coefficient_lat_penalty * restriction.array() / (count.array() + 1).cast<float_t>();
 		}
 
 		// ノードU、Vの側抑制ペナルティを計算
@@ -220,7 +223,7 @@ namespace monju {
 			//   s(P(u|v)/P(u))(log(P(u|v)/P(u))
 			// = s(P(u,v)/P(u)P(v))(log(P(u,v)/P(u)P(v))
 			mui.array() /= (margin_prob_U * margin_prob_V).array(); // P(u,v)/P(u)P(v)
-			mui.array() *= mui.array().log() * static_cast<float>(kNumUnits);
+			mui.array() *= mui.array().log() * std::pow(static_cast<float>(kNumUnits), 2.f);
 			restriction.row(U) += mui.rowwise().sum(); // I(U=u,V)
 			restriction.row(V) += mui.colwise().sum(); // I(U,V=v)
 		}
