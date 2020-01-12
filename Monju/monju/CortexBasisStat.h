@@ -5,6 +5,7 @@
 #include "GridMatrixStorage.h"
 #include "Closable.h"
 #include "ConcurrencyContext.h"
+#include "TaskPenaltyCalc.h"
 
 namespace monju {
 
@@ -15,22 +16,36 @@ namespace monju {
 		using TStorage = TriangularGridMatrixStorage<int32_t>;
 
 		std::string _id;
-		int
-			_nodes,
-			_units_per_node;
+		const int
+			_kNodes,
+			_kUnitsPerNode;
 		std::shared_ptr<TStorage> _storage;
+		Synchronizable _synch;
 		ConcurrencyContext _conc;
+		std::shared_ptr<MatrixRm<float_t>> _win;
+		std::shared_ptr<MatrixRm<float_t>> _lat;
+		std::shared_ptr<MatrixRm<float_t>> _penalty;
+
+	public:
+		CortexBasisStat(const CortexBasisStat&) = delete;
+		CortexBasisStat& operator=(const CortexBasisStat&) = delete;
+
+	public:
+		MatrixRm<float_t>& win() const { return *_win; }
+		MatrixRm<float_t>& lat() const { return *_lat; }
+		MatrixRm<float_t>& penalty() const { return *_penalty; }
 
 	public:
 		CortexBasisStat(
 			std::string id,
 			int nodes,
 			int units_per_node
-		) : _conc(1)
+		) : _conc(1), _kNodes(nodes), _kUnitsPerNode(units_per_node)
 		{
 			_id = id;
-			_nodes = nodes;
-			_units_per_node = _units_per_node;
+			_win = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
+			_lat = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
+			_penalty = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
 		}
 
 		~CortexBasisStat()
@@ -38,30 +53,45 @@ namespace monju {
 			close();
 		}
 
-		void persist(MatrixRm<int32_t>& win)
+		std::future<void> persist(MatrixRm<int32_t>& win)
 		{
-			const auto task = [&sto = _tri_sto](int grow, int gcol, int row, int col) -> void
+			MatrixRm<int32_t>* p = new MatrixRm<int32_t>(win);
+			const auto task = [=](std::weak_ptr<TStorage> sto, MatrixRm<int32_t>* pr) -> void
 			{
-				sto.addElement(grow, gcol, row, col, 1);
-			};
-
-			for (int i = 0; i < win.rows(); i++)
-			{
-				for (int ii = 0; ii < i; ii++)
+				std::unique_ptr<MatrixRm<int32_t>> p(pr);
+				if (auto pSto = sto.lock())
 				{
-					auto f = _conc.threadPool().submit(task, i, ii, static_cast<int>(win(i)), static_cast<int>(win(ii)));
+					// LOCK -----------------------------
+					WriteGuard g(_synch);
+					for (int u = 0; u < p->rows(); u++)
+					{
+						for (int v = 0; v <= u; v++)
+							pSto->addElement(u, v, (*p)(u, 0), (*p)(v, 0), 1);
+					}
 				}
-			}
+			};
+			return _conc.threadPool().submit(task, _storage, p);
 		}
 
-		std::future<MatrixRm<float_t>*> calcPenalty(MatrixRm<float_t>* p)
+		std::future<void> calcPenalty()
 		{
-
+			TaskPenaltyCalc* p = new TaskPenaltyCalc(_kNodes, _kUnitsPerNode, _kUnitsPerNode, _storage, 10.f, 10.f);
+			const auto task = [=](TaskPenaltyCalc* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
+			{
+				// LOCK -----------------------------
+				ReadGuard g(_synch);
+				std::unique_ptr<TaskPenaltyCalc> p(pr);
+				p->calcPenalty(win, lat, penalty);
+			};
+			return _conc.threadPool().submit(task, p, _win, _lat, _penalty);
+			
 		}
 
 		void create(std::string dir)
 		{
-			_storage = std::make_shared<TStorage>(storagePath(dir), _nodes, _units_per_node, _units_per_node);
+			_storage = std::make_shared<TStorage>();
+			_storage->create(storagePath(dir), _kNodes, _kUnitsPerNode, _kUnitsPerNode);
+			_conc.create();
 		}
 
 		void close()

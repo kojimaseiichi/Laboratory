@@ -26,9 +26,9 @@ namespace monju {
 		{
 			_ptp = std::make_unique<ThreadPool>(max_threads);
 		}
-		void create(int max_threads)
+		void create()
 		{
-			_ptp = std::make_unique<ThreadPool>(max_threads);
+			_ptp->init();
 		}
 		~ConcurrencyContext()
 		{

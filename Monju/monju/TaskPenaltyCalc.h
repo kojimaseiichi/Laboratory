@@ -191,6 +191,7 @@ namespace monju {
 		{
 			MatrixRm<int32_t> count(kNumNodes, kNumUnits);
 			restriction.resizeLike(count);
+			restriction.setZero();
 
 			// ノードのすべての組み合わせに対して相互情報量を計算
 			for (int U = 0; U < kNumNodes; U++)
@@ -220,8 +221,8 @@ namespace monju {
 			auto margin_prob_U = mui.rowwise().sum(); // P(u)=Σ_v P(u,v)
 			auto margin_prob_V = mui.colwise().sum(); // P(v)=Σ_u P(u,v)
 			// 同時確率分布を相互情報量で上書き I(U=u,V=v) の行列を計算
-			//   s(P(u|v)/P(u))(log(P(u|v)/P(u))
-			// = s(P(u,v)/P(u)P(v))(log(P(u,v)/P(u)P(v))
+			//   s^2(P(u|v)/P(u))(log(P(u|v)/P(u))
+			// = s^2(P(u,v)/P(u)P(v))(log(P(u,v)/P(u)P(v))
 			mui.array() /= (margin_prob_U * margin_prob_V).array(); // P(u,v)/P(u)P(v)
 			mui.array() *= mui.array().log() * std::pow(static_cast<float>(kNumUnits), 2.f);
 			restriction.row(U) += mui.rowwise().sum(); // I(U=u,V)
