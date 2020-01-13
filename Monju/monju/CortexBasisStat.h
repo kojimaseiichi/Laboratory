@@ -25,6 +25,7 @@ namespace monju {
 		std::shared_ptr<MatrixRm<float_t>> _win;
 		std::shared_ptr<MatrixRm<float_t>> _lat;
 		std::shared_ptr<MatrixRm<float_t>> _penalty;
+		int _coeWinPenalty, _coeLatPenalty;
 
 	public:
 		CortexBasisStat(const CortexBasisStat&) = delete;
@@ -39,13 +40,18 @@ namespace monju {
 		CortexBasisStat(
 			std::string id,
 			int nodes,
-			int units_per_node
+			int units_per_node,
+			int coeWinPenalty,
+			int coeLatPenalty
+
 		) : _conc(1), _kNodes(nodes), _kUnitsPerNode(units_per_node)
 		{
 			_id = id;
 			_win = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
 			_lat = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
 			_penalty = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
+			_coeWinPenalty = coeWinPenalty;
+			_coeLatPenalty = coeLatPenalty;
 		}
 
 		~CortexBasisStat()
@@ -75,7 +81,7 @@ namespace monju {
 
 		std::future<void> calcPenalty()
 		{
-			PenaltyCalcTask* p = new PenaltyCalcTask(_kNodes, _kUnitsPerNode, _kUnitsPerNode, _storage, 10.f, 10.f);
+			PenaltyCalcTask* p = new PenaltyCalcTask(_kNodes, _kUnitsPerNode, _kUnitsPerNode, _storage, _coeWinPenalty, _coeLatPenalty);
 			const auto task = [=](PenaltyCalcTask* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
 			{
 				// LOCK -----------------------------

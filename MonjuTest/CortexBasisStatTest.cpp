@@ -28,7 +28,7 @@ namespace MonjuTest
 			storage->writeCell(a, 1, 1);
 			storage->close();
 
-			monju::CortexBasisStat stat("hoge", 2, 2);
+			monju::CortexBasisStat stat("hoge", 2, 2, 2.f, 5.f);
 			stat.create(R"(C:\dev\test)");
 			
 			monju::MatrixRm<int32_t> win(2, 1);
@@ -42,10 +42,10 @@ namespace MonjuTest
 
 			monju::MatrixRm<float_t> penalty = stat.penalty();
 
-			Assert::AreEqual(monju::util_math::round_n(1.91968E-10f, 3), monju::util_math::round_n(penalty(0, 0), 3));
-			Assert::AreEqual(monju::util_math::round_n(2.67588058f, 3), monju::util_math::round_n(penalty(0, 1), 3));
-			Assert::AreEqual(monju::util_math::round_n(0.054511065f, 3), monju::util_math::round_n(penalty(1, 0), 3));
-			Assert::AreEqual(monju::util_math::round_n(1.746221814f, 3), monju::util_math::round_n(penalty(1, 1), 3));
+			Assert::AreEqual(monju::util_math::round_n(4.000175171, 3), monju::util_math::round_n(penalty(0, 0), 3));
+			Assert::AreEqual(monju::util_math::round_n(0.816292572f, 3), monju::util_math::round_n(penalty(0, 1), 3));
+			Assert::AreEqual(monju::util_math::round_n(1.454513189f, 3), monju::util_math::round_n(penalty(1, 0), 3));
+			Assert::AreEqual(monju::util_math::round_n(0.898379721f, 3), monju::util_math::round_n(penalty(1, 1), 3));
 		}
 
 		TEST_METHOD(Persist2)
@@ -62,7 +62,7 @@ namespace MonjuTest
 			storage->writeCell(a, 1, 1);
 			storage->close();
 
-			monju::CortexBasisStat stat("hoge", 2, 2);
+			monju::CortexBasisStat stat("hoge", 2, 2, 2.f, 5.f);
 			stat.create(R"(C:\dev\test)");
 
 			monju::MatrixRm<int32_t> win(2, 1);
@@ -78,10 +78,10 @@ namespace MonjuTest
 
 			monju::MatrixRm<float_t> penalty = stat.penalty();
 
-			Assert::AreEqual(monju::util_math::round_n(0.406890041f, 4), monju::util_math::round_n(penalty(0, 0), 4));
-			Assert::AreEqual(monju::util_math::round_n(1.595775579f, 4), monju::util_math::round_n(penalty(0, 1), 4));
-			Assert::AreEqual(monju::util_math::round_n(0.173514255f, 4), monju::util_math::round_n(penalty(1, 0), 4));
-			Assert::AreEqual(monju::util_math::round_n(1.605943096f, 4), monju::util_math::round_n(penalty(1, 1), 4));
+			Assert::AreEqual(monju::util_math::round_n(1.111827138f, 4), monju::util_math::round_n(penalty(0, 0), 4));
+			Assert::AreEqual(monju::util_math::round_n(0.938740393f, 4), monju::util_math::round_n(penalty(0, 1), 4));
+			Assert::AreEqual(monju::util_math::round_n(1.255309760f, 4), monju::util_math::round_n(penalty(1, 0), 4));
+			Assert::AreEqual(monju::util_math::round_n(0.927761223f, 4), monju::util_math::round_n(penalty(1, 1), 4));
 		}
 	};
 }

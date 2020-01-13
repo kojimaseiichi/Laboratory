@@ -31,7 +31,7 @@ namespace MonjuTest
 			storage->readCell(a, 1, 0);
 			storage->readCell(a, 1, 1);
 
-			monju::PenaltyCalcTask task(2, 2, 2, storage, 10.f, 10.f);
+			monju::PenaltyCalcTask task(2, 2, 2, storage, 2.f, 5.f);
 
 			auto win = std::make_shared <monju::MatrixRm<float_t>>(2, 2);
 			auto lat = std::make_shared <monju::MatrixRm<float_t>>(2, 2);
@@ -43,10 +43,10 @@ namespace MonjuTest
 
 			task.calcPenalty(win, lat, penalty);
 
-			Assert::AreEqual(monju::util_math::round_n(1.91968E-10f, 3), monju::util_math::round_n((*penalty)(0, 0), 3));
-			Assert::AreEqual(monju::util_math::round_n(2.67588058f, 3), monju::util_math::round_n((*penalty)(0, 1), 3));
-			Assert::AreEqual(monju::util_math::round_n(0.054511065f, 3), monju::util_math::round_n((*penalty)(1, 0), 3));
-			Assert::AreEqual(monju::util_math::round_n(1.746221814f, 3), monju::util_math::round_n((*penalty)(1, 1), 3));
+			Assert::AreEqual(monju::util_math::round_n(4.000175171f, 3), monju::util_math::round_n((*penalty)(0, 0), 3));
+			Assert::AreEqual(monju::util_math::round_n(0.816292572f, 3), monju::util_math::round_n((*penalty)(0, 1), 3));
+			Assert::AreEqual(monju::util_math::round_n(1.454513189f, 3), monju::util_math::round_n((*penalty)(1, 0), 3));
+			Assert::AreEqual(monju::util_math::round_n(0.898379721f, 3), monju::util_math::round_n((*penalty)(1, 1), 3));
 		}
 	};
 }
