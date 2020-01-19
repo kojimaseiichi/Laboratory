@@ -9,6 +9,9 @@
 
 namespace monju {
 
+	// 基底間のデータをフィルニ保存
+	// 保持するデータ
+	// ・ベイズ計算的な変数（CPT/OOBP）
 	class CortexInterBasisStorage : public Synchronizable
 	{
 	private:

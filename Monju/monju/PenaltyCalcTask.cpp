@@ -99,7 +99,7 @@ void monju::PenaltyCalcTask::_calcWinRateDistribution(MatrixRm<int32_t>& mpe_cou
 
 	prob = mpe_count.cast<float_t>();
 	prob.array() += 0.001f;
-	prob.array().colwise() /= prob.rowwise().sum().array();
+	prob.array().colwise() /= prob.rowwise().sum().array(); // çáÇ¡ÇƒÇÈÇÃÇ©ÅHíºä¥Ç≈ÇÕprob.colwise().array()...Ç†Ç¡ÇƒÇÈÅH
 }
 
 void monju::PenaltyCalcTask::_calcWinKLDistance(MatrixRm<int32_t>& mpe_count, MatrixRm<float_t>& message)

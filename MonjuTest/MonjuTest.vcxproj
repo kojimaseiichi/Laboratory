@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CortexBasisStatTest.cpp" />
+    <ClCompile Include="GridCptUpdater.cpp" />
     <ClCompile Include="TaskPenaltyCalcTest.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
     <ClCompile Include="OpenCLComponentTest.cpp" />

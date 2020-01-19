@@ -1,17 +1,15 @@
 ﻿#pragma once
-#ifndef _MONJU_TASK_PENALTY_CALC_H__
-#define _MONJU_TASK_PENALTY_CALC_H__
+#ifndef _MONJU_PENALTY_CALC_TASK_H__
+#define _MONJU_PENALTY_CALC_TASK_H__
 
 #include "GridMatrixStorage.h"
 #include "GridMatrixAccessor.h"
 
 namespace monju {
 
-	/*
-	ベイジアンネットの枠組みにおけるモデルの制約を計算します。
-	　・一様な勝率となるようなペナルティ
-	　・ノード同士が独立となるようなペナルティ
-	*/
+	// ベイジアンネットの枠組みにおけるモデルの制約を計算します。
+	// ・一様な勝率となるようなペナルティ
+	// ・ノード同士が独立となるようなペナルティ
 	class PenaltyCalcTask
 	{
 		// 定数
@@ -68,4 +66,4 @@ namespace monju {
 
 } // monju
 
-#endif // !_MONJU_TASK_PENALTY_CALC_H_
+#endif // !_MONJU_PENALTY_CALC_TASK_H_

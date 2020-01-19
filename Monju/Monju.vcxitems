@@ -17,6 +17,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.cpp" />
@@ -25,6 +26,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DriverBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridCptUpdater.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp" />
@@ -46,6 +48,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.h" />
@@ -53,6 +56,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceProgram.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DriverBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridCptUpdater.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.h" />

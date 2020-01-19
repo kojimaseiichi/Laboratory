@@ -9,7 +9,7 @@
 
 namespace monju {
 
-	// 基底の勝率に関する統計量を保存
+	// 基底の統計データをファイルに保存
 	class CortexBasisStat : public Closable
 	{
 	private:
@@ -25,7 +25,7 @@ namespace monju {
 		std::shared_ptr<MatrixRm<float_t>> _win;
 		std::shared_ptr<MatrixRm<float_t>> _lat;
 		std::shared_ptr<MatrixRm<float_t>> _penalty;
-		int _coeWinPenalty, _coeLatPenalty;
+		float_t _coeWinPenalty, _coeLatPenalty;
 
 	public:
 		CortexBasisStat(const CortexBasisStat&) = delete;

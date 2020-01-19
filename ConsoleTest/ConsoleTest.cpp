@@ -5,7 +5,15 @@
 #include "monju/GridMatrixStorage.h"
 #include "monju/PenaltyCalcTask.h"
 
+void test1();
+void test2();
+
 int main()
+{
+	test2();
+}
+
+void test1()
 {
 	auto storage = std::make_shared<monju::TriangularGridMatrixStorage<int32_t>>();
 	storage->create(R"(C:\dev\test\cout_test.mat)", 2, 2, 2);
@@ -23,6 +31,20 @@ int main()
 	auto penalty = std::make_shared <monju::MatrixRm<float_t>>(2, 2);
 
 	task.calcPenalty(win, lat, penalty);
+}
+
+void test2()
+{
+	monju::MatrixCm<float_t> cpt, mcpt;
+	cpt.resize(2 * 2 * 2, 2);
+	cpt << 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f,
+		9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f, 16.f;
+	mcpt.resize(2, 2);
+	mcpt << 1.f, 2.f, 3.f, 5.f;
+	auto b = mcpt.array().rowwise() /= mcpt.colwise().sum().array();
+	mcpt(0, 0);
+	b(0, 0);
+	
 }
 
 // プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー

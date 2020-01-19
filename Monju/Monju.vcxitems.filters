@@ -79,6 +79,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStat.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridCptUpdater.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -178,6 +184,12 @@
       <Filter>共通</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStat.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridCptUpdater.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
   </ItemGroup>

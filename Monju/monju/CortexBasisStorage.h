@@ -8,6 +8,10 @@
 
 namespace monju {
 
+	// 基底のデータをファイルに保存
+	// 保持するデータ
+	// ・ベイズ計算的の変数（OOBP）
+	// ・（予定）予測符号化（PredNet的な）
 	class CortexBasisStorage : public Synchronizable
 	{
 	private:
