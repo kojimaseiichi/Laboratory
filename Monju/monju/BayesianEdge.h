@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_CORTEX_INTER_BASIS_STORAGE_H__
-#define _MONJU_CORTEX_INTER_BASIS_STORAGE_H__
+#ifndef _MONJU_BAYESIAN_EDGE_H__
+#define _MONJU_BAYESIAN_EDGE_H__
 #include "Synchronizable.h"
 #include "MonjuTypes.h"
 #include "VariableKind.h"
@@ -12,7 +12,7 @@ namespace monju {
 	// 基底間のデータをフィルニ保存
 	// 保持するデータ
 	// ・ベイズ計算的な変数（CPT/OOBP）
-	class CortexInterBasisStorage : public Synchronizable
+	class BayesianEdge : public Synchronizable
 	{
 	private:
 		std::string _id;
@@ -22,7 +22,9 @@ namespace monju {
 			_nodes_y,				// 基底のノード数(Y)
 			_units_per_node_y;		// ノード当たりのユニット数(Y)
 
-		MatrixCm<float_t> _cpt, _lambda, _kappa;
+		MatrixCm<float_t>
+			_lambda,				// λ（ノード数Y * ユニット数Y, ノード数X）
+			_kappa;					// κ（ノード数Y * ユニット数X, ノード数X）
 
 	public:
 		std::string id() const { return _id; }
@@ -30,27 +32,26 @@ namespace monju {
 		int unitsPerNodeX() const { return _units_per_node_x; }
 		int nodesY() const { return _nodes_y; }
 		int unitsPerNodeY() const { return _units_per_node_y; }
-		MatrixCm<float_t> cpt() const { return _cpt; }
 		MatrixCm<float_t> lambda() const { return _lambda; }
 		MatrixCm<float_t> kappa() const { return _kappa; }
 
 
 	public:
-		CortexInterBasisStorage(
+		BayesianEdge(const BayesianEdge&) = delete;
+		BayesianEdge& operator =(const BayesianEdge&) = delete;
+
+		BayesianEdge(
 			std::string id,
 			int nodes_x,
 			int units_per_node_x,
 			int nodes_y,
 			int units_per_node_y
 		);
-
-		~CortexInterBasisStorage();
-
+		~BayesianEdge();
 		void store(std::string dir);
-
 		void load(std::string dir);
 
 	};
 }
 
-#endif // !_MONJU_CORTEX_INTER_BASIS_STORAGE_H__
+#endif // !_MONJU_BAYESIAN_EDGE_H__

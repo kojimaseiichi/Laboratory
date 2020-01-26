@@ -64,25 +64,25 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp">
       <Filter>共通</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStat.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNode.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridCptUpdater.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridCpt.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
   </ItemGroup>
@@ -168,17 +168,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStorage.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStorage.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h">
       <Filter>共通</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexBasisStat.h">
-      <Filter>皮質モジュール</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h">
       <Filter>共通</Filter>
@@ -186,10 +177,19 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\CortexInterBasisStat.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNode.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridCptUpdater.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridCpt.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,19 +5,19 @@
 #include "monju/GridMatrixStorage.h"
 #include "monju/PenaltyCalcTask.h"
 #include "monju/util_math.h"
-#include "monju/CortexBasisStat.h"
-#include "monju/GridCptUpdater.h"
+#include "monju/BayesianNodeStat.h"
+#include "monju/GridCpt.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 
 namespace MonjuTest
 {
-	TEST_CLASS(CortexBasisStatTest)
+	TEST_CLASS(GridCptUpdater)
 	{
 		TEST_METHOD(wtf1)
 		{
-			monju::GridCptUpdater u(2, 2, 2, 2);
+			monju::GridCpt u("grid-cpt-test", 2, 2, 2, 2);
 			monju::MatrixRm<int32_t> winX, winY;
 			winX.resize(2, 1);
 			winY.resize(2, 1);
@@ -27,8 +27,8 @@ namespace MonjuTest
 			lambda.resize(4, 2);
 			monju::MatrixCm<float_t> cpt;
 			cpt.resize(2 * 2 * 2, 2);
-			u.wtaDown(winX, winY, lambda);
-			u.addDelta(cpt, 1.0f);
+			u.winnerTakerAll(winX, winY, lambda, 0.01f);
+			u.addDelta();
 
 		}
 	};

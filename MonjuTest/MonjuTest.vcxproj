@@ -164,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BayesianModTest.cpp" />
     <ClCompile Include="CortexBasisStatTest.cpp" />
     <ClCompile Include="GridCptUpdater.cpp" />
     <ClCompile Include="TaskPenaltyCalcTest.cpp" />

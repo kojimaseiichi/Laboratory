@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_CORTEX_BASIS_STORAGE_H__
-#define _MONJU_CORTEX_BASIS_STORAGE_H__
+#ifndef _MONJU_BAYESIAN_NODE_H__
+#define _MONJU_BAYESIAN_NODE_H__
 #include "Synchronizable.h"
 #include "MonjuTypes.h"
 #include "VariableKind.h"
@@ -12,7 +12,7 @@ namespace monju {
 	// 保持するデータ
 	// ・ベイズ計算的の変数（OOBP）
 	// ・（予定）予測符号化（PredNet的な）
-	class CortexBasisStorage : public Synchronizable
+	class BayesianNode : public Synchronizable
 	{
 	private:
 
@@ -24,7 +24,7 @@ namespace monju {
 			_lambda,	// λ_X(x)
 			_pi,		// π_X(x)
 			_rho,		// ρ_X(x)
-			_r,			// 制約項_X(x)
+			_r,			// ペナルティc項_X(x)
 			_bel;		// BEL_X(x)
 		MatrixRm<int32_t> 
 			_win;		// 勝者ユニット
@@ -41,9 +41,11 @@ namespace monju {
 		MatrixRm<int32_t> win() const { return _win; }
 
 	public:
-		CortexBasisStorage(std::string id, int nodes, int units_per_node);
+		BayesianNode(const BayesianNode&) = delete;
+		BayesianNode& operator =(const BayesianNode&) = delete;
 
-		~CortexBasisStorage();
+		BayesianNode(std::string id, int nodes, int units_per_node);
+		~BayesianNode();
 
 		void store(std::string dir);
 
@@ -53,4 +55,4 @@ namespace monju {
 
 }
 
-#endif // !_MONJU_CORTEX_BASIS_STORAGE_H__
+#endif // !_MONJU_BAYESIAN_NODE_H__

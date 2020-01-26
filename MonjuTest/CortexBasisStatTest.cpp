@@ -5,7 +5,7 @@
 #include "monju/GridMatrixStorage.h"
 #include "monju/PenaltyCalcTask.h"
 #include "monju/util_math.h"
-#include "monju/CortexBasisStat.h"
+#include "monju/BayesianNodeStat.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -28,7 +28,7 @@ namespace MonjuTest
 			storage->writeCell(a, 1, 1);
 			storage->close();
 
-			monju::CortexBasisStat stat("hoge", 2, 2, 2.f, 5.f);
+			monju::BayesianNodeStat stat("hoge", 2, 2, 2.f, 5.f);
 			stat.create(R"(C:\dev\test)");
 			
 			monju::MatrixRm<int32_t> win(2, 1);
@@ -62,14 +62,14 @@ namespace MonjuTest
 			storage->writeCell(a, 1, 1);
 			storage->close();
 
-			monju::CortexBasisStat stat("hoge", 2, 2, 2.f, 5.f);
+			monju::BayesianNodeStat stat("hoge", 2, 2, 2.f, 5.f);
 			stat.create(R"(C:\dev\test)");
 
 			monju::MatrixRm<int32_t> win(2, 1);
 			win << 0, 0;
-			auto f1 = stat.persist(win);
+			auto f1 = stat.accumulate(win);
 			win << 0, 1;
-			auto f2 = stat.persist(win);
+			auto f2 = stat.accumulate(win);
 			f1.wait();
 			f2.wait();
 

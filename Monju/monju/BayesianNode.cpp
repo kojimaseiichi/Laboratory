@@ -1,6 +1,6 @@
-#include "CortexBasisStorage.h"
+#include "BayesianNode.h"
 
-monju::CortexBasisStorage::CortexBasisStorage(std::string id, int nodes, int units_per_node)
+monju::BayesianNode::BayesianNode(std::string id, int nodes, int units_per_node)
 {
 	_id = id;
 	_nodes = nodes;
@@ -15,12 +15,12 @@ monju::CortexBasisStorage::CortexBasisStorage(std::string id, int nodes, int uni
 	util_eigen::init_matrix_zero(_win, nodes, 1);
 }
 
-monju::CortexBasisStorage::~CortexBasisStorage()
+monju::BayesianNode::~BayesianNode()
 {
 
 }
 
-void monju::CortexBasisStorage::store(std::string dir)
+void monju::BayesianNode::store(std::string dir)
 {
 	std::string extension = "mat2";
 	util_eigen::write_binary(dir, _id, "lambda", extension, _lambda);
@@ -32,7 +32,7 @@ void monju::CortexBasisStorage::store(std::string dir)
 	util_eigen::write_binary(dir, _id, "win", extension, _win);
 }
 
-void monju::CortexBasisStorage::load(std::string dir)
+void monju::BayesianNode::load(std::string dir)
 {
 	std::string extension = "mat2";
 	if (util_eigen::read_binary(dir, _id, "lambda", extension, _lambda) == false)
