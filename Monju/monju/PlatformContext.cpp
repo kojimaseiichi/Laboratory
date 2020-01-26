@@ -16,6 +16,7 @@ void monju::PlatformContext::saveJson(const std::string work_folder) const
 	boost::property_tree::ptree root;
 	// root
 	root.put("work_folder", work_folder);
+	root.put("kernel_folder", _kernel_folder);
 	{
 		// deivce
 		boost::property_tree::ptree device;
@@ -33,6 +34,7 @@ void monju::PlatformContext::loadJson(const std::string work_folder)
 	boost::property_tree::read_json(full_path_to_prpperties_json(work_folder), root);
 	// root
 	_work_folder = work_folder;
+	_kernel_folder = root.get<std::string>("kernel_folder");
 	{
 		// deivce
 		auto device = root.get_child("device");
@@ -85,6 +87,11 @@ void monju::PlatformContext::close()
 std::string monju::PlatformContext::workspaceDir()
 {
 	return _work_folder.string();
+}
+
+std::string monju::PlatformContext::kernelDir()
+{
+	return _kernel_folder.string();
 }
 
 // デバイスコンテキスト（計算資源）

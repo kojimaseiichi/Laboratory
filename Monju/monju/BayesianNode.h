@@ -5,6 +5,7 @@
 #include "MonjuTypes.h"
 #include "VariableKind.h"
 #include "util_eigen.h"
+#include "DeviceMemory.h"
 
 namespace monju {
 

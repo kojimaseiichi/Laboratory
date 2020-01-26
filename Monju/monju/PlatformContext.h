@@ -18,6 +18,7 @@ namespace monju {
 	{
 	private:
 		boost::filesystem::path _work_folder;
+		boost::filesystem::path _kernel_folder;
 		int _platform_id;
 
 	private:
@@ -52,6 +53,7 @@ namespace monju {
 	public:
 		// ワークスペースディレクトリ
 		std::string workspaceDir();
+		std::string kernelDir();
 		// デバイスコンテキスト（計算資源）
 		DeviceContext& deviceContext() const;
 
