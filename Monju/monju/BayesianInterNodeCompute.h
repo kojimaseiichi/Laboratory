@@ -3,7 +3,6 @@
 #define _MONJU_BAYESIAN_ACTIVATOR_H__
 
 #include "MonjuTypes.h"
-#include "Closable.h"
 #include "PlatformContext.h"
 #include "DeviceProgram.h"
 #include "DeviceKernel.h"
@@ -11,21 +10,23 @@
 #include "DeviceMemory.h"
 #include <map>
 #include <boost/lexical_cast.hpp>
+#include "BayesianNodeDevice.h"
+#include "BayesianEdgeDevice.h"
 
 namespace monju {
 
-	class BayesianActivator : Closable
+	class BayesianInterNodeCompute
 	{
 	private:
 		std::string
-			_kSrcOobpUp1 = "",
-			_kSrcOobpUp2 = "",
-			_kSrcOobpDown1 = "",
-			_kSrcOobpDown2 = "",
-			_kKernelOobpUp1 = "",
-			_kKernelOobpUp2 = "",
-			_kKernelOobpDown1 = "",
-			_kKernelOobpDown2 = "";
+			_kSrcOobpUp1 = "oobp\\oobp3_full_up_1.cl",
+			_kSrcOobpUp2 = "oobp\\oobp3_full_up_2.cl",
+			_kSrcOobpDown1 = "oobp\\oobp3_full_down_1.cl",
+			_kSrcOobpDown2 = "oobp\\oobp3_full_down_2.cl",
+			_kKernelOobpUp1 = "oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}",
+			_kKernelOobpUp2 = "oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}",
+			_kKernelOobpDown1 = "oobp3_full_down_1_X${X}_Y${Y}_XU${XU}_YU${YU}",
+			_kKernelOobpDown2 = "oobp3_full_down_2_X${X}_Y${Y}_XU${XU}_YU${YU}";
 
 		const int
 			_kNodesX,
@@ -48,10 +49,10 @@ namespace monju {
 			_kernelOobpDown2;
 
 	public:
-		BayesianActivator(const BayesianActivator&) = delete;
-		BayesianActivator& operator =(const BayesianActivator&) = delete;
+		BayesianInterNodeCompute(const BayesianInterNodeCompute&) = delete;
+		BayesianInterNodeCompute& operator =(const BayesianInterNodeCompute&) = delete;
 
-		BayesianActivator(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, std::weak_ptr<PlatformContext> platformContext) :
+		BayesianInterNodeCompute(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, std::weak_ptr<PlatformContext> platformContext) :
 			_kNodesX(nodesX),
 			_kNodesY(nodesY),
 			_kUnitsPerNodeX(unitsPerNodeX),
@@ -79,27 +80,42 @@ namespace monju {
 			}
 		}
 
-		void up(Device& device, DeviceMemory& memx, DeviceMemory& memy, DeviceMemory& memw)
+		void up(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
 		{
-			_up(device, memx, memy, memw);
-			memw.flushRead();
-			memx.flushRead();
+			if (nodeX.device().getClDeviceId() != nodeY.device().getClDeviceId() ||
+				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
+				throw MonjuException("異なるデバイス");
+
+			auto px = nodeX.ref().lock();
+			auto py = nodeY.ref().lock();
+			auto pw = edge.ref().lock();
+			_up(nodeX.device(), *px, *py, *pw);
 		}
 
-		void down(Device& device, DeviceMemory& memx, DeviceMemory& memy, DeviceMemory& memw)
+		void down(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
 		{
-			_down(device, memx, memy, memw);
-			memw.flushRead();
-			memy.flushRead();
+			if (nodeX.device().getClDeviceId() != nodeY.device().getClDeviceId() ||
+				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
+				throw MonjuException("異なるデバイス");
+
+			auto px = nodeX.ref().lock();
+			auto py = nodeY.ref().lock();
+			auto pw = edge.ref().lock();
+			_down(nodeX.device(), *px, *py, *pw);
 		}
 
-		void both(Device& device, DeviceMemory& memx, DeviceMemory& memy, DeviceMemory& memw)
+		void both(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
 		{
-			_up(device, memx, memy, memw);
-			_down(device, memx, memy, memw);
-			memx.flushRead();
-			memw.flushRead();
-			memy.flushRead();
+			if (nodeX.device().getClDeviceId() != nodeY.device().getClDeviceId() ||
+				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
+				throw MonjuException("異なるデバイス");
+
+			auto px = nodeX.ref().lock();
+			auto py = nodeY.ref().lock();
+			auto pw = edge.ref().lock();
+
+			_up(nodeX.device(), *px, *py, *pw);
+			_down(nodeX.device(), *px, *py, *pw);
 		}
 
 	private:
@@ -138,9 +154,6 @@ namespace monju {
 			// (2) λ計算
 			_kernelOobpUp2.compute(device, global_work_size2);
 			memx.requireRead(argUp2.outputParams());
-
-			//memw.flushRead();
-			//memx.flushRead();
 		}
 
 		void _down(Device& device, DeviceMemory& memx, DeviceMemory& memy, DeviceMemory& memw)

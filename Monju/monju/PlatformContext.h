@@ -45,7 +45,7 @@ namespace monju {
 	public:
 		// プラットフォーム情報をファイルから読み込み利用可能とする
 		void open(std::string work_folder);
-		void create(std::string work_folder, int platform_id);
+		void create(std::string work_folder, std::string kernel_folder, int platform_id);
 		// プラットフォーム情報をファイルに保存する
 		void close();
 

@@ -85,7 +85,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianActivator.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
   </ItemGroup>
@@ -195,7 +201,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianActivator.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
   </ItemGroup>

@@ -25,6 +25,9 @@ namespace monju {
 		const int _kCellSize;	// セルサイズ
 
 	public:
+		std::string id() const { return _id; }
+		MatrixCm<float_t>& cpt() { return _cpt; }
+		MatrixCm<float_t>& deltaCpt() { return _deltaCpt; }
 
 	public:
 		GridCpt(

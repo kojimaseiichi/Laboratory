@@ -67,9 +67,10 @@ void monju::PlatformContext::open(std::string work_folder)
 	createDeviceContext(_platform_id);
 }
 
-void monju::PlatformContext::create(std::string work_folder, int platform_id)
+void monju::PlatformContext::create(std::string work_folder, std::string kernel_folder, int platform_id)
 {
 	_work_folder = work_folder;
+	_kernel_folder = kernel_folder;
 	_platform_id = platform_id;
 	saveJson(work_folder);
 	createDeviceContext(_platform_id);

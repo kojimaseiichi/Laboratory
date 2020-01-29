@@ -14,10 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianActivator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNode.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.cpp" />
@@ -45,10 +47,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianActivator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h" />

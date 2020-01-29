@@ -19,7 +19,7 @@ namespace MonjuTest
 		TEST_METHOD(GpuDeviceContextTest)
 		{
 			monju::PlatformContext platformContext;
-			platformContext.create(R"(C:\dev\test)", 1);
+			platformContext.create(R"(C:\dev\test)", R"(C:\dev\test\kernels)", 0);
 			monju::DeviceContext& deviceContext = platformContext.deviceContext();
 		}
 
