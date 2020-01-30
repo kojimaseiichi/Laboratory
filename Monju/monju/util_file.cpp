@@ -17,6 +17,14 @@ std::string monju::util_file::combine(const std::string & dir, const std::string
 	return dir + "\\" + name + "." + extention;
 }
 
+std::string monju::util_file::combine(const std::string& dir, const std::string& name)
+{
+	auto back = dir.back();
+	if (back == '\\' || back == '/')
+		return dir + name;
+	return dir + "\\" + name;
+}
+
 std::string monju::util_file::readContent(const std::string & path)
 {
 	std::ifstream ifs(path);

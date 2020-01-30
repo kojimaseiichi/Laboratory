@@ -14,6 +14,8 @@ namespace monju {
 		// ファイルのパスを取得
 		std::string combine(const std::string& dir, const std::string& name, const std::string& extention);
 
+		std::string combine(const std::string& dir, const std::string& name);
+
 		// ファイルの内容を取得
 		std::string readContent(const std::string& path);
 	}

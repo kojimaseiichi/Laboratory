@@ -12,6 +12,7 @@
 #include <boost/lexical_cast.hpp>
 #include "BayesianNodeDevice.h"
 #include "BayesianEdgeDevice.h"
+#include "util_file.h"
 
 namespace monju {
 
@@ -68,10 +69,10 @@ namespace monju {
 
 			if (auto c = _platformContext.lock())
 			{
-				_oobpUp1.create(c->deviceContext(), c->deviceContext().getAllDevices(), _kSrcOobpUp1, params_map);
-				_oobpUp2.create(c->deviceContext(), c->deviceContext().getAllDevices(), _kSrcOobpUp2, params_map);
-				_oobpDown1.create(c->deviceContext(), c->deviceContext().getAllDevices(), _kSrcOobpDown1, params_map);
-				_oobpDown2.create(c->deviceContext(), c->deviceContext().getAllDevices(), _kSrcOobpDown2, params_map);
+				_oobpUp1.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpUp1), params_map);
+				_oobpUp2.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpUp2), params_map);
+				_oobpDown1.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpDown1), params_map);
+				_oobpDown2.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpDown2), params_map);
 
 				_kernelOobpUp1.create(_oobpUp1, _kKernelOobpUp1, params_map);
 				_kernelOobpUp2.create(_oobpUp2, _kKernelOobpUp2, params_map);
