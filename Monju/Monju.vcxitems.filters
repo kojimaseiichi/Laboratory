@@ -97,6 +97,27 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClContext.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClPlatformId.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClCommandQueues.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClKernel.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClMemory.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClProgram.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClObject.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -215,6 +236,27 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.h">
       <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClContext.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClPlatformId.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClCommandQueues.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClKernel.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClMemory.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClProgram.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClObject.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

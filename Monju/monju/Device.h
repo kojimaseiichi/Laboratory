@@ -7,23 +7,18 @@
 
 namespace monju {
 
-	/// <summary>計算デバイス<br>
-	/// GPUボード１枚分<br>
-	/// OpenCLのラッパー</summary>
+	// 保有するOpenCLリソース
 	class Device
 	{
 	private:
+		// 外部資源
 		cl_context			_context;
 		cl_device_id		_device_id;
+		// 責任範囲（解放予定）
 		cl_command_queue	_command_queue;
 
-		// 初期化・生成
-	public:
-		Device();
-		~Device();
-
 		// コピー禁止・ムーブ禁止
-	private:
+	public:
 		Device(const Device&) = delete;
 		Device(Device&&) = delete;
 		Device& operator=(const Device&) = delete;
@@ -36,11 +31,19 @@ namespace monju {
 		cl_command_queue	getClCommandQueue() const { return _command_queue; }
 
 	public:
-		// OpenCLデバイス初期化
-		void				create(cl_context context, cl_device_id device_id);
-		// OpenCLデバイス解放
-		void				release();
+		Device();
+		~Device();
+		void	create(cl_context context, cl_device_id device_id);
+		void	flush();
+		void	finish();
+		void	release();
+	private:
 
+		void	_release();
+		cl_command_queue	_clCreateCommandQueueWithProperties(cl_context context, cl_device_id device_id);
+		void	_clReleaseCommandQueue();
+		void	_clFlush();
+		void	_clFinish();
 	};
 
 } // namespace monju

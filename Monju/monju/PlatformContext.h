@@ -22,18 +22,17 @@ namespace monju {
 		int _platform_id;
 
 	private:
-		std::unique_ptr<DeviceContext> _device_context;
+		DeviceContext* _pDeviceContext;
 
 	private:
 		// プロパティファイルへのパス
 		std::string full_path_to_prpperties_json(std::string work_folder) const;
 		// プラットフォーム情報をJSON形式でファイルに書き込み
-		void saveJson(const std::string work_folder) const;
+		void _saveJson(const std::string work_folder) const;
 		// プラットフォーム情報をファイルから読み込み
-		void loadJson(const std::string work_folder);
-		// 
-		void createDeviceContext(int platform_id);
-
+		void _loadJson(const std::string work_folder);
+		void _createDeviceContext(int platform_id);
+		void _release();
 
 		// コピー禁止・ムーブ禁止
 	public:

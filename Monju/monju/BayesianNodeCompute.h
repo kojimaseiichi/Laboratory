@@ -26,15 +26,17 @@ namespace monju {
 			_kUnitsPerNode;
 
 		PlatformContext* _pPlatformContext;
-
 		DeviceProgram _pgmOobpBel;
-
 		DeviceKernel _kernelOobpBel;
 
+		// コピー禁止・ムーブ禁止
 	public:
 		BayesianNodeCompute(const BayesianNodeCompute&) = delete;
+		BayesianNodeCompute(BayesianNodeCompute&&) = delete;
 		BayesianNodeCompute& operator =(const BayesianNodeCompute&) = delete;
+		BayesianNodeCompute& operator =(BayesianNodeCompute&&) = delete;
 
+	public:
 		BayesianNodeCompute(int nodes, int unitsPerNode, PlatformContext& platformContext)
 			: _kNodes(nodes), _kUnitsPerNode(unitsPerNode)
 		{
@@ -47,7 +49,10 @@ namespace monju {
 			_pgmOobpBel.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpBel), params_map);
 			_kernelOobpBel.create(_pgmOobpBel, _kKernelOobpBel, params_map);
 		}
-
+		~BayesianNodeCompute()
+		{
+			_release();
+		}
 		void bel(BayesianNodeDevice& node)
 		{
 			_bel(node.device(), node.mem());
@@ -69,6 +74,12 @@ namespace monju {
 
 			_kernelOobpBel.compute(device, global_work_size);
 			mem.requireRead(arg.outputParams());
+		}
+
+		void _release()
+		{
+			_kernelOobpBel.release();
+			_pgmOobpBel.release();
 		}
 	};
 }

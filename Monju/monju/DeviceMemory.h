@@ -175,7 +175,7 @@ namespace monju {
 		_map_mem.insert(std::pair<VariableKind, MemAttr>(v, ma));
 	}
 	template<class Matrix>
-	inline void DeviceMemory::addMemory(VariableKind kind, Matrix& m)
+	void DeviceMemory::addMemory(VariableKind kind, Matrix& m)
 	{
 		_addNewClMem(kind, m);
 	}

@@ -37,12 +37,12 @@ namespace monju {
 		}
 		~BayesianEdgeDevice()
 		{
-
+			if (_pMem != nullptr)
+				_pMem->release();
 		}
 
 		Device& device() const { return *_pDevice; }
 		DeviceMemory& mem() const { return *_pMem; }
-		//std::weak_ptr<DeviceMemory> ref() const { return _pMem; }
 	};
 }
 

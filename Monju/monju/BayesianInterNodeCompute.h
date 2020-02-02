@@ -49,10 +49,14 @@ namespace monju {
 			_kernelOobpDown1,
 			_kernelOobpDown2;
 
+		// コピー禁止・ムーブ禁止
 	public:
 		BayesianInterNodeCompute(const BayesianInterNodeCompute&) = delete;
+		BayesianInterNodeCompute(BayesianInterNodeCompute&&) = delete;
 		BayesianInterNodeCompute& operator =(const BayesianInterNodeCompute&) = delete;
+		BayesianInterNodeCompute& operator =(BayesianInterNodeCompute&&) = delete;
 
+	public:
 		BayesianInterNodeCompute(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, PlatformContext& platformContext) :
 			_kNodesX(nodesX),
 			_kNodesY(nodesY),
@@ -76,6 +80,10 @@ namespace monju {
 			_kernelOobpUp2.create(_pgmOobpUp2, _kKernelOobpUp2, params_map);
 			_kernelOobpDown1.create(_pgmOobpDown1, _kKernelOobpDown1, params_map);
 			_kernelOobpDown2.create(_pgmOobpDown2, _kKernelOobpDown2, params_map);
+		}
+		~BayesianInterNodeCompute()
+		{
+			_release();
 		}
 
 		void up(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
@@ -178,6 +186,19 @@ namespace monju {
 			memy.requireRead(argDown2.outputParams());
 		}
 
+		void _release()
+		{
+			_kernelOobpUp1.release();
+			_kernelOobpUp2.release();
+			_kernelOobpDown1.release();
+			_kernelOobpDown2.release();
+
+			_pgmOobpUp1.release();
+			_pgmOobpUp2.release();
+			_pgmOobpDown1.release();
+			_pgmOobpDown2.release();
+
+		}
 	};
 }
 

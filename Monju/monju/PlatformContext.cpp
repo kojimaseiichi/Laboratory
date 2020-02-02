@@ -11,7 +11,7 @@ std::string monju::PlatformContext::full_path_to_prpperties_json(std::string wor
 
 // プラットフォーム情報をJSON形式でファイルに書き込み
 
-void monju::PlatformContext::saveJson(const std::string work_folder) const
+void monju::PlatformContext::_saveJson(const std::string work_folder) const
 {
 	boost::property_tree::ptree root;
 	// root
@@ -28,7 +28,7 @@ void monju::PlatformContext::saveJson(const std::string work_folder) const
 
 // プラットフォーム情報をファイルから読み込み
 
-void monju::PlatformContext::loadJson(const std::string work_folder)
+void monju::PlatformContext::_loadJson(const std::string work_folder)
 {
 	boost::property_tree::ptree root;
 	boost::property_tree::read_json(full_path_to_prpperties_json(work_folder), root);
@@ -42,10 +42,20 @@ void monju::PlatformContext::loadJson(const std::string work_folder)
 	}
 }
 
-void monju::PlatformContext::createDeviceContext(int platform_id)
+void monju::PlatformContext::_createDeviceContext(int platform_id)
 {
-	_device_context = std::make_unique<DeviceContext>();
-	_device_context->create(platform_id);
+	_pDeviceContext = new DeviceContext();
+	_pDeviceContext->create(platform_id);
+}
+
+void monju::PlatformContext::_release()
+{
+	if (_pDeviceContext != nullptr)
+	{
+		_pDeviceContext->release();
+		delete _pDeviceContext;
+		_pDeviceContext = nullptr;
+	}
 }
 
 monju::PlatformContext::PlatformContext()
@@ -56,6 +66,7 @@ monju::PlatformContext::PlatformContext()
 
 monju::PlatformContext::~PlatformContext()
 {
+	_release();
 }
 
 // プラットフォーム情報をファイルから読み込み利用可能とする
@@ -63,8 +74,8 @@ monju::PlatformContext::~PlatformContext()
 void monju::PlatformContext::open(std::string work_folder)
 {
 	_work_folder = work_folder;
-	loadJson(work_folder);
-	createDeviceContext(_platform_id);
+	_loadJson(work_folder);
+	_createDeviceContext(_platform_id);
 }
 
 void monju::PlatformContext::create(std::string work_folder, std::string kernel_folder, int platform_id)
@@ -72,15 +83,16 @@ void monju::PlatformContext::create(std::string work_folder, std::string kernel_
 	_work_folder = work_folder;
 	_kernel_folder = kernel_folder;
 	_platform_id = platform_id;
-	saveJson(work_folder);
-	createDeviceContext(_platform_id);
+	_saveJson(work_folder);
+	_createDeviceContext(_platform_id);
 }
 
 // プラットフォーム情報をファイルに保存する
 
 void monju::PlatformContext::close()
 {
-	saveJson(_work_folder.string());
+	_saveJson(_work_folder.string());
+	_release();
 }
 
 // ワークスペースディレクトリ
@@ -99,5 +111,5 @@ std::string monju::PlatformContext::kernelDir()
 
 monju::DeviceContext& monju::PlatformContext::deviceContext() const
 {
-	return *_device_context;
+	return *_pDeviceContext;
 }
