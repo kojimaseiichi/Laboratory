@@ -35,7 +35,9 @@ namespace monju {
 		// ÉRÉsÅ[ã÷é~
 	public:
 		DeviceKernelArguments(const DeviceKernelArguments&) = delete;
+		DeviceKernelArguments(DeviceKernelArguments&&) = delete;
 		DeviceKernelArguments& operator =(const DeviceKernelArguments&) = delete;
+		DeviceKernelArguments& operator =(DeviceKernelArguments&&) = delete;
 
 	private:
 		void _clSetKernelArg(cl_kernel kernel, cl_uint arg_index, size_t arg_size, const void* arg_value);

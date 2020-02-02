@@ -47,7 +47,7 @@ namespace monju {
 		BayesianNodeStat(
 			std::string id,
 			int nodes,
-			int units_per_node,
+			int unitsPerNode,
 			int coeWinPenalty,
 			int coeLatPenalty
 

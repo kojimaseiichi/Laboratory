@@ -17,10 +17,10 @@ namespace monju {
 	private:
 		std::string _id;
 		int
-			_nodes_x,				// 基底のノード数(X)
-			_units_per_node_x,		// ノード当たりのユニット数(X)
-			_nodes_y,				// 基底のノード数(Y)
-			_units_per_node_y;		// ノード当たりのユニット数(Y)
+			_kNodesX,				// 基底のノード数(X)
+			_kUnitsPerNodeX,		// ノード当たりのユニット数(X)
+			_kNodesY,				// 基底のノード数(Y)
+			_kUnitsPerNodeY;		// ノード当たりのユニット数(Y)
 
 		MatrixCm<float_t>
 			_lambda,				// λ（ノード数Y * ユニット数Y, ノード数X）
@@ -28,10 +28,10 @@ namespace monju {
 
 	public:
 		std::string id() const { return _id; }
-		int nodesX() const { return _nodes_x; }
-		int unitsPerNodeX() const { return _units_per_node_x; }
-		int nodesY() const { return _nodes_y; }
-		int unitsPerNodeY() const { return _units_per_node_y; }
+		int nodesX() const { return _kNodesX; }
+		int unitsPerNodeX() const { return _kUnitsPerNodeX; }
+		int nodesY() const { return _kNodesY; }
+		int unitsPerNodeY() const { return _kUnitsPerNodeY; }
 		MatrixCm<float_t> lambda() const { return _lambda; }
 		MatrixCm<float_t> kappa() const { return _kappa; }
 
@@ -48,9 +48,12 @@ namespace monju {
 			int units_per_node_y
 		);
 		~BayesianEdge();
+		void initRandom();
 		void store(std::string dir);
 		void load(std::string dir);
 
+	private:
+		void _setRandomProb(MatrixCm<float_t>& m, int unitsPerNode, int oppositNodes);
 	};
 }
 

@@ -1,3 +1,4 @@
+このファイルは要らない
 /*
  # ATTENTION!
     You can write this source only with Latin-1 character set. DO NOT use Japanese characters.

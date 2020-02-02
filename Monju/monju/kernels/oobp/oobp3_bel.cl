@@ -7,6 +7,7 @@
 
  # WORK ITEM
     [0] threads for every nodes in the basis
+    [1] 1
 
  # WORK GROUP
     N/A
@@ -20,13 +21,15 @@
     ig_x_pi         PI variable in the basis
     og_x_rho        RHO variable in the basis
     og_x_BEL        BEL variable in the basis
+    og_x_win        index of the winner unit
 
 */
 __kernel void oobp3_bel_X${X}_XU${XU}(
     __global float* ig_x_lambda,
     __global float* ig_x_pi,
     __global float* og_x_rho,
-    __global float* og_x_BEL
+    __global float* og_x_BEL,
+    __global int* og_x_win
 )
 {
     const int kNode = get_global_id(0);
@@ -39,7 +42,7 @@ __kernel void oobp3_bel_X${X}_XU${XU}(
 
     float rho[${XU}];
     float sum = 0.0f;
-    int won = -1;
+    int win = -1;
     int max = 0;
     prefetch(g_x_lambda_offset, ${XU});
     prefetch(g_x_pi_offset, ${XU});
@@ -51,8 +54,10 @@ __kernel void oobp3_bel_X${X}_XU${XU}(
     }
     for (int i = 0; i < ${XU}; i ++)
     {
-        g_x_rho[i] = rho[i];
-        g_x_bel[i] = rho[i] / sum;
+       float r = rho[i];
+        g_x_rho[i] = r;
+        g_x_bel[i] = r / sum;
+        win = select(win, i, isgreater(r, max));
     }
-
+   og_x_win[kNode] = win;
 }

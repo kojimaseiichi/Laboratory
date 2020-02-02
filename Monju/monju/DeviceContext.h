@@ -28,10 +28,12 @@ namespace monju {
 		DeviceContext();
 		~DeviceContext();
 
-		// コピー禁止
+		// コピー禁止・ムーブ禁止
 	private:
-		DeviceContext(const DeviceContext& o) = delete;
-		DeviceContext& operator=(const DeviceContext& o) = delete;
+		DeviceContext(const DeviceContext&) = delete;
+		DeviceContext(DeviceContext&&) = delete;
+		DeviceContext& operator=(const DeviceContext&) = delete;
+		DeviceContext& operator=(DeviceContext&&) = delete;
 
 	private:
 		// プラットフォームをヒューリスティックに取得したいが、方法が思いつかないので最初のプラットフォームを取得

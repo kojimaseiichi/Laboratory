@@ -94,6 +94,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -208,6 +211,9 @@
       <Filter>皮質モジュール</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
   </ItemGroup>

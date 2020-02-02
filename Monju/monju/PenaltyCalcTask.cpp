@@ -63,8 +63,9 @@ void monju::PenaltyCalcTask::_calcExponentialPenalty(MatrixRm<int32_t>& mpe_coun
 		pe = penalty.lock();
 	if (win != nullptr && lat != nullptr && pe != nullptr)
 		pe->array() =
-		((
-			win->array() * _coeWinPenalty -/*マイナス*/lat->array() * _coeLatPenalty) / (mpe_count.cast<float_t>().array() + 1.f))
+		(
+			(win->array() * _coeWinPenalty -/*マイナス*/lat->array() * _coeLatPenalty) / (mpe_count.cast<float_t>().array() + 1.f)
+		)
 		.min(20.f)	// expが発散しないようにクリップ
 		.exp();
 	else

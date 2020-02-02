@@ -35,6 +35,12 @@ namespace monju {
 		void createDeviceContext(int platform_id);
 
 
+		// コピー禁止・ムーブ禁止
+	public:
+		PlatformContext(const PlatformContext&) = delete;
+		PlatformContext(PlatformContext&&) = delete;
+		PlatformContext& operator=(const PlatformContext&) = delete;
+		PlatformContext& operator=(PlatformContext&&) = delete;
 
 		// 生成・初期化
 	public:

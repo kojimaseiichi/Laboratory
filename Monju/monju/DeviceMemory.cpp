@@ -42,45 +42,104 @@ bool monju::DeviceMemory::_checkReadWriteConflict()
 	return true;
 }
 
+void monju::DeviceMemory::_writeBuffer(Device& device, VariableKind kind)
+{
+	MemAttr ma;
+	if (_findClMem(kind, &ma) == false)
+		return;
+	_queueWriteBuffer(device.getClCommandQueue(), ma.mem, ma.bytes, ma.p);
+}
+
+void monju::DeviceMemory::_readBuffer(Device& device, VariableKind kind)
+{
+	MemAttr ma;
+	if (_findClMem(kind, &ma) == false)
+		return;
+	_queueReadBuffer(device.getClCommandQueue(), ma.mem, ma.bytes, ma.p);
+}
+
 void monju::DeviceMemory::release()
 {
 	_clearAllClMem();
 	_map_mem.clear();
 }
 
-void monju::DeviceMemory::writeBuffer(Device& device, std::set<monju::VariableKind>& variableKindSet)
+void monju::DeviceMemory::writeBuffer(Device& device, VariableKind kind)
 {
-	for (const auto& kind : variableKindSet)
+	_writeBuffer(device, kind);
+	_write_required.erase(kind);
+}
+
+// ホストメモリからデバイスメモリへ書き込み（デバイス指定）
+
+void monju::DeviceMemory::writeBuffer(Device& device, std::set<VariableKind>& variableKindSet)
+{
+	for (const auto kind : variableKindSet)
 	{
-		MemAttr ma;
-		if (_findClMem(kind, &ma) == false)
-			continue;
-		_queueWriteBuffer(device.getClCommandQueue(), ma.mem, ma.bytes, ma.p);
+		_writeBuffer(device, kind);
+		if (_p_device->getClDeviceId() == device.getClDeviceId())
+		{
+			_write_required.erase(kind);
+		}
 	}
 }
 
-void monju::DeviceMemory::writeBuffer(std::set<monju::VariableKind>& variableKindSet)
-{
-	writeBuffer(*_p_device, variableKindSet);
-	_write_required.erase(variableKindSet.begin(), variableKindSet.end());
+// ホストメモリからデバイスメモリへ書き込み
 
-}
-
-void monju::DeviceMemory::readBuffer(Device& device, std::set<monju::VariableKind>& variableKindSet)
+void monju::DeviceMemory::writeBuffer(std::set<VariableKind>& variableKindSet)
 {
 	for (const auto& kind : variableKindSet)
 	{
-		MemAttr ma;
-		if (_findClMem(kind, &ma) == false)
-			continue;
-		_queueReadBuffer(device.getClCommandQueue(), ma.mem, ma.bytes, ma.p);
+		_writeBuffer(*_p_device, kind);
+		_write_required.erase(kind);
+
 	}
 }
 
-void monju::DeviceMemory::readBuffer(std::set<monju::VariableKind>& variableKindSet)
+void monju::DeviceMemory::writeBuffer(VariableKind kind)
 {
-	readBuffer(*_p_device, variableKindSet);
-	_read_required.erase(variableKindSet.begin(), variableKindSet.end());
+	_writeBuffer(*_p_device, kind);
+	_write_required.erase(kind);
+}
+
+void monju::DeviceMemory::readBuffer(Device& device, VariableKind kind)
+{
+	_readBuffer(device, kind);
+	if (_p_device->getClDeviceId() == device.getClDeviceId())
+		_read_required.erase(kind);
+}
+
+// デバイスメモリからホストメモリへ読み込み（デバイス指定）
+
+void monju::DeviceMemory::readBuffer(Device& device, std::set<VariableKind>& variableKindSet)
+{
+	for (const auto kind : variableKindSet)
+		_readBuffer(device, kind);
+	if (_p_device == &device)
+	{
+		for (auto kind : variableKindSet)
+		{
+			if (_read_required.find(kind) != _read_required.end())
+				_read_required.erase(kind);
+		}
+	}
+}
+
+// デバイスメモリからホストメモリへ読み込み
+
+void monju::DeviceMemory::readBuffer(std::set<VariableKind>& variableKindSet)
+{
+	for (const auto kind : variableKindSet)
+	{
+		_readBuffer(*_p_device, kind);
+		_read_required.erase(kind);
+	}
+}
+
+void monju::DeviceMemory::readBuffer(VariableKind kind)
+{
+	_readBuffer(*_p_device, kind);
+	_read_required.erase(kind);
 }
 
 void monju::DeviceMemory::requireRead(VariableKind v)
@@ -109,14 +168,16 @@ void monju::DeviceMemory::flushWrite()
 {
 	if (_checkReadWriteConflict() == false)
 		throw MonjuException("read/write conflict");
-	writeBuffer(_write_required);
+	std::set<VariableKind> c(_write_required);
+	writeBuffer(c);
 }
 
 void monju::DeviceMemory::flushRead()
 {
 	if (_checkReadWriteConflict() == false)
 		throw MonjuException("read/write conflict");
-	readBuffer(_read_required);
+	std::set<VariableKind> c(_read_required);
+	readBuffer(c);
 }
 
 // 指定した変数のメモリオブジェクトを取得

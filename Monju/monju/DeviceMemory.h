@@ -27,7 +27,7 @@ namespace monju {
 		// OpenCLメモリオブジェクト
 		struct MemAttr
 		{
-			float* p;
+			void* p;
 			cl_mem mem;
 			size_t bytes;
 		};
@@ -43,12 +43,15 @@ namespace monju {
 		// 初期化・生成
 	public:
 		DeviceMemory(Device& device);
-		virtual ~DeviceMemory();
+		~DeviceMemory();
 
-		// コピー禁止
+		// コピー禁止・ムーブ禁止
 	protected:
 		DeviceMemory(const DeviceMemory&) = delete;
+		DeviceMemory(DeviceMemory&&) = delete;
 		DeviceMemory& operator=(const DeviceMemory&) = delete;
+		DeviceMemory& operator=(const DeviceMemory&&) = delete;
+		
 
 		// プロパティ
 	public:
@@ -77,6 +80,8 @@ namespace monju {
 		// メモリ一貫性をチェック（ホストメモリとデバイスメモリの両方が変更されている状態）
 		bool	_checkReadWriteConflict();
 
+		void	_writeBuffer(Device& device, VariableKind kind);
+		void	_readBuffer(Device& device, VariableKind kind);
 
 		// 仮想関数
 	public:
@@ -86,13 +91,21 @@ namespace monju {
 		// 公開関数
 	public:
 		// ホストメモリからデバイスメモリへ書き込み（デバイス指定）
+		void	writeBuffer(Device& device, VariableKind kind);
+		// ホストメモリからデバイスメモリへ書き込み（デバイス指定）
 		void	writeBuffer(Device& device, std::set<VariableKind>& variableKindSet);
 		// ホストメモリからデバイスメモリへ書き込み
 		void	writeBuffer(std::set<VariableKind>& variableKindSet);
+		// ホストメモリからデバイスメモリへ書き込み
+		void	writeBuffer(VariableKind kind);
+		// デバイスメモリからホストメモリへ読み込み（デバイス指定）
+		void	readBuffer(Device& device, VariableKind kind);
 		// デバイスメモリからホストメモリへ読み込み（デバイス指定）
 		void	readBuffer(Device& device, std::set<VariableKind>& variableKindSet);
 		// デバイスメモリからホストメモリへ読み込み
 		void	readBuffer(std::set<VariableKind>& variableKindSet);
+		// デバイスメモリからホストメモリへ読み込み
+		void	readBuffer(VariableKind kind);
 		// デバイスメモリからホストメモリへ読み込みが必要
 		void	requireRead(VariableKind v);
 		void	requireRead(std::set<VariableKind>& variablesToRead);

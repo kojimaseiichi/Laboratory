@@ -45,6 +45,7 @@ void monju::DeviceKernel::_run(Device& device, std::vector<size_t>& global_work_
 	if (global_work_size.size() != local_work_size.size())
 		throw MonjuException("global_work_sizeとlocal_work_sizeの次元が一致しない");
 	cl_uint dim = static_cast<cl_uint>(global_work_size.size());
+	cl_event eventWait;
 	cl_int error_code = clEnqueueNDRangeKernel(
 		device.getClCommandQueue(),	// OpenCLキュー
 		_kernel,						// カーネル
@@ -54,7 +55,13 @@ void monju::DeviceKernel::_run(Device& device, std::vector<size_t>& global_work_
 		local_work_size.data(),			// local work size
 		0,								// number of events in wait list
 		nullptr,						// event wait list
-		nullptr);						// event
+		&eventWait);					// event
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
+	error_code = clWaitForEvents(1, &eventWait);
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
+	error_code = clReleaseEvent(eventWait);
 	if (error_code != CL_SUCCESS)
 		throw OpenClException(error_code);
 }
@@ -62,6 +69,7 @@ void monju::DeviceKernel::_run(Device& device, std::vector<size_t>& global_work_
 void monju::DeviceKernel::_run(Device& device, std::vector<size_t>& global_work_size)
 {
 	cl_uint dim = static_cast<cl_uint>(global_work_size.size());
+	cl_event eventWait;
 	cl_int error_code = clEnqueueNDRangeKernel(
 		device.getClCommandQueue(),	// OpenCLキュー
 		_kernel,						// カーネル
@@ -71,7 +79,13 @@ void monju::DeviceKernel::_run(Device& device, std::vector<size_t>& global_work_
 		nullptr,						// local work size(null)
 		0,								// number of events in wait list
 		nullptr,						// event wait list
-		nullptr);						// event
+		&eventWait);						// event
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
+	error_code = clWaitForEvents(1, &eventWait);
+	if (error_code != CL_SUCCESS)
+		throw OpenClException(error_code);
+	error_code = clReleaseEvent(eventWait);
 	if (error_code != CL_SUCCESS)
 		throw OpenClException(error_code);
 }

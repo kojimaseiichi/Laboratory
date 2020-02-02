@@ -22,10 +22,12 @@ namespace monju {
 		Device();
 		~Device();
 
-		// コピー禁止
+		// コピー禁止・ムーブ禁止
 	private:
-		Device(const Device& o) = delete;
-		Device& operator=(const Device& o) = delete;
+		Device(const Device&) = delete;
+		Device(Device&&) = delete;
+		Device& operator=(const Device&) = delete;
+		Device& operator=(Device&&) = delete;
 
 		// プロパティ
 	public:

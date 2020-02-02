@@ -4,13 +4,18 @@
 #include "monju/MonjuTypes.h"
 #include "monju/GridMatrixStorage.h"
 #include "monju/PenaltyCalcTask.h"
+#include <set>
 
 void test1();
 void test2();
 
 int main()
 {
-	test2();
+	// test2();
+	std::set<int> a;
+	a.insert(1);
+	a.erase(2);
+	a.insert(1);
 }
 
 void test1()
@@ -35,16 +40,15 @@ void test1()
 
 void test2()
 {
-	monju::MatrixCm<float_t> cpt, mcpt;
-	cpt.resize(2 * 2 * 2, 2);
-	cpt << 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f,
-		9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f, 16.f;
-	mcpt.resize(2, 2);
-	mcpt << 1.f, 2.f, 3.f, 5.f;
-	auto b = mcpt.array().rowwise() /= mcpt.colwise().sum().array();
-	mcpt(0, 0);
-	b(0, 0);
-	
+	monju::MatrixRm<float_t> cpt(4,4);
+	cpt << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
+	std::cout << cpt << std::endl << "==========" << std::endl;
+	for (auto row : cpt.rowwise())
+	{
+		monju::MatrixRm<float_t>::Index rowIndex, maxarg;
+		row.maxCoeff(&rowIndex, &maxarg);
+		std::cout << rowIndex << ", " << maxarg << std::endl;
+	}
 }
 
 // プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー

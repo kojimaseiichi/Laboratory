@@ -1,11 +1,11 @@
 #include "BayesianNodeStat.h"
 
-monju::BayesianNodeStat::BayesianNodeStat(std::string id, int nodes, int units_per_node, int coeWinPenalty, int coeLatPenalty) : _conc(1), _kNodes(nodes), _kUnitsPerNode(units_per_node)
+monju::BayesianNodeStat::BayesianNodeStat(std::string id, int nodes, int unitsPerNode, int coeWinPenalty, int coeLatPenalty) : _conc(1), _kNodes(nodes), _kUnitsPerNode(unitsPerNode)
 {
 	_id = id;
-	_win = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
-	_lat = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
-	_penalty = std::make_shared<MatrixRm<float_t>>(nodes, units_per_node);
+	_win = std::make_shared<MatrixRm<float_t>>(nodes, unitsPerNode);
+	_lat = std::make_shared<MatrixRm<float_t>>(nodes, unitsPerNode);
+	_penalty = std::make_shared<MatrixRm<float_t>>(nodes, unitsPerNode);
 	_coeWinPenalty = coeWinPenalty;
 	_coeLatPenalty = coeLatPenalty;
 }

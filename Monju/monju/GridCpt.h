@@ -67,6 +67,22 @@ namespace monju {
 			if (util_eigen::read_binary(dir, _id, "delta-cpt", extension, _deltaCpt) == false)
 				util_eigen::init_matrix_zero(_deltaCpt, rows, _kNodesX);
 		}
+		void initRandom()
+		{
+			// CPT
+			_cpt.setRandom();
+			_cpt = _cpt.array().abs();
+			for (int col = 0; col < _kNodesX; col++)
+			{
+				for (int row = 0; row < _kNodesY; row++)
+				{
+					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt.col(col).data() + row * static_cast<uintptr_t>(_kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
+					map.array().rowwise() /= map.colwise().sum().array();
+				}
+			}
+			// delta CPT
+			_deltaCpt.setZero();
+		}
 		void winnerTakerAll(
 			MatrixRm<int32_t>& winX,
 			MatrixRm<int32_t>& winY,

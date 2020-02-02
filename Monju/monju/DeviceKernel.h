@@ -27,10 +27,12 @@ namespace monju {
 		}
 		virtual ~DeviceKernel();
 
-		// コピー禁止
+		// コピー禁止・ムーブ禁止
 	protected:
 		DeviceKernel(const DeviceKernel&) = delete;
+		DeviceKernel(DeviceKernel&&) = delete;
 		DeviceKernel& operator=(const DeviceKernel&) = delete;
+		DeviceKernel& operator=(DeviceKernel&&) = delete;
 
 	protected:
 		// 外部依存リソース

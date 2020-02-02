@@ -19,7 +19,7 @@ namespace monju {
 	class BayesianInterNodeCompute
 	{
 	private:
-		std::string
+		const std::string
 			_kSrcOobpUp1 = "oobp\\oobp3_full_up_1.cl",
 			_kSrcOobpUp2 = "oobp\\oobp3_full_up_2.cl",
 			_kSrcOobpDown1 = "oobp\\oobp3_full_down_1.cl",
@@ -35,13 +35,13 @@ namespace monju {
 			_kUnitsPerNodeX,
 			_kUnitsPerNodeY;
 
-		std::weak_ptr<PlatformContext> _platformContext;
+		PlatformContext* _pPlatformContext;
 
 		DeviceProgram 
-			_oobpUp1, 
-			_oobpUp2, 
-			_oobpDown1, 
-			_oobpDown2;
+			_pgmOobpUp1, 
+			_pgmOobpUp2, 
+			_pgmOobpDown1, 
+			_pgmOobpDown2;
 
 		DeviceKernel
 			_kernelOobpUp1,
@@ -53,13 +53,13 @@ namespace monju {
 		BayesianInterNodeCompute(const BayesianInterNodeCompute&) = delete;
 		BayesianInterNodeCompute& operator =(const BayesianInterNodeCompute&) = delete;
 
-		BayesianInterNodeCompute(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, std::weak_ptr<PlatformContext> platformContext) :
+		BayesianInterNodeCompute(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, PlatformContext& platformContext) :
 			_kNodesX(nodesX),
 			_kNodesY(nodesY),
 			_kUnitsPerNodeX(unitsPerNodeX),
 			_kUnitsPerNodeY(unitsPerNodeY)
 		{
-			_platformContext = platformContext;
+			_pPlatformContext = &platformContext;
 
 			std::map<std::string, std::string> params_map;
 			params_map["X"] = boost::lexical_cast<std::string>(_kNodesX);
@@ -67,18 +67,15 @@ namespace monju {
 			params_map["XU"] = boost::lexical_cast<std::string>(_kUnitsPerNodeX);
 			params_map["YU"] = boost::lexical_cast<std::string>(_kUnitsPerNodeY);
 
-			if (auto c = _platformContext.lock())
-			{
-				_oobpUp1.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpUp1), params_map);
-				_oobpUp2.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpUp2), params_map);
-				_oobpDown1.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpDown1), params_map);
-				_oobpDown2.create(c->deviceContext(), c->deviceContext().getAllDevices(), util_file::combine(c->kernelDir(), _kSrcOobpDown2), params_map);
+			_pgmOobpUp1.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp1), params_map);
+			_pgmOobpUp2.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp2), params_map);
+			_pgmOobpDown1.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpDown1), params_map);
+			_pgmOobpDown2.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpDown2), params_map);
 
-				_kernelOobpUp1.create(_oobpUp1, _kKernelOobpUp1, params_map);
-				_kernelOobpUp2.create(_oobpUp2, _kKernelOobpUp2, params_map);
-				_kernelOobpDown1.create(_oobpDown1, _kKernelOobpDown1, params_map);
-				_kernelOobpDown2.create(_oobpDown2, _kKernelOobpDown2, params_map);
-			}
+			_kernelOobpUp1.create(_pgmOobpUp1, _kKernelOobpUp1, params_map);
+			_kernelOobpUp2.create(_pgmOobpUp2, _kKernelOobpUp2, params_map);
+			_kernelOobpDown1.create(_pgmOobpDown1, _kKernelOobpDown1, params_map);
+			_kernelOobpDown2.create(_pgmOobpDown2, _kKernelOobpDown2, params_map);
 		}
 
 		void up(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
@@ -87,10 +84,7 @@ namespace monju {
 				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
 				throw MonjuException("異なるデバイス");
 
-			auto px = nodeX.ref().lock();
-			auto py = nodeY.ref().lock();
-			auto pw = edge.ref().lock();
-			_up(nodeX.device(), *px, *py, *pw);
+			_up(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
 		}
 
 		void down(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
@@ -99,10 +93,7 @@ namespace monju {
 				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
 				throw MonjuException("異なるデバイス");
 
-			auto px = nodeX.ref().lock();
-			auto py = nodeY.ref().lock();
-			auto pw = edge.ref().lock();
-			_down(nodeX.device(), *px, *py, *pw);
+			_down(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
 		}
 
 		void both(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
@@ -111,12 +102,8 @@ namespace monju {
 				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
 				throw MonjuException("異なるデバイス");
 
-			auto px = nodeX.ref().lock();
-			auto py = nodeY.ref().lock();
-			auto pw = edge.ref().lock();
-
-			_up(nodeX.device(), *px, *py, *pw);
-			_down(nodeX.device(), *px, *py, *pw);
+			_up(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
+			_down(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
 		}
 
 	private:

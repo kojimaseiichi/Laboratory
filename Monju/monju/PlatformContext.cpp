@@ -16,7 +16,7 @@ void monju::PlatformContext::saveJson(const std::string work_folder) const
 	boost::property_tree::ptree root;
 	// root
 	root.put("work_folder", work_folder);
-	root.put("kernel_folder", _kernel_folder);
+	root.put("kernel_folder", _kernel_folder.string());
 	{
 		// deivce
 		boost::property_tree::ptree device;

@@ -60,14 +60,17 @@ namespace monju {
 			std::string source_path,
 			params_map& params);
 
+		// コピー禁止・ムーブ禁止
+	public:
+		DeviceProgram(const DeviceProgram&) = delete;
+		DeviceProgram(DeviceProgram&&) = delete;
+		DeviceProgram& operator=(const DeviceProgram&) = delete;
+		DeviceProgram& operator=(DeviceProgram&&) = delete;
+
 	public:
 
 		DeviceProgram();
 		virtual ~DeviceProgram();
-
-		DeviceProgram(const DeviceProgram&) = delete;
-
-		DeviceProgram& operator=(const DeviceProgram&) = delete;
 
 		// プログラムを初期化
 		void	create(

@@ -20,6 +20,16 @@ monju::BayesianNode::~BayesianNode()
 
 }
 
+void monju::BayesianNode::initRandom()
+{
+	_setRandomProb(_lambda);
+	_setRandomProb(_pi);
+	_rho.array() = _lambda.array() * _pi.array();
+	_r.setOnes();
+	_bel = _rho.array().colwise() / _rho.array().rowwise().sum();
+	_win.setOnes();
+}
+
 void monju::BayesianNode::store(std::string dir)
 {
 	std::string extension = "mat2";
@@ -49,4 +59,11 @@ void monju::BayesianNode::load(std::string dir)
 	if (util_eigen::read_binary(dir, _id, "win", extension, _win) == false)
 		util_eigen::init_matrix_zero(_win, _nodes, 1);
 
+}
+
+void monju::BayesianNode::_setRandomProb(MatrixRm<float_t>& m)
+{
+	m.setRandom();
+	m = m.array().abs();
+	m.array().colwise() /= m.array().rowwise().sum();
 }

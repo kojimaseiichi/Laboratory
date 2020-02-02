@@ -48,10 +48,21 @@ namespace monju {
 		BayesianNode(std::string id, int nodes, int units_per_node);
 		~BayesianNode();
 
+		void initRandom();
 		void store(std::string dir);
-
 		void load(std::string dir);
-
+		void findWinnerOfBEL()
+		{
+			for (Eigen::Index nRow = 0; nRow < _bel.rows(); nRow++)
+			{
+				auto row = _bel.row(nRow);
+				MatrixRm<float_t>::Index maxarg;
+				row.maxCoeff(&maxarg);
+				_win(nRow, 0) = static_cast<int32_t>(maxarg);
+			}
+		}
+	private:
+		void _setRandomProb(MatrixRm<float_t>& m);
 	};
 
 }

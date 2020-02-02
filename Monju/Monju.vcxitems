@@ -19,6 +19,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNode.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp" />
@@ -52,6 +53,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h" />
