@@ -118,6 +118,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClObject.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClBuffer.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEvent.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -256,6 +262,12 @@
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClObject.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClBuffer.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEvent.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
   </ItemGroup>

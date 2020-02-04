@@ -22,8 +22,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClCommandQueues.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClContext.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEvent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClKernel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClPlatformId.cpp" />
@@ -63,8 +65,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClCommandQueues.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClKernel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h" />

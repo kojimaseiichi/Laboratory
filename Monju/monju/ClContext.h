@@ -12,7 +12,6 @@ namespace monju {
 	class ClContext
 	{
 	private:
-		ClPlatformId* _pPlatformId;
 		std::vector<cl_device_id> _deviceIds;
 		cl_context _context; // ‰ð•ú‚·‚é
 
@@ -29,7 +28,6 @@ namespace monju {
 			if (errno != CL_SUCCESS)
 				throw OpenClException(error, "clCreateContext");
 		}
-
 		void _releaseContext()
 		{
 			if (_context == nullptr)
@@ -41,10 +39,9 @@ namespace monju {
 		}
 
 	public:
-		ClContext(ClPlatformId& platformId)
+		ClContext(std::vector<cl_device_id> deviceIds)
 		{
-			_pPlatformId = &platformId;
-			_deviceIds = platformId.deviceIds();
+			_deviceIds = deviceIds;
 			_context = _createContext(_deviceIds);
 		}
 		~ClContext()
