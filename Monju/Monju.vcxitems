@@ -27,7 +27,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEvent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClKernel.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClPlatformId.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClProgram.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp" />
@@ -43,8 +42,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClContext.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClEigenMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClException.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClKernel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClKernelArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Synchronizable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.cpp" />
@@ -70,7 +73,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClKernel.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClPlatformId.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClProgram.h" />
@@ -90,8 +92,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuTypes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClEigenMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClException.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClKernel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClKernelArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Synchronizable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PenaltyCalcTask.h" />

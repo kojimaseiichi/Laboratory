@@ -18,7 +18,11 @@ namespace monju
 		cl_mem _createBuffer(cl_context context, size_t size, void* pBuff)
 		{
 			cl_int error;
-			cl_mem mem = clCreateBuffer(context, CL_MEM_READ_WRITE, size, pBuff, &error);
+			cl_mem mem = clCreateBuffer(
+				context,
+				CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
+				size, pBuff,
+				&error);
 			if (error != CL_SUCCESS)
 				throw new OpenClException(error, "clCreateBuffer");
 			return mem;
@@ -44,6 +48,26 @@ namespace monju
 		{
 			_releaseBuffer();
 		}
+		cl_mem mem() const
+		{
+			return _mem;
+		}
+		size_t size() const
+		{
+			return _size;
+		}
+		void* ptr() const
+		{
+			return _p;
+		}
+
+		// コピー禁止・ムーブ禁止
+	public:
+		ClBuffer(const ClBuffer&) = delete;
+		ClBuffer(ClBuffer&&) = delete;
+		ClBuffer& operator=(const ClBuffer&) = delete;
+		ClBuffer& operator=(ClBuffer&&) = delete;
+
 	};
 }
 

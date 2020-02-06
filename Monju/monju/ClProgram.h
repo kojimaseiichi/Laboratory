@@ -18,7 +18,8 @@ namespace monju
 		using params_map = std::map<std::string, std::string>;
 
 	private:
-		ClContext* _pContext;
+		cl_context _context;
+		std::vector<cl_device_id> _deviceIds;
 		std::string _sourcePath;
 		params_map _params;
 		cl_program _program;	// ‰ð•ú—\’è
@@ -91,12 +92,13 @@ namespace monju
 
 
 	public:
-		ClProgram(ClContext& context, std::string sourcePath, params_map params)
+		ClProgram(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, params_map params)
 		{
-			_pContext = &context;
+			_context = context;
+			_deviceIds = deviceIds;
 			_sourcePath = sourcePath;
 			_params = params;
-			_create(context.context, context.deviceIds, sourcePath, params);
+			_create(context, deviceIds, sourcePath, params);
 		}
 		~ClProgram()
 		{

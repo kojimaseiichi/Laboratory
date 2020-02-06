@@ -109,19 +109,28 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClKernel.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClMemory.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClProgram.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClObject.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClBuffer.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEvent.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClContext.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClKernel.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClKernelArgs.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClMemory.cpp">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClEigenMemory.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
   </ItemGroup>
@@ -255,19 +264,28 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClKernel.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClMemory.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClProgram.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClObject.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClBuffer.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEvent.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClContext.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClKernel.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClKernelArgs.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClMemory.h">
+      <Filter>計算基盤%28OpenCL%29</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClEigenMemory.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClInclude>
   </ItemGroup>

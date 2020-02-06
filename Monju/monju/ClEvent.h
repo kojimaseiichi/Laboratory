@@ -4,10 +4,12 @@
 
 #include <CL/cl.h>
 #include <vector>
+#include "Synchronizable.h"
+#include "OpenClException.h"
 
 namespace monju
 {
-	class ClEvent
+	class ClEvent : public Synchronizable
 	{
 	private:
 		std::vector<cl_event> _events;
@@ -24,18 +26,20 @@ namespace monju
 
 		void push(cl_event event)
 		{
+			WriteGuard(this);
 			_events.push_back(event);
 		}
-		void clear()
+		void waitAll()
 		{
-			_events.clear();
-		}
-		void clear(std::vector<cl_event> events)
-		{
-		}
-		std::vector<cl_event> events()
-		{
-			return _events;
+			ReadGuard(this);
+			std::vector<cl_event> e;
+			{
+				WriteGuard(this);
+				e.swap(_events);
+			}
+			cl_int error = clWaitForEvents(static_cast<cl_int>(e.size), e.data());
+			if (error != CL_SUCCESS)
+				throw OpenClException(error, "clWaitForEvents");
 		}
 	};
 }
