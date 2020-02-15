@@ -4,7 +4,7 @@
 
 #include "Eigen/Dense"
 #include "nlohmann/json.hpp"
-
+#include <map>
 
 namespace monju {
 
@@ -26,6 +26,8 @@ namespace monju {
 
 	/// <summary>nlohmann‚ÌJSONƒNƒ‰ƒX</summary>
 	using json = nlohmann::json;
+
+	using params = std::map<std::string, std::string>;
 
 	// ”jŠü—\’è
 	union BasisWorkItemCalcPlan

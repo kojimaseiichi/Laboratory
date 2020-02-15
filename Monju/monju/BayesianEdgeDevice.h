@@ -3,46 +3,52 @@
 #define _MONJU_BAYESIAN_EDGE_DEVICE_H__
 
 #include "BayesianEdge.h"
-#include "Device.h"
-#include "DeviceMemory.h"
 #include "GridCpt.h"
+#include "ClVariableSet.h"
 
 namespace monju {
 
 	class BayesianEdgeDevice
 	{
 	private:
-		Device* _pDevice;
+		std::shared_ptr<ClMachine> _clMachine;
 		BayesianEdge* _pEdge;
-		GridCpt* _pCpt;
-		std::unique_ptr<DeviceMemory> _pMem;
+		std::shared_ptr<ClMemory> _clLambda, _clKappa, _clCpt;
+		ClVariableSet _clVariableSet;
+	public:
+		BayesianEdgeDevice(std::weak_ptr<ClMachine> clMachine, BayesianEdge& edge)
+		{
+			_clMachine = clMachine.lock();
+			_pEdge = &edge;
+
+			auto lambda = _pEdge->lambda().lock();
+			auto kappa = _pEdge->kappa().lock();
+			auto cpt = _pEdge->cpt().cpt().lock();
+
+			_clLambda = std::make_shared<ClMemory>(_clMachine, lambda->size() * sizeof(float));
+			_clKappa = std::make_shared<ClMemory>(_clMachine, kappa->size() * sizeof(float));
+			_clCpt = std::make_shared<ClMemory>(_clMachine, cpt->size() * sizeof(float));
+
+			_clVariableSet.add<MatrixCm<float>>([](auto m) { return m.data(); }, _pEdge->lambda(), VariableKind::lambda, _clLambda);
+			_clVariableSet.add<MatrixCm<float>>([](auto m) { return m.data(); }, _pEdge->kappa(), VariableKind::kappa, _clKappa);
+			_clVariableSet.add<MatrixCm<float>>([](auto m) { return m.data(); }, _pEdge->cpt().cpt(), VariableKind::W, _clCpt);
+		}
+		~BayesianEdgeDevice()
+		{
+			_clLambda.reset();
+			_clKappa.reset();
+			_clCpt.reset();
+		}
+		ClVariableSet& clVariableSet()
+		{
+			return _clVariableSet;
+		}
 
 	public:	// コピー禁止・ムーブ禁止
 		BayesianEdgeDevice(const BayesianEdgeDevice&) = delete;
 		BayesianEdgeDevice(BayesianEdgeDevice&&) = delete;
 		BayesianEdgeDevice& operator=(const BayesianEdgeDevice&) = delete;
 		BayesianEdgeDevice& operator=(BayesianEdgeDevice&&) = delete;
-
-	public:
-		BayesianEdgeDevice(Device& device, BayesianEdge& edge, GridCpt& cpt)
-		{
-			_pDevice = &device;
-			_pEdge = &edge;
-			_pCpt = &cpt;
-			_pMem = std::make_unique<DeviceMemory>(device);
-
-			_pMem->addMemory(VariableKind::lambda, _pEdge->lambda());
-			_pMem->addMemory(VariableKind::kappa, _pEdge->kappa());
-			_pMem->addMemory(VariableKind::W, _pCpt->cpt());
-		}
-		~BayesianEdgeDevice()
-		{
-			if (_pMem != nullptr)
-				_pMem->release();
-		}
-
-		Device& device() const { return *_pDevice; }
-		DeviceMemory& mem() const { return *_pMem; }
 	};
 }
 

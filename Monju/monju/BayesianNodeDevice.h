@@ -3,50 +3,68 @@
 #define _BAYESIAN_NODE_DEVICE_H__
 
 #include "BayesianNode.h"
-#include "Device.h"
-#include "DeviceMemory.h"
+#include "ClMachine.h"
+#include "ClDeviceContext.h"
+#include "ClMemory.h"
+#include "ClVariableSet.h"
 
 namespace monju {
 
 	class BayesianNodeDevice
 	{
 	private:
-		Device* _pDevice;
+		std::shared_ptr<ClMachine> _clMachine;
 		BayesianNode* _pNode;
-		std::unique_ptr<DeviceMemory> _mem;
+		std::shared_ptr<ClMemory>
+			_clLambda,
+			_clPi,
+			_clRho,
+			_clR,
+			_clBel,
+			_clWin;
+		ClVariableSet _clVariableSet;
+
+	public:
+		BayesianNodeDevice(std::weak_ptr<ClMachine> clMachine, BayesianNode& node)
+		{
+			_clMachine = clMachine.lock();
+			_pNode = &node;
+
+			auto lambda = _pNode->lambda().lock();
+			auto pi = _pNode->pi().lock();
+			auto rho = _pNode->rho().lock();
+			auto r = _pNode->r().lock();
+			auto bel = _pNode->bel().lock();
+			auto win = _pNode->win().lock();
+
+			_clLambda = std::make_shared<ClMemory>(_clMachine, lambda->size() * sizeof(float));
+			_clPi = std::make_shared<ClMemory>(_clMachine, pi->size() * sizeof(float));
+			_clRho = std::make_shared<ClMemory>(_clMachine, rho->size() * sizeof(float));
+			_clR = std::make_shared<ClMemory>(_clMachine, r->size() * sizeof(float));
+			_clBel = std::make_shared<ClMemory>(_clMachine, bel->size() * sizeof(float));
+			_clWin = std::make_shared<ClMemory>(_clMachine, win->size() * sizeof(int32_t));
+
+			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->lambda(), VariableKind::lambda, _clLambda);
+			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->pi(), VariableKind::pi, _clPi);
+			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->rho(), VariableKind::rho, _clRho);
+			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->r(), VariableKind::R, _clR);
+			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->bel(), VariableKind::BEL, _clBel);
+			_clVariableSet.add<MatrixRm<int32_t>>([](auto m) { return m.data(); }, _pNode->win(), VariableKind::WIN, _clWin);
+		}
+		~BayesianNodeDevice()
+		{
+
+		}
+		ClVariableSet& clVariableSet()
+		{
+			return _clVariableSet;
+		}
 
 	public:	// コピー禁止・ムーブ禁止
 		BayesianNodeDevice(const BayesianNodeDevice&) = delete;
 		BayesianNodeDevice(BayesianNodeDevice&&) = delete;
 		BayesianNodeDevice& operator=(const BayesianNodeDevice&) = delete;
 		BayesianNodeDevice& operator=(BayesianNodeDevice&&) = delete;
-
-	public:
-		BayesianNodeDevice(Device& device, BayesianNode& node)
-		{
-			_pDevice = &device;
-			_pNode = &node;
-
-			_mem = std::make_unique<DeviceMemory>(device);
-
-			_mem->addMemory(VariableKind::lambda, _pNode->lambda());
-			_mem->addMemory(VariableKind::pi, _pNode->pi());
-			_mem->addMemory(VariableKind::rho, _pNode->rho());
-			_mem->addMemory(VariableKind::R, _pNode->r());
-			_mem->addMemory(VariableKind::BEL, _pNode->bel());
-			_mem->addMemory(VariableKind::WIN, _pNode->win());
-		}
-
-		~BayesianNodeDevice()
-		{
-
-		}
-
-		Device& device() const { return *_pDevice; }
-		DeviceMemory& mem() const { return *_mem; }
-		//std::weak_ptr<DeviceMemory> ref() const { return _mem; }
-
-
 	};
 }
 

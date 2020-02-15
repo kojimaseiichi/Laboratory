@@ -97,41 +97,50 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClContext.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClBuffer.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClPlatformId.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClContext.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClCommandQueues.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClEvent.cpp">
+      <Filter>OpenCL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClKernel.cpp">
+      <Filter>OpenCL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClPlatformId.cpp">
+      <Filter>OpenCL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClProgram.cpp">
+      <Filter>OpenCL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClCommandQueue.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClKernel.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClProgram.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClMachine.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClBuffer.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClDeviceContext.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEvent.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClFunc.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClContext.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClMemory.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClKernel.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEventJoiner.cpp">
+      <Filter>OpenCL</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClKernelArgs.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Environment.cpp">
+      <Filter>共通</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClMemory.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClEigenMemory.cpp">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.cpp">
+      <Filter>OpenCLコンベンション</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -252,41 +261,50 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClContext.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClBuffer.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClPlatformId.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClContext.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClCommandQueues.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClEvent.h">
+      <Filter>OpenCL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClKernel.h">
+      <Filter>OpenCL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClPlatformId.h">
+      <Filter>OpenCL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClProgram.h">
+      <Filter>OpenCL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClCommandQueue.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClKernel.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClProgram.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClMachine.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClBuffer.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClDeviceContext.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEvent.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClFunc.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClContext.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClMemory.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClKernel.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEventJoiner.h">
+      <Filter>OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClKernelArgs.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Environment.h">
+      <Filter>共通</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClMemory.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClEigenMemory.h">
-      <Filter>計算基盤%28OpenCL%29</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.h">
+      <Filter>OpenCLコンベンション</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -307,6 +325,12 @@
     </Filter>
     <Filter Include="皮質モジュール">
       <UniqueIdentifier>{9bd9280e-2f53-498e-b61d-0a95d6503a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenCL">
+      <UniqueIdentifier>{2ee00878-87f9-4c7e-9994-99c102a79d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenCLコンベンション">
+      <UniqueIdentifier>{c7fff8c3-5555-4004-bd4a-a4593e96c2ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

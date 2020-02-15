@@ -3,16 +3,14 @@
 #define _MONJU_BAYESIAN_ACTIVATOR_H__
 
 #include "MonjuTypes.h"
-#include "PlatformContext.h"
-#include "DeviceProgram.h"
-#include "DeviceKernel.h"
-#include "DeviceKernelArguments.h"
-#include "DeviceMemory.h"
 #include <map>
 #include <boost/lexical_cast.hpp>
 #include "BayesianNodeDevice.h"
 #include "BayesianEdgeDevice.h"
 #include "util_file.h"
+#include "ClMachine.h"
+#include "ClKernel.h"
+#include "Environment.h"
 
 namespace monju {
 
@@ -35,41 +33,32 @@ namespace monju {
 			_kUnitsPerNodeX,
 			_kUnitsPerNodeY;
 
-		PlatformContext* _pPlatformContext;
 
-		DeviceProgram 
-			_pgmOobpUp1, 
-			_pgmOobpUp2, 
-			_pgmOobpDown1, 
-			_pgmOobpDown2;
 
-		DeviceKernel
+		std::shared_ptr<ClMachine> _clMachine;
+
+		std::shared_ptr<ClKernel>
 			_kernelOobpUp1,
 			_kernelOobpUp2,
 			_kernelOobpDown1,
 			_kernelOobpDown2;
 
-		// コピー禁止・ムーブ禁止
 	public:
-		BayesianInterNodeCompute(const BayesianInterNodeCompute&) = delete;
-		BayesianInterNodeCompute(BayesianInterNodeCompute&&) = delete;
-		BayesianInterNodeCompute& operator =(const BayesianInterNodeCompute&) = delete;
-		BayesianInterNodeCompute& operator =(BayesianInterNodeCompute&&) = delete;
-
-	public:
-		BayesianInterNodeCompute(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, PlatformContext& platformContext) :
+		BayesianInterNodeCompute(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, std::weak_ptr<ClMachine> clMachine) :
 			_kNodesX(nodesX),
 			_kNodesY(nodesY),
 			_kUnitsPerNodeX(unitsPerNodeX),
 			_kUnitsPerNodeY(unitsPerNodeY)
 		{
-			_pPlatformContext = &platformContext;
+			_clMachine = clMachine.lock();
 
 			std::map<std::string, std::string> params_map;
 			params_map["X"] = boost::lexical_cast<std::string>(_kNodesX);
 			params_map["Y"] = boost::lexical_cast<std::string>(_kNodesY);
 			params_map["XU"] = boost::lexical_cast<std::string>(_kUnitsPerNodeX);
 			params_map["YU"] = boost::lexical_cast<std::string>(_kUnitsPerNodeY);
+
+			_kernelOobpUp1 = std::make_shared<ClKernel>(_clMachine, util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp1));
 
 			_pgmOobpUp1.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp1), params_map);
 			_pgmOobpUp2.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp2), params_map);
@@ -199,6 +188,13 @@ namespace monju {
 			_pgmOobpDown2.release();
 
 		}
+
+		// コピー禁止・ムーブ禁止
+	public:
+		BayesianInterNodeCompute(const BayesianInterNodeCompute&) = delete;
+		BayesianInterNodeCompute(BayesianInterNodeCompute&&) = delete;
+		BayesianInterNodeCompute& operator =(const BayesianInterNodeCompute&) = delete;
+		BayesianInterNodeCompute& operator =(BayesianInterNodeCompute&&) = delete;
 	};
 }
 

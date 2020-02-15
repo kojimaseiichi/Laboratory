@@ -17,7 +17,7 @@ void monju::DeviceKernelArguments::_clSetKernelArg(cl_kernel kernel, cl_uint arg
 
 void monju::DeviceKernelArguments::push(monju::DeviceMemory& mem, VariableKind kind, bool output)
 {
-	cl_mem m = mem.getMemory(kind);
+c	cl_mem m = mem.getMemory(kind);
 	_Argument arg;
 	arg.arg_size = sizeof(cl_mem);
 	arg.arg_value.__cl_mem = m;

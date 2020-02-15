@@ -2,74 +2,86 @@
 #ifndef _MONJU_CL_KERNEL_H__
 #define _MONJU_CL_KERNEL_H__
 
-#include "ClProgram.h"
+#include "ClMachine.h"
+#include "_ClProgram.h"
+#include "_ClKernel.h"
+#include "_ClCommandQueue.h"
+#include <memory>
+#include "MonjuTypes.h"
 
 namespace monju
 {
 	class ClKernel
 	{
-	public:
-		using params_map = std::map<std::string, std::string>;
-
 	private:
-		cl_program _program;
+		std::shared_ptr<ClMachine> _clMachine;
+		std::shared_ptr<_ClContext> _clContext;	// ClMachineから取得
+		std::string _sourcePath;
 		std::string _kernelName;
-		params_map _params;
-		cl_kernel _kernel;	// 解放予定
+		std::map<std::string, std::string> _params;
 
-		cl_kernel _createKernel(cl_program program, std::string& kernelName, std::map<std::string, std::string>& params)
+		std::shared_ptr<_ClProgram> _clProgram;	// 解放予定
+		std::shared_ptr<_ClKernel> _clKernel;	// 解放予定
+
+		void _createProgram()
 		{
-			std::string parameterized_kernel_name = util_str::parameterizePlaceholders(kernelName, params);
-			cl_int error;
-			cl_kernel kernel = clCreateKernel(program, parameterized_kernel_name.c_str(), &error);
-			if (error != CL_SUCCESS)
-				throw OpenClException(error);
-			return kernel;
+			_clProgram = std::make_shared<_ClProgram>(
+				_clContext->context(),
+				_clContext->deviceIds(),
+				_sourcePath,
+				_params);
 		}
-		void _run(cl_command_queue commandQueue, std::vector<size_t>& globalWorkSize, std::vector<size_t>& localWorkSize)
+		void _createKernel()
 		{
-			if (globalWorkSize.size() != localWorkSize.size())
-				throw MonjuException("global_work_sizeとlocal_work_sizeの次元が一致しない");
-			cl_uint dim = static_cast<cl_uint>(globalWorkSize.size());
-			cl_event eventWait;
-			cl_int error = clEnqueueNDRangeKernel(
-				commandQueue,					// OpenCLキュー
-				_kernel,						// カーネル
-				dim,							// 2次元
-				nullptr,						// global work offset
-				globalWorkSize.data(),			// global work size
-				localWorkSize.data(),			// local work size
-				0,								// number of events in wait list
-				nullptr,						// event wait list
-				&eventWait);					// event
-			if (error != CL_SUCCESS)
-				throw OpenClException(error);
+			_clKernel = std::make_shared<_ClKernel>(
+				_clProgram->clProgram(),
+				_kernelName,
+				_params);
+		}
+		void _releaseProgram()
+		{
+
+			bool unique = _clProgram.use_count() == 1;
+			_clProgram.reset();
+			if (!unique)
+				throw MonjuException("_clProgram");
 		}
 		void _releaseKernel()
 		{
-			if (_kernel == nullptr)
-				return;
-			cl_int error = clReleaseKernel(_kernel);
-			if (error != CL_SUCCESS)
-				throw OpenClException(error, "clReleaseKernel");
-			_kernel = nullptr;
+			bool unique = _clKernel.use_count() == 1;
+			_clKernel.reset();
+			if (!unique)
+				throw MonjuException("_clKernel");
 		}
 
 	public:
-		ClKernel(cl_program program, std::string kernelName, params_map params)
+		ClKernel(
+			std::weak_ptr<ClMachine> clMachine,
+			std::string sourcePath,
+			std::string kernelName,
+			params params)
 		{
-			_kernel = _createKernel(program, kernelName, params);
-			_program = program;
+			_clMachine = clMachine.lock();
+			_clContext = _clMachine->clContext().lock();
+			_sourcePath = sourcePath;
 			_kernelName = kernelName;
 			_params = params;
+
+			_createProgram();
+			_createKernel();
 		}
 		~ClKernel()
 		{
 			_releaseKernel();
+			_releaseProgram();
 		}
-		void run(cl_command_queue commandQueue, std::vector<size_t> globalWorkSize, std::vector<size_t>& localWorkSize)
+		cl_program clProgram() const
 		{
-			_run(commandQueue, globalWorkSize, localWorkSize);
+			return _clProgram->clProgram();
+		}
+		cl_kernel clKernel() const
+		{
+			return _clKernel->clKernel();
 		}
 
 		// コピー禁止・ムーブ禁止
@@ -83,4 +95,3 @@ namespace monju
 }
 
 #endif // !_MONJU_CL_KERNEL_H__
-

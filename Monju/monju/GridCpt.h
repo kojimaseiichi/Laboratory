@@ -19,15 +19,15 @@ namespace monju {
 			_kUnitsPerNodeX,	
 			_kNodesY,
 			_kUnitsPerNodeY;
-		MatrixCm<float_t>
+		std::shared_ptr<MatrixCm<float_t>>
 			_cpt,			// グリッドCPT（４階テンソル）
 			_deltaCpt;		// グリッドCPT増分
 		const int _kCellSize;	// セルサイズ
 
 	public:
 		std::string id() const { return _id; }
-		MatrixCm<float_t>& cpt() { return _cpt; }
-		MatrixCm<float_t>& deltaCpt() { return _deltaCpt; }
+		std::weak_ptr<MatrixCm<float_t>> cpt() { return _cpt; }
+		std::weak_ptr<MatrixCm<float_t>> deltaCpt() { return _deltaCpt; }
 
 	public:
 		GridCpt(
@@ -46,11 +46,14 @@ namespace monju {
 			_id = id;
 			const int rows = _kCellSize * _kNodesY;
 			
-			_cpt.resize(rows, _kNodesX);
-			_cpt.setZero();
+			_cpt = std::make_shared<MatrixCm<float_t>>();
+			_deltaCpt = std::make_shared<MatrixCm<float_t>>();
 
-			_deltaCpt.resize(rows, _kNodesX);
-			_deltaCpt.setZero();
+			_cpt->resize(rows, _kNodesX);
+			_cpt->setZero();
+
+			_deltaCpt->resize(rows, _kNodesX);
+			_deltaCpt->setZero();
 		}
 		void store(std::string dir)
 		{
@@ -70,18 +73,18 @@ namespace monju {
 		void initRandom()
 		{
 			// CPT
-			_cpt.setRandom();
-			_cpt = _cpt.array().abs();
+			_cpt->setRandom();
+			*_cpt = _cpt->array().abs();
 			for (int col = 0; col < _kNodesX; col++)
 			{
 				for (int row = 0; row < _kNodesY; row++)
 				{
-					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt.col(col).data() + row * static_cast<uintptr_t>(_kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
+					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt->col(col).data() + row * static_cast<uintptr_t>(_kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
 					map.array().rowwise() /= map.colwise().sum().array();
 				}
 			}
 			// delta CPT
-			_deltaCpt.setZero();
+			_deltaCpt->setZero();
 		}
 		void winnerTakerAll(
 			MatrixRm<int32_t>& winX,
@@ -100,8 +103,8 @@ namespace monju {
 				for (int row = 0; row < _kNodesY; row++)
 				{
 					int winUnitY = winY(row, 0);
-					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt.col(col).data() + static_cast<int>(row * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
-					auto mapDelta = Eigen::Map<MatrixCm<float_t>>(_deltaCpt.col(col).data() + static_cast<int>(row * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
+					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt->col(col).data() + static_cast<int>(row * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
+					auto mapDelta = Eigen::Map<MatrixCm<float_t>>(_deltaCpt->col(col).data() + static_cast<int>(row * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
 					mapDelta(winUnitY, winUnitX) += learningRate * (1 - map(winUnitY, winUnitX));
 				}
 			}
@@ -124,8 +127,8 @@ namespace monju {
 				mapLambda.col(winUnitX).maxCoeff(&maxRow);
 				{
 					int winUnitY = winY(maxRow, 0);
-					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt.col(col).data() + static_cast<Eigen::Index>(maxRow * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
-					auto mapDelta = Eigen::Map<MatrixCm<float_t>>(_deltaCpt.col(col).data() + static_cast<Eigen::Index>(maxRow * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
+					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt->col(col).data() + static_cast<Eigen::Index>(maxRow * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
+					auto mapDelta = Eigen::Map<MatrixCm<float_t>>(_deltaCpt->col(col).data() + static_cast<Eigen::Index>(maxRow * _kCellSize), _kUnitsPerNodeY, _kUnitsPerNodeX);
 					mapDelta(winUnitY, winUnitX) += learningRate * (1 - map(winUnitY, winUnitX));
 				}
 			}
@@ -147,7 +150,7 @@ namespace monju {
 				map.col(winX(x, 0)).maxCoeff(&row, &col); // ←rowに学習対象のCPT
 				// 学習対象のrow, x, winY(row), winX(x)
 				int r = static_cast<int>(row);
-				auto a = Eigen::Map<MatrixCm<float_t>>(_deltaCpt.col(x).data() + static_cast<int>(_kCellSize * row), _kUnitsPerNodeY, _kUnitsPerNodeX);
+				auto a = Eigen::Map<MatrixCm<float_t>>(_deltaCpt->col(x).data() + static_cast<int>(_kCellSize * row), _kUnitsPerNodeY, _kUnitsPerNodeX);
 				a(winY(r), winX(x)) += 1.f;
 			}
 		}
@@ -168,7 +171,7 @@ namespace monju {
 				map.col(winX(x, 0)).maxCoeff(&row, &col); // ←rowに学習対象のCPT
 				// 学習対象のrow, x, winY(row), winX(x)
 				int r = static_cast<int>(row);
-				auto a = Eigen::Map<MatrixCm<float_t>>(_deltaCpt.col(x).data() + static_cast<int>(_kCellSize * row), _kUnitsPerNodeY, _kUnitsPerNodeX);
+				auto a = Eigen::Map<MatrixCm<float_t>>(_deltaCpt->col(x).data() + static_cast<int>(_kCellSize * row), _kUnitsPerNodeY, _kUnitsPerNodeX);
 				a.col(winX(x)).array() += belY.row(r).array();
 			}
 		}
@@ -177,8 +180,8 @@ namespace monju {
 		{
 			// CPTの増分を足す
 
-			_cpt.array() += _deltaCpt.array();
-			_deltaCpt.setZero();
+			_cpt->array() += _deltaCpt->array();
+			_deltaCpt->setZero();
 		}
 	};
 

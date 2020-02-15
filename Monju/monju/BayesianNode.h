@@ -21,32 +21,53 @@ namespace monju {
 		int 
 			_nodes,				// 基底のノード数
 			_units_per_node;	// ノード当たりのユニット数
-		MatrixRm<float_t>
+		std::shared_ptr<MatrixRm<float_t>>
 			_lambda,	// λ_X(x)
 			_pi,		// π_X(x)
 			_rho,		// ρ_X(x)
 			_r,			// ペナルティc項_X(x)
 			_bel;		// BEL_X(x)
-		MatrixRm<int32_t> 
+		std::shared_ptr<MatrixRm<int32_t>>
 			_win;		// 勝者ユニット
 
 	public:
 		std::string id() const { return _id; }
 		int nodes() const { return _nodes; }
 		int unitsPerNode() const { return _units_per_node; }
-		MatrixRm<float_t> lambda() const { return _lambda; }
-		MatrixRm<float_t> pi() const { return _pi; };
-		MatrixRm<float_t> rho() const { return _rho; }
-		MatrixRm<float_t> r() const { return _r; }
-		MatrixRm<float_t> bel() const { return _bel; }
-		MatrixRm<int32_t> win() const { return _win; }
+		std::weak_ptr<MatrixRm<float_t>> lambda() const { return _lambda; }
+		std::weak_ptr<MatrixRm<float_t>> pi() const { return _pi; };
+		std::weak_ptr<MatrixRm<float_t>> rho() const { return _rho; }
+		std::weak_ptr<MatrixRm<float_t>> r() const { return _r; }
+		std::weak_ptr<MatrixRm<float_t>> bel() const { return _bel; }
+		std::weak_ptr<MatrixRm<int32_t>> win() const { return _win; }
 
 	public:
 		BayesianNode(const BayesianNode&) = delete;
 		BayesianNode& operator =(const BayesianNode&) = delete;
 
-		BayesianNode(std::string id, int nodes, int units_per_node);
-		~BayesianNode();
+		BayesianNode(std::string id, int nodes, int units_per_node)
+		{
+			_id = id;
+			_nodes = nodes;
+			_units_per_node = units_per_node;
+
+			_lambda = std::make_shared<MatrixRm<float_t>>();
+			_pi = std::make_shared<MatrixRm<float_t>>();
+			_rho = std::make_shared<MatrixRm<float_t>>();
+			_r = std::make_shared<MatrixRm<float_t>>();
+			_bel = std::make_shared<MatrixRm<float_t>>();
+			_win = std::make_shared<MatrixRm<int32_t>>();
+
+			_lambda->resize(nodes, units_per_node);
+			_pi->resize(nodes, units_per_node);
+			_rho->resize(nodes, units_per_node);
+			_r->resize(nodes, units_per_node);
+			_bel->resize(nodes, units_per_node);
+			_win->resize(nodes, 1);
+		}
+		~BayesianNode()
+		{
+		}
 
 		void initRandom();
 		void store(std::string dir);
