@@ -1,2 +1,2 @@
-#include "OpenClKernel.h"
+#include "ClKernel.h"
 

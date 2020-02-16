@@ -44,12 +44,12 @@ namespace monju {
 			_clBel = std::make_shared<ClMemory>(_clMachine, bel->size() * sizeof(float));
 			_clWin = std::make_shared<ClMemory>(_clMachine, win->size() * sizeof(int32_t));
 
-			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->lambda(), VariableKind::lambda, _clLambda);
-			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->pi(), VariableKind::pi, _clPi);
-			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->rho(), VariableKind::rho, _clRho);
-			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->r(), VariableKind::R, _clR);
-			_clVariableSet.add<MatrixRm<float_t>>([](auto m) { return m.data(); }, _pNode->bel(), VariableKind::BEL, _clBel);
-			_clVariableSet.add<MatrixRm<int32_t>>([](auto m) { return m.data(); }, _pNode->win(), VariableKind::WIN, _clWin);
+			_clVariableSet.add(_pNode->lambda(), VariableKind::lambda, _clLambda);
+			_clVariableSet.add(_pNode->pi(), VariableKind::pi, _clPi);
+			_clVariableSet.add(_pNode->rho(), VariableKind::rho, _clRho);
+			_clVariableSet.add(_pNode->r(), VariableKind::R, _clR);
+			_clVariableSet.add(_pNode->bel(), VariableKind::BEL, _clBel);
+			_clVariableSet.add(_pNode->win(), VariableKind::WIN, _clWin);
 		}
 		~BayesianNodeDevice()
 		{

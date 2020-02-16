@@ -7,7 +7,7 @@
 
 namespace monju {
 
-	void CL_CALLBACK callback_notify_error(const char* errinfo, const void* private_info, size_t cb, void* user_data);
+	void CL_CALLBACK cl_context_notify_error(const char* errinfo, const void* private_info, size_t cb, void* user_data);
 
 	class _ClContext
 	{
@@ -15,11 +15,15 @@ namespace monju {
 		std::vector<cl_device_id> _deviceIds;
 		cl_context _context; // ‰ð•ú‚·‚é
 
-		cl_context _createContext(std::vector<cl_device_id>& deviceIds);
+		void _createContext(std::vector<cl_device_id>& deviceIds);
 		void _releaseContext();
 
 	public:
-		_ClContext(std::vector<cl_device_id> deviceIds);
+		_ClContext(const std::vector<cl_device_id> deviceIds)
+		{
+			_deviceIds = deviceIds;
+			_createContext(_deviceIds);
+		}
 		~_ClContext();
 		cl_context context() const;
 		std::vector<cl_device_id> deviceIds() const;

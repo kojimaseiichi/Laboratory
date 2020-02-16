@@ -29,6 +29,12 @@ namespace monju {
 
 	using params = std::map<std::string, std::string>;
 
+	struct UniformBasisShape
+	{
+		uint32_t nodes;
+		uint32_t units;
+	};
+
 	// ”jŠü—\’è
 	union BasisWorkItemCalcPlan
 	{

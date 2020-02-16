@@ -29,6 +29,7 @@ namespace monju
 		~ClMachine();
 		std::weak_ptr<_ClPlatformId> clPlatformId() const;
 		std::weak_ptr<_ClContext> clContext() const;
+		std::vector<cl_device_id> deviceIds() const;
 
 		// コピー禁止・ムーブ禁止
 	public:

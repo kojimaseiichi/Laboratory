@@ -29,9 +29,9 @@ namespace monju {
 			_clKappa = std::make_shared<ClMemory>(_clMachine, kappa->size() * sizeof(float));
 			_clCpt = std::make_shared<ClMemory>(_clMachine, cpt->size() * sizeof(float));
 
-			_clVariableSet.add<MatrixCm<float>>([](auto m) { return m.data(); }, _pEdge->lambda(), VariableKind::lambda, _clLambda);
-			_clVariableSet.add<MatrixCm<float>>([](auto m) { return m.data(); }, _pEdge->kappa(), VariableKind::kappa, _clKappa);
-			_clVariableSet.add<MatrixCm<float>>([](auto m) { return m.data(); }, _pEdge->cpt().cpt(), VariableKind::W, _clCpt);
+			_clVariableSet.add(_pEdge->lambda(), VariableKind::lambda, _clLambda);
+			_clVariableSet.add(_pEdge->kappa(), VariableKind::kappa, _clKappa);
+			_clVariableSet.add(_pEdge->cpt().cpt(), VariableKind::W, _clCpt);
 		}
 		~BayesianEdgeDevice()
 		{

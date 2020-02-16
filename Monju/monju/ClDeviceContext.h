@@ -98,6 +98,7 @@ namespace monju
 			_clMachine = clMachine.lock();
 			_clContext = _clMachine->clContext().lock();
 			_deviceId = deviceId;
+			_createCommandQueue();
 		}
 		~ClDeviceContext()
 		{

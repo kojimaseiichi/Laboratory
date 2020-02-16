@@ -21,8 +21,7 @@ void monju::_ClPlatformId::_getDeviceIds(cl_platform_id platform)
 	if (error != CL_SUCCESS)
 		throw OpenClException(error, "clGetDeviceIDs");
 	for (int n = 0; n < retNum; n++)
-		_deviceIds.push_back
-		(devices[n]);
+		_deviceIds.push_back(devices[n]);
 }
 
 monju::_ClPlatformId::_ClPlatformId(int selectPlatform)

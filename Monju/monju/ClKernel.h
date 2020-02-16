@@ -7,6 +7,7 @@
 #include "_ClKernel.h"
 #include "_ClCommandQueue.h"
 #include <memory>
+#include <filesystem>
 #include "MonjuTypes.h"
 
 namespace monju
@@ -64,6 +65,21 @@ namespace monju
 			_clMachine = clMachine.lock();
 			_clContext = _clMachine->clContext().lock();
 			_sourcePath = sourcePath;
+			_kernelName = kernelName;
+			_params = params;
+
+			_createProgram();
+			_createKernel();
+		}
+		ClKernel(
+			std::weak_ptr<ClMachine> clMachine,
+			std::filesystem::path sourcePath,
+			std::string kernelName,
+			params params)
+		{
+			_clMachine = clMachine.lock();
+			_clContext = _clMachine->clContext().lock();
+			_sourcePath = sourcePath.string();
 			_kernelName = kernelName;
 			_params = params;
 

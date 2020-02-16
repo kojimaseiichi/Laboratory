@@ -17,7 +17,7 @@ namespace MonjuTest
 	{
 		TEST_METHOD(wtf1)
 		{
-			monju::GridCpt u("grid-cpt-test", 2, 2, 2, 2);
+			monju::GridCpt u("grid-cpt-test", { 2, 2 }, { 2, 2 });
 			monju::MatrixRm<int32_t> winX, winY;
 			winX.resize(2, 1);
 			winY.resize(2, 1);

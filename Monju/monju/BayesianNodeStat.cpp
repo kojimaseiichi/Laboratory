@@ -1,11 +1,13 @@
 #include "BayesianNodeStat.h"
 
-monju::BayesianNodeStat::BayesianNodeStat(std::string id, int nodes, int unitsPerNode, int coeWinPenalty, int coeLatPenalty) : _conc(1), _kNodes(nodes), _kUnitsPerNode(unitsPerNode)
+monju::BayesianNodeStat::BayesianNodeStat(std::string id, UniformBasisShape shape, float_t coeWinPenalty, float_t coeLatPenalty)
+	: _conc(1)
 {
 	_id = id;
-	_win = std::make_shared<MatrixRm<float_t>>(nodes, unitsPerNode);
-	_lat = std::make_shared<MatrixRm<float_t>>(nodes, unitsPerNode);
-	_penalty = std::make_shared<MatrixRm<float_t>>(nodes, unitsPerNode);
+	_shape = shape;
+	_win = std::make_shared<MatrixRm<float_t>>(shape.nodes, shape.units);
+	_lat = std::make_shared<MatrixRm<float_t>>(shape.nodes, shape.units);
+	_penalty = std::make_shared<MatrixRm<float_t>>(shape.nodes, shape.units);
 	_coeWinPenalty = coeWinPenalty;
 	_coeLatPenalty = coeLatPenalty;
 }
@@ -37,7 +39,7 @@ std::future<void> monju::BayesianNodeStat::accumulate(MatrixRm<int32_t>& win)
 
 std::future<void> monju::BayesianNodeStat::calcPenalty()
 {
-	PenaltyCalcTask* p = new PenaltyCalcTask(_kNodes, _kUnitsPerNode, _kUnitsPerNode, _storage, _coeWinPenalty, _coeLatPenalty);
+	PenaltyCalcTask* p = new PenaltyCalcTask(_shape.nodes, _shape.units, _shape.units, _storage, _coeWinPenalty, _coeLatPenalty);
 	const auto task = [=](PenaltyCalcTask* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
 	{
 		// LOCK -----------------------------
@@ -52,7 +54,7 @@ std::future<void> monju::BayesianNodeStat::calcPenalty()
 void monju::BayesianNodeStat::create(std::string dir)
 {
 	_storage = std::make_shared<TStorage>();
-	_storage->create(storagePath(dir), _kNodes, _kUnitsPerNode, _kUnitsPerNode);
+	_storage->create(storagePath(dir), _shape.nodes, _shape.units, _shape.units);
 	_conc.create();
 }
 

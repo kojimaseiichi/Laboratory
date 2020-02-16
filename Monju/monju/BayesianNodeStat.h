@@ -17,9 +17,7 @@ namespace monju {
 
 		// ID
 		std::string _id;
-		const int
-			_kNodes,			// 基底当たりのノード数
-			_kUnitsPerNode;		// ノード当たりのユニット数
+		UniformBasisShape _shape;
 		// カウンティング
 		std::shared_ptr<TStorage> _storage;
 		std::shared_ptr<MatrixRm<float_t>> 
@@ -35,10 +33,6 @@ namespace monju {
 		ConcurrencyContext _conc;
 
 	public:
-		BayesianNodeStat(const BayesianNodeStat&) = delete;
-		BayesianNodeStat& operator=(const BayesianNodeStat&) = delete;
-
-	public:
 		MatrixRm<float_t>& win() const { return *_win; }
 		MatrixRm<float_t>& lat() const { return *_lat; }
 		MatrixRm<float_t>& penalty() const { return *_penalty; }
@@ -46,10 +40,9 @@ namespace monju {
 	public:
 		BayesianNodeStat(
 			std::string id,
-			int nodes,
-			int unitsPerNode,
-			int coeWinPenalty,
-			int coeLatPenalty
+			UniformBasisShape shape,
+			float_t coeWinPenalty,
+			float_t coeLatPenalty
 
 		);
 		~BayesianNodeStat();
@@ -60,6 +53,13 @@ namespace monju {
 
 	private:
 		std::string storagePath(std::string dir) const;
+
+		// コピー禁止・ムーブ禁止
+	public:
+		BayesianNodeStat(const BayesianNodeStat&) = delete;
+		BayesianNodeStat(BayesianNodeStat&&) = delete;
+		BayesianNodeStat& operator =(const BayesianNodeStat&) = delete;
+		BayesianNodeStat& operator =(BayesianNodeStat&&) = delete;
 	};
 }
 

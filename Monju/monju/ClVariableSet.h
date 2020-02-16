@@ -31,50 +31,59 @@ namespace monju
 			void* pData = func();
 			deviceContext.enqueueWriteBuffer(clMemory, pData, pEvent);
 		}
-	public:
-		template <typename M>
-		void add(std::function<void* (M&)>&& dataGetter, std::weak_ptr<M> matrix, VariableKind variableKind, std::weak_ptr<ClMemory> clMemory)
+		template <typename T>
+		std::function<void* ()> _makeDataAccessor(std::weak_ptr<T> ptr)
 		{
-			std::function<void* (std::weak_ptr<M>)> wrapper = [](m) ->{
-				auto p = m.lock();
-				return dataGetter(*p);
+			return [ptr]() {
+				auto p = ptr.lock();
+				return p->data();
 			};
-			std::function<void*()> func = std::bind(
-				std::forward<std::function<void* (std::weak_ptr<M>)>>(wrapper),
-				std::forward<std::weak_ptr<M>>(matrix));
-			_dataGetterMap.insert(variableKind, std::make_tuple(func, clMemory);
+		}
+
+	public:
+		template <typename T>
+		void add(std::weak_ptr<T> weakPtr, VariableKind variableKind, std::weak_ptr<ClMemory> clMemory)
+		{
+			auto func = _makeDataAccessor(weakPtr);
+			_variableMap.emplace(variableKind, std::make_tuple(func, clMemory));
 		}
 		void clear()
 		{
 			_variableMap.clear();
 		}
-		void enqueueReadAll(ClDeviceContext& deviceContext, ClEventJoiner* pEvent)
+		void enqueueReadAll(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent)
 		{
+			auto p = deviceContext.lock();
 			for (auto e : _variableMap)
-				_enqueueRead(e.second, deviceContext, pEvent);
+				_enqueueRead(e.second, *p, pEvent);
 		}
-		void enqueueWriteAll(ClDeviceContext& deviceContext, ClEventJoiner* pEvent)
+		void enqueueWriteAll(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent)
 		{
+			auto p = deviceContext.lock();
 			for (auto e : _variableMap)
-				_enqueueWrite(e.second, deviceContext, pEvent);
+				_enqueueWrite(e.second, *p, pEvent);
 		}
-		void enqueueRead(ClDeviceContext& deviceContext, ClEventJoiner* pEvent, VariableKind variable)
+		void enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, VariableKind variable)
 		{
-			_enqueueRead(_variableMap.at(variable), deviceContext, pEvent);
+			auto p = deviceContext.lock();
+			_enqueueRead(_variableMap.at(variable), *p, pEvent);
 		}
-		void enqueueWrite(ClDeviceContext& deviceContext, ClEventJoiner* pEvent, VariableKind variable)
+		void enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, VariableKind variable)
 		{
-			_enqueueWrite(_variableMap.at(variable), deviceContext, pEvent);
+			auto p = deviceContext.lock();
+			_enqueueWrite(_variableMap.at(variable), *p, pEvent);
 		}
-		void enqueueRead(ClDeviceContext& deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables)
+		void enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables)
 		{
+			auto p = deviceContext.lock();
 			for (auto va : variables)
-				enqueueRead(deviceContext, pEvent, va);
+				_enqueueRead(_variableMap.at(va), *p, pEvent);
 		}
-		void enqueueWrite(ClDeviceContext& deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables)
+		void enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables)
 		{
+			auto p = deviceContext.lock();
 			for (auto va : variables)
-				enqueueWrite(deviceContext, pEvent, va);
+				_enqueueWrite(_variableMap.at(va), *p, pEvent);
 		}
 		std::weak_ptr<ClMemory> getClMemory(VariableKind variableKind)
 		{

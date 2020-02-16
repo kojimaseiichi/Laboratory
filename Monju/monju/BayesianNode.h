@@ -18,9 +18,7 @@ namespace monju {
 	private:
 
 		std::string _id;
-		int 
-			_nodes,				// 基底のノード数
-			_units_per_node;	// ノード当たりのユニット数
+		UniformBasisShape _shape;
 		std::shared_ptr<MatrixRm<float_t>>
 			_lambda,	// λ_X(x)
 			_pi,		// π_X(x)
@@ -32,8 +30,7 @@ namespace monju {
 
 	public:
 		std::string id() const { return _id; }
-		int nodes() const { return _nodes; }
-		int unitsPerNode() const { return _units_per_node; }
+		UniformBasisShape shape() const { return _shape; }
 		std::weak_ptr<MatrixRm<float_t>> lambda() const { return _lambda; }
 		std::weak_ptr<MatrixRm<float_t>> pi() const { return _pi; };
 		std::weak_ptr<MatrixRm<float_t>> rho() const { return _rho; }
@@ -42,14 +39,10 @@ namespace monju {
 		std::weak_ptr<MatrixRm<int32_t>> win() const { return _win; }
 
 	public:
-		BayesianNode(const BayesianNode&) = delete;
-		BayesianNode& operator =(const BayesianNode&) = delete;
-
-		BayesianNode(std::string id, int nodes, int units_per_node)
+		BayesianNode(std::string id, UniformBasisShape shape)
 		{
 			_id = id;
-			_nodes = nodes;
-			_units_per_node = units_per_node;
+			_shape = shape;
 
 			_lambda = std::make_shared<MatrixRm<float_t>>();
 			_pi = std::make_shared<MatrixRm<float_t>>();
@@ -58,12 +51,12 @@ namespace monju {
 			_bel = std::make_shared<MatrixRm<float_t>>();
 			_win = std::make_shared<MatrixRm<int32_t>>();
 
-			_lambda->resize(nodes, units_per_node);
-			_pi->resize(nodes, units_per_node);
-			_rho->resize(nodes, units_per_node);
-			_r->resize(nodes, units_per_node);
-			_bel->resize(nodes, units_per_node);
-			_win->resize(nodes, 1);
+			_lambda->resize(shape.nodes, shape.units);
+			_pi->resize(shape.nodes, shape.units);
+			_rho->resize(shape.nodes, shape.units);
+			_r->resize(shape.nodes, shape.units);
+			_bel->resize(shape.nodes, shape.units);
+			_win->resize(shape.nodes, 1);
 		}
 		~BayesianNode()
 		{
@@ -74,16 +67,23 @@ namespace monju {
 		void load(std::string dir);
 		void findWinnerOfBEL()
 		{
-			for (Eigen::Index nRow = 0; nRow < _bel.rows(); nRow++)
+			for (Eigen::Index nRow = 0; nRow < _bel->rows(); nRow++)
 			{
-				auto row = _bel.row(nRow);
+				auto row = _bel->row(nRow);
 				MatrixRm<float_t>::Index maxarg;
 				row.maxCoeff(&maxarg);
-				_win(nRow, 0) = static_cast<int32_t>(maxarg);
+				(*_win)(nRow, 0) = static_cast<int32_t>(maxarg);
 			}
 		}
 	private:
-		void _setRandomProb(MatrixRm<float_t>& m);
+		void _setRandomProb(std::shared_ptr<MatrixRm<float_t>> m);
+
+		// コピー禁止・ムーブ禁止
+	public:
+		BayesianNode(const BayesianNode&) = delete;
+		BayesianNode(BayesianNode&&) = delete;
+		BayesianNode& operator =(const BayesianNode&) = delete;
+		BayesianNode& operator =(BayesianNode&&) = delete;
 	};
 
 }

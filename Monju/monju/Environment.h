@@ -3,75 +3,75 @@
 #define _MONJU_ENVIRONMENT_H__
 
 #include <string>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/foreach.hpp>
-#include <boost/optional.hpp>
+#include <fstream>
 #include <boost/filesystem.hpp>
+#include "nlohmann/json.hpp"
 
 namespace monju
 {
 	class Environment
 	{
+	public:
+		struct Info
+		{
+			std::string workFolder;
+			std::string kernelFolder;
+			int platformId;
+		};
 	private:
-		boost::filesystem::path _workFolder;
-		boost::filesystem::path _kernelFolder;
-		int _platformId;
+		Info _info;
+		std::string _workFolder;
 
 		// プロパティファイルへのパス
-		std::string _propertyFilePath(std::string work_folder) const
+		std::string _propertyFilePath(std::string workFolder) const
 		{
-			boost::filesystem::path bwf = boost::filesystem::path(work_folder);
+			boost::filesystem::path bwf = boost::filesystem::path(workFolder);
 			boost::filesystem::path full_path = bwf / "properties.json";
 			return full_path.string();
 		}
 		// プラットフォーム情報をJSON形式でファイルに書き込み
-		void _saveJson(const std::string work_folder) const
+		void _saveJson(const std::string workFolder) const
 		{
-			boost::property_tree::ptree root;
-			// root
-			root.put("work_folder", work_folder);
-			root.put("kernel_folder", _kernelFolder.string());
-			{
-				// deivce
-				boost::property_tree::ptree device;
-				device.put("platform_id", _platformId);
-				root.add_child("device", device);
-			}
-			boost::property_tree::write_json(_propertyFilePath(work_folder), root);
+			std::string fileName = _propertyFilePath(workFolder);
+			std::ofstream o;
+			o.open(fileName, std::ofstream::out | std::ofstream::binary);
+			nlohmann::json j;
+			j["workFolder"] = _info.workFolder;
+			j["kernelFolder"] = _info.kernelFolder;
+			j["platformId"] = _info.platformId;
+			o << j;
 		}
 		// プラットフォーム情報をファイルから読み込み
-		void _loadJson(const std::string work_folder)
+		void _loadJson(const std::string workFolder)
 		{
-			boost::property_tree::ptree root;
-			boost::property_tree::read_json(_propertyFilePath(work_folder), root);
-			// root
-			_workFolder = work_folder;
-			_kernelFolder = root.get<std::string>("kernel_folder");
-			{
-				// deivce
-				auto device = root.get_child("device");
-				_platformId = device.get<int>("platform_id");
-			}
+			std::string fileName = _propertyFilePath(workFolder);
+			std::ifstream i;
+			i.open(fileName, std::ofstream::in | std::ofstream::binary);
+			nlohmann::json j;
+			i >> j;
+			_info = {
+				j["workFolder"].get<std::string>(),
+				j["kernelFolder"].get<std::string>(),
+				j["platformId"].get<int>()
+			};
 		}
 
 	public:
-		void open(std::string work_folder)
+		Environment(std::string workFolder)
 		{
-			_workFolder = work_folder;
-			_loadJson(work_folder);
+			open(workFolder);
 		}
-		int platformId() const
+		~Environment()
 		{
-			return _platformId;
 		}
-		std::string workspaceDir()
+		void open(std::string workFolder)
 		{
-			return _workFolder.string();
+			_workFolder = workFolder;
+			_loadJson(workFolder);
 		}
-		std::string kernelDir()
+		Info info() const
 		{
-			return _kernelFolder.string();
+			return _info;
 		}
 
 		// コピー禁止・ムーブ禁止

@@ -28,7 +28,7 @@ namespace MonjuTest
 			storage->writeCell(a, 1, 1);
 			storage->close();
 
-			monju::BayesianNodeStat stat("hoge", 2, 2, 2.f, 5.f);
+			monju::BayesianNodeStat stat("hoge", { 2, 2 }, 2.f, 5.f);
 			stat.create(R"(C:\dev\test)");
 			
 			monju::MatrixRm<int32_t> win(2, 1);
@@ -62,7 +62,7 @@ namespace MonjuTest
 			storage->writeCell(a, 1, 1);
 			storage->close();
 
-			monju::BayesianNodeStat stat("hoge", 2, 2, 2.f, 5.f);
+			monju::BayesianNodeStat stat("hoge", { 2, 2 }, 2.f, 5.f);
 			stat.create(R"(C:\dev\test)");
 
 			monju::MatrixRm<int32_t> win(2, 1);

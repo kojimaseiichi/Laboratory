@@ -39,17 +39,22 @@ namespace monju
 			for (int n = 0; n < _args.size(); n++)
 			{
 				const auto& r = _args.at(n);
-				clSetKernelArg(_clKernel->clKernel(), n, r.size, &r.argValue);
+				clSetKernelArg(_clKernel->clKernel(), n, r.size, &(r.argValue));
 			}
 			cl_event ev;
 			// ƒLƒ…[‚É’Ç‰Á
 			auto p = clDeviceContext.lock();
-			p->enqueueNDRangeKernel(
-				_clKernel,
-				globalWorkSize,
-				*pLocalWorkSize,
-				pEvent);
-			
+			if (pLocalWorkSize == nullptr)
+				p->enqueueNDRangeKernel(
+					_clKernel,
+					globalWorkSize,
+					pEvent);
+			else
+				p->enqueueNDRangeKernel(
+					_clKernel,
+					globalWorkSize,
+					*pLocalWorkSize,
+					pEvent);
 		}
 
 	public:
@@ -76,6 +81,11 @@ namespace monju
 			a.size = sizeof(cl_mem);
 			a.argValue.clMem = p->clMem();
 			_args.push_back(a);
+		}
+		void pushArgument(std::weak_ptr<ClMemory> clMemory)
+		{
+			auto p = clMemory.lock();
+			pushArgument(*p);
 		}
 		void clearArguments()
 		{

@@ -13,6 +13,7 @@
 #include "monju/BayesianNodeDevice.h"
 #include "monju/BayesianInterNodeCompute.h"
 #include "monju/BayesianNodeCompute.h"
+#include "monju/Environment.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -23,76 +24,67 @@ namespace MonjuTest
 	{
 		TEST_METHOD(Test1)
 		{
-			monju::MatrixRm<int> networkShape(3, 2);
-			networkShape <<
-				1, 256,	// 2 nodes, 4 units per node
-				8, 16,
-				8, 16;
+			std::vector<monju::UniformBasisShape> network{ { 1, 256}, {32, 32}, {32, 32} };
+			monju::Environment env(R"(C:\dev\test)");
 
 			// CPUの記憶域確保
-			monju::BayesianNode inputLayer("input-layer", networkShape(0, 0), networkShape(0, 1));
-			monju::BayesianNode layer1("layer1", networkShape(1, 0), networkShape(1, 1));
-			monju::BayesianNode layer2("layer2", networkShape(2, 0), networkShape(2, 1));
+			monju::BayesianNode inputLayer("input-layer", network[0]);
+			monju::BayesianNode layer1("layer1", network[1]);
+			monju::BayesianNode layer2("layer2", network[2]);
 			inputLayer.initRandom();
 			layer1.initRandom();
 			layer2.initRandom();
 
-			monju::BayesianEdge inputEdge("input-edge", networkShape(1, 0), networkShape(1, 1), networkShape(0, 0), networkShape(0, 1));
-			monju::BayesianEdge edge1("edge1", networkShape(2, 0), networkShape(2, 1), networkShape(1, 0), networkShape(1, 1));
+			monju::BayesianEdge inputEdge("input-edge", network[1], network[0]);
+			monju::BayesianEdge edge1("edge1", network[2], network[1]);
 			inputEdge.initRandom();
 			edge1.initRandom();
 
-			monju::GridCpt cpt1("cpt1", networkShape(1, 0), networkShape(1, 1), networkShape(0, 0), networkShape(0, 1));
-			monju::GridCpt cpt2("cpt2", networkShape(2, 0), networkShape(2, 1), networkShape(1, 0), networkShape(1, 1));
-			cpt1.initRandom();
-			cpt2.initRandom();
-
 			// 統計情報
-			monju::BayesianNodeStat nodeStat1("stat1", networkShape(1, 0), networkShape(1, 1), 5.0f, 10.f);
-			monju::BayesianNodeStat nodeStat2("stat2", networkShape(2, 0), networkShape(2, 1), 5.0f, 10.f);
+			monju::BayesianNodeStat nodeStat1("stat1", network[1], 5.0f, 10.f);
+			monju::BayesianNodeStat nodeStat2("stat2", network[2], 5.0f, 10.f);
 
 			try
 			{
-
-
 				// GPU使用準備
-				monju::PlatformContext ctx;
-				ctx.open(R"(C:\dev\test)");
-				auto& device = ctx.deviceContext().getDevice(0);
+				std::shared_ptr<monju::ClMachine> clMachine = std::make_shared<monju::ClMachine>(env.info().platformId);
 
+				// GPUの記憶域確保
+				monju::BayesianNodeDevice inputLayerDevice(clMachine, inputLayer);
+				monju::BayesianNodeDevice layerDevice1(clMachine, layer1);
+				monju::BayesianNodeDevice layerDevice2(clMachine, layer2);
+				monju::BayesianEdgeDevice inputEdgeDevice(clMachine, inputEdge);
+				monju::BayesianEdgeDevice edgeDevice1(clMachine, edge1);
+
+				// GPUの計算資源
+				monju::BayesianInterNodeCompute interNodeCmp1(network[1], network[0], env, clMachine);
+				monju::BayesianInterNodeCompute interNodeCmp2(network[2], network[1], env, clMachine);
+				monju::BayesianNodeCompute nodeCmp1(network[1], env, clMachine);
+				monju::BayesianNodeCompute nodeCmp2(network[2], env, clMachine);
+
+				// デバイス選択
+				auto deviceId = clMachine->deviceIds().at(0);
+				// GPUの割り当て
+				std::shared_ptr<monju::ClDeviceContext> dc = std::make_shared<monju::ClDeviceContext>(clMachine, deviceId);
+
+				// 非同期処理
+				monju::ClEventJoiner joiner;
+
+				// GPUメモリ転送
+				inputLayerDevice.clVariableSet().enqueueWriteAll(dc, nullptr);
+				layerDevice1.clVariableSet().enqueueWriteAll(dc, nullptr);
+				layerDevice2.clVariableSet().enqueueWriteAll(dc, nullptr);
+				inputEdgeDevice.clVariableSet().enqueueWriteAll(dc, nullptr);
+				edgeDevice1.clVariableSet().enqueueWriteAll(dc, nullptr);
+
+				for (int n = 0; n < 10000; n++)
 				{
-					// GPUの記憶域確保
-					monju::BayesianNodeDevice inputLayerDevice(device, inputLayer);
-					monju::BayesianNodeDevice layerDevice1(device, layer1);
-					monju::BayesianNodeDevice layerDevice2(device, layer2);
-					monju::BayesianEdgeDevice inputEdgeDevice(device, inputEdge, cpt1);
-					monju::BayesianEdgeDevice edgeDevice1(device, edge1, cpt2);
-
-					{
-						// GPUの計算資源
-						monju::BayesianInterNodeCompute interNodeCmp1(networkShape(1, 0), networkShape(0, 0), networkShape(1, 1), networkShape(0, 1), ctx);
-						monju::BayesianInterNodeCompute interNodeCmp2(networkShape(2, 0), networkShape(1, 0), networkShape(2, 1), networkShape(1, 1), ctx);
-						monju::BayesianNodeCompute nodeCmp1(networkShape(1, 0), networkShape(1, 1), ctx);
-						monju::BayesianNodeCompute nodeCmp2(networkShape(2, 0), networkShape(2, 1), ctx);
-
-						// 計算の実行
-						for (int j = 0; j < 10; j++)
-						{
-							for (int i = 0; i < 10; i++)
-							{
-								interNodeCmp1.both(layerDevice1, inputLayerDevice, inputEdgeDevice);
-								nodeCmp1.bel(layerDevice1);
-								interNodeCmp2.both(layerDevice2, layerDevice1, edgeDevice1);
-								nodeCmp2.bel(layerDevice2);
-
-								layerDevice1.mem().readBuffer(monju::VariableKind::WIN);
-								layerDevice2.mem().readBuffer(monju::VariableKind::WIN);
-
-							}
-						}
-					}
+					interNodeCmp1.both(dc, layerDevice1, inputLayerDevice, inputEdgeDevice, &joiner);
+					interNodeCmp2.both(dc, layerDevice2, layerDevice1, edgeDevice1, &joiner);
+					nodeCmp1.bel(dc, layerDevice1, &joiner);
+					nodeCmp2.bel(dc, layerDevice2, &joiner);
+					joiner.join();
 				}
-				ctx.close();
 			}
 			catch (...) {
 

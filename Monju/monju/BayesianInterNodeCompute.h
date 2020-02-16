@@ -4,12 +4,13 @@
 
 #include "MonjuTypes.h"
 #include <map>
+#include <filesystem>
 #include <boost/lexical_cast.hpp>
 #include "BayesianNodeDevice.h"
 #include "BayesianEdgeDevice.h"
 #include "util_file.h"
 #include "ClMachine.h"
-#include "ClKernel.h"
+#include "ClFunc.h"
 #include "Environment.h"
 
 namespace monju {
@@ -27,13 +28,9 @@ namespace monju {
 			_kKernelOobpDown1 = "oobp3_full_down_1_X${X}_Y${Y}_XU${XU}_YU${YU}",
 			_kKernelOobpDown2 = "oobp3_full_down_2_X${X}_Y${Y}_XU${XU}_YU${YU}";
 
-		const int
-			_kNodesX,
-			_kNodesY,
-			_kUnitsPerNodeX,
-			_kUnitsPerNodeY;
-
-
+		UniformBasisShape
+			shapeX,
+			shapeY;
 
 		std::shared_ptr<ClMachine> _clMachine;
 
@@ -44,150 +41,181 @@ namespace monju {
 			_kernelOobpDown2;
 
 	public:
-		BayesianInterNodeCompute(int nodesX, int nodesY, int unitsPerNodeX, int unitsPerNodeY, std::weak_ptr<ClMachine> clMachine) :
-			_kNodesX(nodesX),
-			_kNodesY(nodesY),
-			_kUnitsPerNodeX(unitsPerNodeX),
-			_kUnitsPerNodeY(unitsPerNodeY)
+		BayesianInterNodeCompute(
+			UniformBasisShape shapeX,
+			UniformBasisShape shapeY,
+			Environment& env,
+			std::weak_ptr<ClMachine> clMachine)
 		{
+			shapeX = shapeX;
+			shapeY = shapeY;
 			_clMachine = clMachine.lock();
 
 			std::map<std::string, std::string> params_map;
-			params_map["X"] = boost::lexical_cast<std::string>(_kNodesX);
-			params_map["Y"] = boost::lexical_cast<std::string>(_kNodesY);
-			params_map["XU"] = boost::lexical_cast<std::string>(_kUnitsPerNodeX);
-			params_map["YU"] = boost::lexical_cast<std::string>(_kUnitsPerNodeY);
+			params_map["X"] = boost::lexical_cast<std::string>(shapeX.nodes);
+			params_map["Y"] = boost::lexical_cast<std::string>(shapeY.nodes);
+			params_map["XU"] = boost::lexical_cast<std::string>(shapeX.units);
+			params_map["YU"] = boost::lexical_cast<std::string>(shapeY.units);
 
-			_kernelOobpUp1 = std::make_shared<ClKernel>(_clMachine, util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp1));
-
-			_pgmOobpUp1.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp1), params_map);
-			_pgmOobpUp2.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpUp2), params_map);
-			_pgmOobpDown1.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpDown1), params_map);
-			_pgmOobpDown2.create(_pPlatformContext->deviceContext(), _pPlatformContext->deviceContext().getAllDevices(), util_file::combine(_pPlatformContext->kernelDir(), _kSrcOobpDown2), params_map);
-
-			_kernelOobpUp1.create(_pgmOobpUp1, _kKernelOobpUp1, params_map);
-			_kernelOobpUp2.create(_pgmOobpUp2, _kKernelOobpUp2, params_map);
-			_kernelOobpDown1.create(_pgmOobpDown1, _kKernelOobpDown1, params_map);
-			_kernelOobpDown2.create(_pgmOobpDown2, _kKernelOobpDown2, params_map);
+			std::filesystem::path kernelPathBase = env.info().kernelFolder;
+			_kernelOobpUp1 = std::make_shared<ClKernel>(
+				_clMachine,
+				kernelPathBase / _kSrcOobpUp1,
+				_kKernelOobpUp1,
+				params_map);
+			_kernelOobpUp2 = std::make_shared<ClKernel>(
+				_clMachine,
+				kernelPathBase / _kSrcOobpUp2,
+				_kKernelOobpUp2,
+				params_map);
+			_kernelOobpDown1 = std::make_shared<ClKernel>(
+				_clMachine,
+				kernelPathBase / _kSrcOobpDown1,
+				_kKernelOobpDown1,
+				params_map);
+			_kernelOobpDown2 = std::make_shared<ClKernel>(
+				_clMachine,
+				kernelPathBase / _kSrcOobpDown2,
+				_kKernelOobpDown2,
+				params_map);
 		}
 		~BayesianInterNodeCompute()
 		{
-			_release();
 		}
 
-		void up(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
+		void up(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
 		{
-			if (nodeX.device().getClDeviceId() != nodeY.device().getClDeviceId() ||
-				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
-				throw MonjuException("異なるデバイス");
-
-			_up(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
+			_up(clDeviceContext, nodeX, nodeY, edge, pJoin);
 		}
 
-		void down(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
+		void down(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
 		{
-			if (nodeX.device().getClDeviceId() != nodeY.device().getClDeviceId() ||
-				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
-				throw MonjuException("異なるデバイス");
-
-			_down(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
+			_down(clDeviceContext, nodeX, nodeY, edge, pJoin);
 		}
 
-		void both(BayesianNodeDevice& nodeX, BayesianNodeDevice& nodeY, BayesianEdgeDevice& edge)
+		void both(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
 		{
-			if (nodeX.device().getClDeviceId() != nodeY.device().getClDeviceId() ||
-				nodeX.device().getClDeviceId() != edge.device().getClDeviceId())
-				throw MonjuException("異なるデバイス");
-
-			_up(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
-			_down(nodeX.device(), nodeX.mem(), nodeY.mem(), edge.mem());
+			_up(clDeviceContext, nodeX, nodeY, edge, pJoin);
+			_down(clDeviceContext, nodeX, nodeY, edge, pJoin);
 		}
 
 	private:
 
-		void _up(Device& device, DeviceMemory& memx, DeviceMemory& memy, DeviceMemory& memw)
+		void _up(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
 		{
-			DeviceKernelArguments argUp1;
-			argUp1.push(memy, monju::VariableKind::lambda, false);
-			argUp1.push(memy, monju::VariableKind::pi, false);
-			argUp1.push(memw, monju::VariableKind::W, false);
-			argUp1.push(memw, monju::VariableKind::kappa, false);
-			argUp1.push(memw, monju::VariableKind::lambda, true);
-			argUp1.stackArguments(_kernelOobpUp1);
-
-			std::vector<size_t> global_work_size1;
-			global_work_size1.push_back(_kNodesY);
-			global_work_size1.push_back(_kNodesX);
-			std::vector<size_t> local_work_size1;
-			local_work_size1.push_back(1);
-			local_work_size1.push_back(_kNodesX);
-
-			// (1) λ_Y計算
-			_kernelOobpUp1.compute(device, global_work_size1, local_work_size1);
-			memw.requireRead(argUp1.outputParams());
-
-			monju::DeviceKernelArguments argUp2;
-			argUp2.push(memw, monju::VariableKind::lambda, false);
-			argUp2.push(memx, monju::VariableKind::R, false);
-			argUp2.push(memx, monju::VariableKind::lambda, true);
-			argUp2.stackArguments(_kernelOobpUp2);
-
-			std::vector<size_t> global_work_size2;
-			global_work_size2.push_back(1);
-			global_work_size2.push_back(_kNodesX);
-
-			// (2) λ計算
-			_kernelOobpUp2.compute(device, global_work_size2);
-			memx.requireRead(argUp2.outputParams());
+			_upOobp1(clDeviceContext, nodeX, nodeY, edge, pJoin);
+			_upOobp2(clDeviceContext, nodeX, nodeY, edge, pJoin);
 		}
 
-		void _down(Device& device, DeviceMemory& memx, DeviceMemory& memy, DeviceMemory& memw)
+		void _upOobp1(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
 		{
-			monju::DeviceKernelArguments argDown1;
-			argDown1.push(memx, monju::VariableKind::rho, false);
-			argDown1.push(memw, monju::VariableKind::W, false);
-			argDown1.push(memw, monju::VariableKind::lambda, false);
-			argDown1.push(memw, monju::VariableKind::kappa, true);
-			argDown1.stackArguments(_kernelOobpDown1);
+			ClFunc func1(_clMachine, _kernelOobpUp1);
 
-			std::vector<size_t> global_work_size1;
-			global_work_size1.push_back(_kNodesY);
-			global_work_size1.push_back(_kNodesX);
-			std::vector<size_t> local_work_size1;
-			local_work_size1.push_back(_kNodesY);
-			local_work_size1.push_back(1);
+			func1.pushArgument(nodeY.clVariableSet().getClMemory(VariableKind::lambda));
+			func1.pushArgument(nodeY.clVariableSet().getClMemory(VariableKind::pi));
+			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::W));
+			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::kappa));
+			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::lambda));
 
-			// κ_X
-			_kernelOobpDown1.compute(device, global_work_size1, local_work_size1);
-			memw.requireRead(argDown1.outputParams());
+			std::vector<size_t> global_work_size1 = { shapeY.nodes, shapeX.nodes };
+			std::vector<size_t> local_work_size1 = { 1, shapeX.nodes };
 
-			monju::DeviceKernelArguments argDown2;
-			argDown2.push(memw, monju::VariableKind::kappa, false);
-			argDown2.push(memy, monju::VariableKind::pi, true);
-			argDown2.stackArguments(_kernelOobpDown2);
-
-			std::vector<size_t> global_work_size2;
-			global_work_size2.push_back(_kNodesY);
-			global_work_size2.push_back(1);
-
-			// π
-			_kernelOobpDown2.compute(device, global_work_size2);
-			memy.requireRead(argDown2.outputParams());
+			func1.execute(clDeviceContext, global_work_size1, pJoin);
+			edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
 		}
 
-		void _release()
+		void _upOobp2(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
 		{
-			_kernelOobpUp1.release();
-			_kernelOobpUp2.release();
-			_kernelOobpDown1.release();
-			_kernelOobpDown2.release();
+			ClFunc func2(_clMachine, _kernelOobpUp2);
 
-			_pgmOobpUp1.release();
-			_pgmOobpUp2.release();
-			_pgmOobpDown1.release();
-			_pgmOobpDown2.release();
+			func2.pushArgument(edge.clVariableSet().getClMemory(VariableKind::lambda));
+			func2.pushArgument(nodeX.clVariableSet().getClMemory(VariableKind::R));
+			func2.pushArgument(nodeX.clVariableSet().getClMemory(VariableKind::lambda));
 
+			std::vector<size_t> global_work_size2 = { 1, shapeX.nodes };
+
+			func2.execute(clDeviceContext, global_work_size2, pJoin);
+			nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
 		}
+
+		void _down(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
+		{
+			_downOobp1(clDeviceContext, nodeX, nodeY, edge, pJoin);
+			_downOobp2(clDeviceContext, nodeX, nodeY, edge, pJoin);
+		}
+		void _downOobp1(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
+		{
+			ClFunc func1(_clMachine, _kernelOobpDown1);
+
+			func1.pushArgument(nodeX.clVariableSet().getClMemory(VariableKind::rho));
+			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::W));
+			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::lambda));
+			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::kappa));
+
+			std::vector<size_t> global_work_size1 = { shapeY.nodes , shapeX.nodes };
+			std::vector<size_t> local_work_size1 = { shapeY.nodes, 1 };
+
+			func1.execute(clDeviceContext, global_work_size1, pJoin);
+			edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::kappa);
+		}
+		void _downOobp2(
+			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			BayesianNodeDevice& nodeX,
+			BayesianNodeDevice& nodeY,
+			BayesianEdgeDevice& edge,
+			ClEventJoiner* pJoin)
+		{
+			ClFunc func2(_clMachine, _kernelOobpDown2);
+
+			func2.pushArgument(edge.clVariableSet().getClMemory(VariableKind::kappa));
+			func2.pushArgument(nodeY.clVariableSet().getClMemory(VariableKind::pi));
+
+			std::vector<size_t> global_work_size2 = { shapeY.nodes, 1 };
+
+			func2.execute(clDeviceContext, global_work_size2, pJoin);
+			nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::pi);
+		}
+
 
 		// コピー禁止・ムーブ禁止
 	public:
