@@ -44,7 +44,6 @@ namespace MonjuTest
 			monju::BayesianNodeStat nodeStat1("stat1", network[1], 5.0f, 10.f);
 			monju::BayesianNodeStat nodeStat2("stat2", network[2], 5.0f, 10.f);
 
-			try
 			{
 				// GPUégópèÄîı
 				std::shared_ptr<monju::ClMachine> clMachine = std::make_shared<monju::ClMachine>(env.info().platformId);
@@ -79,16 +78,13 @@ namespace MonjuTest
 
 				for (int n = 0; n < 10000; n++)
 				{
-					interNodeCmp1.both(dc, layerDevice1, inputLayerDevice, inputEdgeDevice, &joiner);
-					interNodeCmp2.both(dc, layerDevice2, layerDevice1, edgeDevice1, &joiner);
-					nodeCmp1.bel(dc, layerDevice1, &joiner);
-					nodeCmp2.bel(dc, layerDevice2, &joiner);
-					joiner.join();
+					interNodeCmp1.both(dc, layerDevice1, inputLayerDevice, inputEdgeDevice, nullptr);
+					interNodeCmp2.both(dc, layerDevice2, layerDevice1, edgeDevice1, nullptr);
+					nodeCmp1.bel(dc, layerDevice1, nullptr);
+					nodeCmp2.bel(dc, layerDevice2, nullptr);
 				}
-			}
-			catch (...) {
-
 			}
 		}
 	};
 }
+ 

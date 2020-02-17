@@ -29,8 +29,8 @@ namespace monju {
 			_kKernelOobpDown2 = "oobp3_full_down_2_X${X}_Y${Y}_XU${XU}_YU${YU}";
 
 		UniformBasisShape
-			shapeX,
-			shapeY;
+			_shapeX,
+			_shapeY;
 
 		std::shared_ptr<ClMachine> _clMachine;
 
@@ -47,8 +47,8 @@ namespace monju {
 			Environment& env,
 			std::weak_ptr<ClMachine> clMachine)
 		{
-			shapeX = shapeX;
-			shapeY = shapeY;
+			_shapeX = shapeX;
+			_shapeY = shapeY;
 			_clMachine = clMachine.lock();
 
 			std::map<std::string, std::string> params_map;
@@ -91,6 +91,8 @@ namespace monju {
 			ClEventJoiner* pJoin)
 		{
 			_up(clDeviceContext, nodeX, nodeY, edge, pJoin);
+			auto p = clDeviceContext.lock();
+			p->flush();
 		}
 
 		void down(
@@ -101,6 +103,8 @@ namespace monju {
 			ClEventJoiner* pJoin)
 		{
 			_down(clDeviceContext, nodeX, nodeY, edge, pJoin);
+			auto p = clDeviceContext.lock();
+			p->flush();
 		}
 
 		void both(
@@ -112,6 +116,8 @@ namespace monju {
 		{
 			_up(clDeviceContext, nodeX, nodeY, edge, pJoin);
 			_down(clDeviceContext, nodeX, nodeY, edge, pJoin);
+			auto p = clDeviceContext.lock();
+			p->flush();
 		}
 
 	private:
@@ -142,11 +148,11 @@ namespace monju {
 			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::kappa));
 			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::lambda));
 
-			std::vector<size_t> global_work_size1 = { shapeY.nodes, shapeX.nodes };
-			std::vector<size_t> local_work_size1 = { 1, shapeX.nodes };
+			std::vector<size_t> global_work_size1 = { _shapeY.nodes, _shapeX.nodes };
+			std::vector<size_t> local_work_size1 = { 1, _shapeX.nodes };
 
-			func1.execute(clDeviceContext, global_work_size1, pJoin);
-			edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
+			func1.execute(clDeviceContext, global_work_size1, local_work_size1, pJoin);
+			//edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
 		}
 
 		void _upOobp2(
@@ -162,10 +168,10 @@ namespace monju {
 			func2.pushArgument(nodeX.clVariableSet().getClMemory(VariableKind::R));
 			func2.pushArgument(nodeX.clVariableSet().getClMemory(VariableKind::lambda));
 
-			std::vector<size_t> global_work_size2 = { 1, shapeX.nodes };
+			std::vector<size_t> global_work_size2 = { 1, _shapeX.nodes };
 
 			func2.execute(clDeviceContext, global_work_size2, pJoin);
-			nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
+			//nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
 		}
 
 		void _down(
@@ -192,11 +198,11 @@ namespace monju {
 			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::lambda));
 			func1.pushArgument(edge.clVariableSet().getClMemory(VariableKind::kappa));
 
-			std::vector<size_t> global_work_size1 = { shapeY.nodes , shapeX.nodes };
-			std::vector<size_t> local_work_size1 = { shapeY.nodes, 1 };
+			std::vector<size_t> global_work_size1 = { _shapeY.nodes , _shapeX.nodes };
+			std::vector<size_t> local_work_size1 = { _shapeY.nodes, 1 };
 
-			func1.execute(clDeviceContext, global_work_size1, pJoin);
-			edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::kappa);
+			func1.execute(clDeviceContext, global_work_size1, local_work_size1, pJoin);
+			//edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::kappa);
 		}
 		void _downOobp2(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
@@ -210,10 +216,10 @@ namespace monju {
 			func2.pushArgument(edge.clVariableSet().getClMemory(VariableKind::kappa));
 			func2.pushArgument(nodeY.clVariableSet().getClMemory(VariableKind::pi));
 
-			std::vector<size_t> global_work_size2 = { shapeY.nodes, 1 };
+			std::vector<size_t> global_work_size2 = { _shapeY.nodes, 1 };
 
 			func2.execute(clDeviceContext, global_work_size2, pJoin);
-			nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::pi);
+			//nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::pi);
 		}
 
 

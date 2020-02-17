@@ -39,7 +39,9 @@ namespace monju
 			for (int n = 0; n < _args.size(); n++)
 			{
 				const auto& r = _args.at(n);
-				clSetKernelArg(_clKernel->clKernel(), n, r.size, &(r.argValue));
+				cl_int error = clSetKernelArg(_clKernel->clKernel(), n, r.size, &(r.argValue));
+				if (error != CL_SUCCESS)
+					throw OpenClException(error, "clSetKernelArg");
 			}
 			cl_event ev;
 			// ÉLÉÖÅ[Ç…í«â¡

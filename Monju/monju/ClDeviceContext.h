@@ -26,6 +26,8 @@ namespace monju
 		}
 		void _releaseCommandQueue()
 		{
+			_commandQueue->flush();
+			_commandQueue->finish();
 			_commandQueue.reset();
 		}
 		void _enqueueReadBuffer(std::weak_ptr<_ClBuffer> clBuffer, void* pData, ClEventJoiner* pEvent)
@@ -42,7 +44,7 @@ namespace monju
 				pData,
 				0,
 				nullptr,
-				&ev);
+				pEvent == nullptr ? nullptr : &ev);
 			if (errno != CL_SUCCESS)
 				throw OpenClException(error, "clEnqueueReadBuffer");
 			if (pEvent != nullptr)
@@ -52,7 +54,7 @@ namespace monju
 		{
 			auto pBuff = clBuffer.lock();
 
-			cl_event ev;
+			cl_event ev = nullptr;;
 			cl_int error = clEnqueueWriteBuffer(
 				_commandQueue->clCommandQueue(),
 				pBuff->clMem(),
@@ -62,7 +64,7 @@ namespace monju
 				pData,
 				0,
 				nullptr,
-				&ev);
+				pEvent == nullptr ? nullptr : &ev);
 			if (errno != CL_SUCCESS)
 				throw OpenClException(error, "clEnqueueWriteBuffer");
 			if (pEvent != nullptr)
@@ -75,7 +77,7 @@ namespace monju
 			ClEventJoiner* pEvent)
 		{
 			auto pKernel = kernel.lock();
-			cl_event ev;
+			cl_event ev = nullptr;
 			cl_int error = clEnqueueNDRangeKernel(
 				_commandQueue->clCommandQueue(),
 				pKernel->clKernel(),
@@ -85,7 +87,7 @@ namespace monju
 				pLocalWorkSize != nullptr ? pLocalWorkSize->data() : nullptr,
 				0,
 				nullptr,
-				&ev);
+				pEvent == nullptr ? nullptr : &ev);
 			if (error != CL_SUCCESS)
 				throw OpenClException(error, "clEnqueueNDRangeKernel");
 			if (pEvent != nullptr)
@@ -108,21 +110,25 @@ namespace monju
 		{
 			auto mem = clMemory.lock();
 			_enqueueReadBuffer(mem->clBuffer(), pData, pEvent);
+			_commandQueue->flush();
 		}
 		void readBuffer(std::weak_ptr<ClMemory> clMemory, void* pData)
 		{
 			auto mem = clMemory.lock();
 			_enqueueReadBuffer(mem->clBuffer(), pData, nullptr);
+			_commandQueue->flush();
 		}
 		void enqueueWriteBuffer(std::weak_ptr<ClMemory> clMemory, void* pData, ClEventJoiner* pEvent)
 		{
 			auto mem = clMemory.lock();
 			_enqueueWriteBuffer(mem->clBuffer(), pData, pEvent);
+			_commandQueue->flush();
 		}
 		void writeBuffer(std::weak_ptr<ClMemory> clMemory, void* pData)
 		{
 			auto mem = clMemory.lock();
 			_enqueueWriteBuffer(mem->clBuffer(), pData, nullptr);
+			_commandQueue->flush();
 		}
 		void enqueueNDRangeKernel(
 			std::weak_ptr<ClKernel> kernel,
@@ -131,6 +137,7 @@ namespace monju
 			ClEventJoiner* pEvent)
 		{
 			_enqueueNDRangeKernel(kernel, globalWorkSize, &localWorkSize, pEvent);
+			_commandQueue->flush();
 		}
 		void enqueueNDRangeKernel(
 			std::weak_ptr<ClKernel> kernel,
@@ -138,8 +145,16 @@ namespace monju
 			ClEventJoiner* pEvent)
 		{
 			_enqueueNDRangeKernel(kernel, globalWorkSize, nullptr, pEvent);
+			_commandQueue->flush();
 		}
-
+		void flush()
+		{
+			_commandQueue->flush();
+		}
+		void finish()
+		{
+			_commandQueue->finish();
+		}
 		// コピー禁止・ムーブ禁止
 	public:
 		ClDeviceContext(const ClDeviceContext&) = delete;

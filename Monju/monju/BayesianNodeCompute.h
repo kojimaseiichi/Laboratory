@@ -52,6 +52,8 @@ namespace monju {
 			ClEventJoiner* pJoin)
 		{
 			_bel(clDeviceContext, node, pJoin);
+			auto p = clDeviceContext.lock();
+			p->flush();
 		}
 
 	private:
@@ -65,14 +67,13 @@ namespace monju {
 			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::pi));
 			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::rho));
 			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::BEL));
-			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::WIN));
 
 			std::vector<size_t> global_work_size = { shape.nodes };
 
 			func.execute(clDeviceContext, global_work_size, pJoin);
-			node.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::rho);
-			node.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::BEL);
-			node.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::WIN);
+			//node.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::rho);
+			//node.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::BEL);
+			//node.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::WIN);
 		}
 
 		// コピー禁止・ムーブ禁止
