@@ -17,24 +17,24 @@ monju::BayesianNodeStat::~BayesianNodeStat()
 	close();
 }
 
-std::future<void> monju::BayesianNodeStat::accumulate(MatrixRm<int32_t>& win)
+std::future<void> monju::BayesianNodeStat::accumulate(std::weak_ptr<MatrixRm<int32_t>> win)
 {
-	MatrixRm<int32_t>* p = new MatrixRm<int32_t>(win);
-	const auto task = [=](std::weak_ptr<TStorage> sto, MatrixRm<int32_t>* pr) -> void
+	auto ptrWin = win.lock();
+	auto ptrWinCp = std::make_shared<MatrixRm<int32_t>>(*ptrWin);
+	const auto task = [=](std::weak_ptr<TStorage> sto, std::shared_ptr<MatrixRm<int32_t>> w) -> void
 	{
-		std::unique_ptr<MatrixRm<int32_t>> p(pr);
 		if (auto pSto = sto.lock())
 		{
 			// LOCK -----------------------------
 			WriteGuard g(_synch);
-			for (int u = 0; u < p->rows(); u++)
+			for (int u = 0; u < w->rows(); u++)
 			{
 				for (int v = 0; v <= u; v++)
-					pSto->addElement(u, v, (*p)(u, 0), (*p)(v, 0), 1);
+					pSto->addElement(u, v, (*w)(u, 0), (*w)(v, 0), 1);
 			}
 		}
 	};
-	return _conc.threadPool().submit(task, _storage, p);
+	return _conc.threadPool().submit(task, _storage, std::forward<std::shared_ptr<MatrixRm<int32_t>>>(ptrWinCp));
 }
 
 std::future<void> monju::BayesianNodeStat::calcPenalty()

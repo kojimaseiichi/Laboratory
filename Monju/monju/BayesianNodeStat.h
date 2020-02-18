@@ -46,7 +46,7 @@ namespace monju {
 
 		);
 		~BayesianNodeStat();
-		std::future<void> accumulate(MatrixRm<int32_t>& win);
+		std::future<void> accumulate(std::weak_ptr<MatrixRm<int32_t>> win);
 		std::future<void> calcPenalty();
 		void create(std::string dir);
 		void close();

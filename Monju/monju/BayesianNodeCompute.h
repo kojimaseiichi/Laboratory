@@ -19,7 +19,7 @@ namespace monju {
 			_kSrcOobpBel = "oobp\\oobp3_bel.cl",
 			_kKernelOobpBel = "oobp3_bel_X${X}_XU${XU}";
 
-		UniformBasisShape shape;
+		UniformBasisShape _shape;
 
 		std::shared_ptr<ClMachine> _clMachine;
 		std::shared_ptr<ClKernel> _clKernel;
@@ -31,6 +31,7 @@ namespace monju {
 			std::weak_ptr<ClMachine> clMachine)
 		{
 			_clMachine = clMachine.lock();
+			_shape = shape;
 
 			std::map<std::string, std::string> params_map;
 			params_map["X"] = boost::lexical_cast<std::string>(shape.nodes);
@@ -67,8 +68,9 @@ namespace monju {
 			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::pi));
 			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::rho));
 			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::BEL));
+			func.pushArgument(node.clVariableSet().getClMemory(VariableKind::WIN));
 
-			std::vector<size_t> global_work_size = { shape.nodes };
+			std::vector<size_t> global_work_size = { _shape.nodes };
 
 			func.execute(clDeviceContext, global_work_size, pJoin);
 			//node.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::rho);

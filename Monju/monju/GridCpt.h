@@ -73,8 +73,10 @@ namespace monju {
 			{
 				for (int row = 0; row < _shapeY.nodes; row++)
 				{
-					auto map = Eigen::Map<MatrixCm<float_t>>(_cpt->col(col).data() + row * static_cast<uintptr_t>(_kCellSize), _shapeY.nodes, _shapeX.units);
-					map.array().rowwise() /= map.colwise().sum().array();
+					auto mm = _cpt->block(row * _kCellSize, col, _kCellSize, 1).reshaped(_shapeY.units, _shapeX.units);
+					mm.array().rowwise() /= mm.colwise().sum().array();
+					//auto map = Eigen::Map<MatrixCm<float_t>>(_cpt->col(col).data() + row * static_cast<uintptr_t>(_kCellSize), _shapeY.nodes, _shapeX.units);
+					//map.array().rowwise() /= map.colwise().sum().array();
 				}
 			}
 			// delta CPT

@@ -34,7 +34,7 @@ namespace monju
 		{
 			auto pBuff = clBuffer.lock();
 
-			cl_event ev;
+			cl_event ev = nullptr;
 			cl_int error = clEnqueueReadBuffer(
 				_commandQueue->clCommandQueue(),
 				pBuff->clMem(),
