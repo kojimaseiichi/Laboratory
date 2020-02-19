@@ -86,6 +86,14 @@ namespace monju {
 				matrix
 			);
 		}
+
+		template <typename Matrix>
+		void copy(std::weak_ptr<Matrix> src, std::weak_ptr<Matrix> dest)
+		{
+			auto p1 = src.lock();
+			auto p2 = dest.lock();
+			*p2 = *p1;
+		}
 	}
 }
 

@@ -38,16 +38,6 @@ bool monju::PenaltyCalcTask::calcPenalty(std::weak_ptr<MatrixRm<float_t>> winRat
 
 	// ペナルティを計算
 	_calcExponentialPenalty(mpe_count, winRateRestriction, lateralInhibition, penalty);
-	//{
-	//	auto
-	//		win = winRateRestriction.lock(),
-	//		lat = lateralInhibition.lock(),
-	//		pe = penalty.lock();
-	//	if (win != nullptr && lat != nullptr && pe != nullptr)
-	//		pe->array() = (-(win->array() * kCoeWinPenalty + lat->array() * kCoeLatPenalty) / (mpe_count.cast<float_t>().array() + 1.f)).exp();
-	//	else
-	//		return false;
-	//}	
 
 	return true;
 }

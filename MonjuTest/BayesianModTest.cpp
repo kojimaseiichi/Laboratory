@@ -26,7 +26,7 @@ namespace MonjuTest
 	{
 		TEST_METHOD(Test1)
 		{
-			std::vector<monju::UniformBasisShape> network{ { 64, 16}, {32, 32}, {32, 32} };
+			std::vector<monju::UniformBasisShape> network{ { 256, 16}, {16, 16}, {16, 16} };
 			monju::Environment env(R"(C:\dev\test)");
 
 			// CPU‚Ì‹L‰¯ˆæŠm•Û
@@ -80,7 +80,7 @@ namespace MonjuTest
 				edgeDevice1.clVariableSet().enqueueWriteAll(dc, &joiner);
 
 				joiner.join();
-				for (int n = 0; n < 1000; n++)
+				for (int n = 0; n < 100000; n++)
 				{
 					interNodeCmp1.both(dc, layerDevice1, inputLayerDevice, inputEdgeDevice, &joiner);
 					interNodeCmp2.both(dc, layerDevice2, layerDevice1, edgeDevice1, &joiner);
@@ -107,8 +107,14 @@ namespace MonjuTest
 						auto f2 = nodeStat2.calcPenalty();
 						f1.wait();
 						f2.wait();
+						
+						monju::util_eigen::copy(nodeStat1.penalty(), layer1.r());
+						monju::util_eigen::copy(nodeStat2.penalty(), layer2.r());
 
+						layerDevice1.clVariableSet().enqueueWrite(dc, &joiner, monju::VariableKind::R);
+						layerDevice2.clVariableSet().enqueueWrite(dc, &joiner, monju::VariableKind::R);
 
+						joiner.join();
 					}
 				}
 			}

@@ -10,6 +10,8 @@ monju::BayesianNodeStat::BayesianNodeStat(std::string id, UniformBasisShape shap
 	_penalty = std::make_shared<MatrixRm<float_t>>(shape.nodes, shape.units);
 	_coeWinPenalty = coeWinPenalty;
 	_coeLatPenalty = coeLatPenalty;
+
+	_conc.create();
 }
 
 monju::BayesianNodeStat::~BayesianNodeStat()

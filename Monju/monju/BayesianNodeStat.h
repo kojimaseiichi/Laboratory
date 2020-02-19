@@ -33,9 +33,9 @@ namespace monju {
 		ConcurrencyContext _conc;
 
 	public:
-		MatrixRm<float_t>& win() const { return *_win; }
-		MatrixRm<float_t>& lat() const { return *_lat; }
-		MatrixRm<float_t>& penalty() const { return *_penalty; }
+		std::weak_ptr<MatrixRm<float_t>> win() const { return _win; }
+		std::weak_ptr<MatrixRm<float_t>> lat() const { return _lat; }
+		std::weak_ptr<MatrixRm<float_t>> penalty() const { return _penalty; }
 
 	public:
 		BayesianNodeStat(
