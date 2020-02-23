@@ -75,6 +75,16 @@ namespace monju {
 				(*_win)(nRow, 0) = static_cast<int32_t>(maxarg);
 			}
 		}
+		bool containsNan()
+		{
+			bool a = util_eigen::contains_nan<MatrixRm<float_t>>(_lambda);
+			bool b = util_eigen::contains_nan<MatrixRm<float_t>>(_pi);
+			bool c = util_eigen::contains_nan<MatrixRm<float_t>>(_rho);
+			bool d = util_eigen::contains_nan<MatrixRm<float_t>>(_r);
+			bool e = util_eigen::contains_nan<MatrixRm<float_t>>(_bel);
+			bool f = util_eigen::contains_nan<MatrixRm<int32_t>>(_win);
+			return a || b || c || d || e || f;
+		}
 	private:
 		void _setRandomProb(std::shared_ptr<MatrixRm<float_t>> m);
 

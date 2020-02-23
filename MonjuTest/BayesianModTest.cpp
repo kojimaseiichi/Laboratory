@@ -9,7 +9,7 @@
 #include "monju/BayesianEdgeStat.h"
 #include "monju/BayesianNode.h"
 #include "monju//BayesianEdge.h"
-#include "monju/GridCpt.h"
+#include "monju/FullConnectedGridCpt.h"
 #include "monju/BayesianEdgeDevice.h"
 #include "monju/BayesianNodeDevice.h"
 #include "monju/BayesianInterNodeCompute.h"
@@ -24,9 +24,82 @@ namespace MonjuTest
 {
 	TEST_CLASS(BayesianModTest)
 	{
+		TEST_METHOD(Test2)
+		{
+			std::vector<monju::UniformBasisShape> network{ {8, 8}, {8, 8} };
+			monju::Environment env(R"(C:\dev\test)");
+
+			// CPUの記憶域確保
+			monju::BayesianNode layer1("layer1", network[0]);
+			monju::BayesianNode layer2("layer2", network[1]);
+			layer1.initRandom();
+			layer2.initRandom();
+
+			monju::BayesianEdge edge1("edge1", network[1], network[0], 4.0f, 4.0f);
+			edge1.initRandom();
+
+			// 統計情報
+			monju::BayesianNodeStat nodeStat1("stat1", network[0], 5.0f, 10.f);
+			monju::BayesianNodeStat nodeStat2("stat2", network[1], 5.0f, 10.f);
+
+			{
+				// GPU使用準備
+				std::shared_ptr<monju::ClMachine> clMachine = std::make_shared<monju::ClMachine>(env.info().platformId);
+
+				// GPUの記憶域確保
+				monju::BayesianNodeDevice layerDevice1(clMachine, layer1);
+				monju::BayesianNodeDevice layerDevice2(clMachine, layer2);
+				monju::BayesianEdgeDevice edgeDevice1(clMachine, edge1);
+
+				// GPUの計算資源
+				monju::BayesianInterNodeCompute interNodeCmp1(network[1], network[0], env, clMachine);
+				monju::BayesianNodeCompute nodeCmp1(network[0], env, clMachine);
+				monju::BayesianNodeCompute nodeCmp2(network[1], env, clMachine);
+
+				// デバイス選択
+				auto deviceId = clMachine->deviceIds().at(0);
+				// GPUの割り当て
+				std::shared_ptr<monju::ClDeviceContext> dc = std::make_shared<monju::ClDeviceContext>(clMachine, deviceId);
+
+				// 非同期処理
+				monju::ClEventJoiner joiner;
+
+				// GPUメモリ転送
+				layerDevice1.clVariableSet().enqueueWriteAll(dc, &joiner);
+				layerDevice2.clVariableSet().enqueueWriteAll(dc, &joiner);
+				edgeDevice1.clVariableSet().enqueueWriteAll(dc, &joiner);
+
+				joiner.join();
+				for (int n = 0; n < 100; n++)
+				{
+					interNodeCmp1.both(dc, layerDevice2, layerDevice1, edgeDevice1, &joiner);
+					edgeDevice1.clVariableSet().enqueueReadAll(dc, &joiner);
+					nodeCmp1.bel(dc, layerDevice1, &joiner);
+					layerDevice1.clVariableSet().enqueueReadAll(dc, &joiner);
+					nodeCmp2.bel(dc, layerDevice2, &joiner);
+					layerDevice2.clVariableSet().enqueueReadAll(dc, &joiner);
+
+					layerDevice1.clVariableSet().enqueueReadAll(dc, &joiner);
+					layerDevice2.clVariableSet().enqueueReadAll(dc, &joiner);
+					edgeDevice1.clVariableSet().enqueueReadAll(dc, &joiner);
+
+					joiner.join();
+
+					auto win1 = layer1.win();
+					auto win2 = layer2.win();
+					auto future1 = nodeStat1.accumulate(win1);
+					auto future2 = nodeStat2.accumulate(win2);
+
+					//edge1.cpt().train(layer2.win(), layer1.win(), edge1.lambda(), 0.1);	// 学習
+				}
+				Assert::IsFalse(edge1.containsNan(), L"(edge1)");
+				Assert::IsFalse(layer1.containsNan(), L"(layer1)");
+				Assert::IsFalse(layer2.containsNan(), L"(layer2)");
+			}
+		}
 		TEST_METHOD(Test1)
 		{
-			std::vector<monju::UniformBasisShape> network{ { 256, 16}, {16, 16}, {16, 16} };
+			std::vector<monju::UniformBasisShape> network{ { 32, 16}, {32, 32}, {16, 32} };
 			monju::Environment env(R"(C:\dev\test)");
 
 			// CPUの記憶域確保
@@ -37,8 +110,8 @@ namespace MonjuTest
 			layer1.initRandom();
 			layer2.initRandom();
 
-			monju::BayesianEdge inputEdge("input-edge", network[1], network[0]);
-			monju::BayesianEdge edge1("edge1", network[2], network[1]);
+			monju::BayesianEdge inputEdge("input-edge", network[1], network[0], 4.0f, 4.0f);
+			monju::BayesianEdge edge1("edge1", network[2], network[1], 4.0f, 4.0f);
 			inputEdge.initRandom();
 			edge1.initRandom();
 
@@ -80,7 +153,7 @@ namespace MonjuTest
 				edgeDevice1.clVariableSet().enqueueWriteAll(dc, &joiner);
 
 				joiner.join();
-				for (int n = 0; n < 100000; n++)
+				for (int n = 0; n < 100; n++)
 				{
 					interNodeCmp1.both(dc, layerDevice1, inputLayerDevice, inputEdgeDevice, &joiner);
 					interNodeCmp2.both(dc, layerDevice2, layerDevice1, edgeDevice1, &joiner);
@@ -91,6 +164,12 @@ namespace MonjuTest
 
 					layerDevice1.clVariableSet().enqueueRead(dc, &joiner, monju::VariableKind::WIN);
 					layerDevice2.clVariableSet().enqueueRead(dc, &joiner, monju::VariableKind::WIN);
+					edgeDevice1.clVariableSet().enqueueRead(dc, &joiner, monju::VariableKind::W);
+
+					// 確認
+					layerDevice1.clVariableSet().enqueueReadAll(dc, &joiner);
+					layerDevice2.clVariableSet().enqueueReadAll(dc, &joiner);
+					edgeDevice1.clVariableSet().enqueueReadAll(dc, &joiner);
 
 					joiner.join();
 
@@ -98,6 +177,12 @@ namespace MonjuTest
 					auto win2 = layer2.win();
 					auto future1 = nodeStat1.accumulate(win1);
 					auto future2 = nodeStat2.accumulate(win2);
+
+					// TODO 入力層と接続するCPTの学習
+					bool a = layer1.containsNan();
+					bool b = layer2.containsNan();
+					bool c = edge1.containsNan();
+					edge1.cpt().train(layer2.win(), layer1.win(), edge1.lambda(), 0.1);	// 学習
 
 					if (n % 10 == 0)
 					{

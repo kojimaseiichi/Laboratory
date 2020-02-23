@@ -20,6 +20,10 @@ namespace monju {
 		}
 
 		float round_n(float number, int n);
+
+		float approx2Exp(float x);
+
+		float approx2Gaussian(float x, float variance);
 	}
 }
 

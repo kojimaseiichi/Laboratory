@@ -63,13 +63,13 @@ __kernel void oobp3_full_down_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     prefetch(g_w_lambda_offset, ${XU});
     for (int j = 0; j < ${XU}; j ++)
     {
-        float a = lo_u_rho[j] / g_w_lambda_offset[j];
+        float a = lo_u_rho[j] / g_w_lambda_offset[j];   // 0 divide
         sum += a;
         w_pi[j] = a;
     }
     for (int j = 0; j < ${XU}; j ++)
     {
-        w_pi[j] /= sum;
+        w_pi[j] /= sum ;    // 0 divide
     }
 
     // to calculate the sumation of "cpt_xy(y,x) * pi_y(x)"
@@ -78,16 +78,19 @@ __kernel void oobp3_full_down_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     {
         w_kappa[i] = 0.0f;
     }
-
+    sum = 0.f;
     for (int j = 0; j < ${XU}; j ++)
     {
         float pi = w_pi[j];
         __global float* g_w_cpt_offset_col = g_w_cpt_offset + j * ${YU};
+        float kappa = 0.f;
         for (int i = 0; i < ${YU}; i ++)
-            w_kappa[i] += pi * g_w_cpt_offset_col[i];
+            kappa += pi * g_w_cpt_offset_col[i];
+        w_kappa[i] = kappa;
+        sum += kappa;
     }
     
     // to store the outcome
     for (int i = 0; i < ${YU}; i ++)
-        g_w_kappa_offset[i] = w_kappa[i];
+        g_w_kappa_offset[i] = w_kappa[i] / sum;
 }

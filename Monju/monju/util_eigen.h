@@ -88,11 +88,54 @@ namespace monju {
 		}
 
 		template <typename Matrix>
+		bool restore_binary(std::string filename, Matrix& matrix, size_t dim)
+		{
+			if (read_binary(filename, matrix))
+				return true;
+			matrix.resize(dim);
+			return false;
+		}
+
+		template <typename Matrix>
+		bool restore_binary(std::string filename, Matrix& matrix, size_t rows, size_t cols)
+		{
+			if (read_binary(filename, matrix))
+				return false;
+			matrix.resize(rows, cols);
+			return false;
+		}
+
+		template <typename Matrix>
+		bool restore_binary(std::string dir, std::string id, std::string name, std::string extension, Matrix& matrix, size_t dim)
+		{
+			if (read_binary(dir, id, name, extension, matrix))
+				return false;
+			matrix.resize(dim);
+			return true;
+		}
+
+		template <typename Matrix>
+		bool restore_binary(std::string dir, std::string id, std::string name, std::string extension, Matrix& matrix, size_t rows, size_t cols)
+		{
+			if (read_binary(dir, id, name, extension, matrix))
+				return false;
+			matrix.resize(rows, cols);
+			return true;
+		}
+
+		template <typename Matrix>
 		void copy(std::weak_ptr<Matrix> src, std::weak_ptr<Matrix> dest)
 		{
 			auto p1 = src.lock();
 			auto p2 = dest.lock();
 			*p2 = *p1;
+		}
+
+		template <typename Matrix>
+		bool contains_nan(std::weak_ptr<Matrix> m)
+		{
+			auto p = m.lock();
+			return !(p->array() == p->array()).all();
 		}
 	}
 }

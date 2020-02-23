@@ -1,7 +1,7 @@
 #include "BayesianEdge.h"
 
-monju::BayesianEdge::BayesianEdge(std::string id, UniformBasisShape shapeX, UniformBasisShape shapeY)
-	: _cpt(id, shapeX, shapeY)
+monju::BayesianEdge::BayesianEdge(std::string id, UniformBasisShape shapeX, UniformBasisShape shapeY, float coefficientNeighborGrid, float coefficientNeighborCell)
+	: _cpt(id, shapeX, shapeY, coefficientNeighborGrid, coefficientNeighborCell)
 {
 	_id = id;
 	_shapeX = shapeX;

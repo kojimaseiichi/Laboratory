@@ -76,9 +76,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridCpt.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
@@ -141,6 +138,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.cpp">
       <Filter>OpenCLコンベンション</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ImageInputGridCpt.cpp">
+      <Filter>皮質モジュール</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,9 +243,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridCpt.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
@@ -305,6 +305,12 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.h">
       <Filter>OpenCLコンベンション</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ImageInputGripCpt.h">
+      <Filter>皮質モジュール</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_BAYESIAN_ACTIVATOR_H__
-#define _MONJU_BAYESIAN_ACTIVATOR_H__
+#ifndef _MONJU_BAYESIAN_INTER_NODE_COMPUTE_H__
+#define _MONJU_BAYESIAN_INTER_NODE_COMPUTE_H__
 
 #include "MonjuTypes.h"
 #include <map>
@@ -232,4 +232,4 @@ namespace monju {
 	};
 }
 
-#endif // !_MONJU_BAYESIAN_ACTIVATOR_H__
+#endif // !_MONJU_BAYESIAN_INTER_NODE_COMPUTE_H__

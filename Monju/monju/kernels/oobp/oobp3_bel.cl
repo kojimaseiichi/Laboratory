@@ -44,8 +44,8 @@ __kernel void oobp3_bel_X${X}_XU${XU}(
     float sum = 0.0f;
     int win = -1;
     int max = 0;
-    prefetch(g_x_lambda_offset, ${XU});
-    prefetch(g_x_pi_offset, ${XU});
+    // prefetch(g_x_lambda_offset, ${XU});
+    // prefetch(g_x_pi_offset, ${XU});
     for (int i = 0; i < ${XU}; i ++)
     {
         float a = g_x_lambda_offset[i] * g_x_pi_offset[i];
@@ -56,8 +56,13 @@ __kernel void oobp3_bel_X${X}_XU${XU}(
     {
        float r = rho[i];
         g_x_rho[i] = r;
-        g_x_bel[i] = r / sum;
-        win = select(win, i, isgreater(r, max));
+        g_x_bel[i] = r / (sum + 0.001f);
+        // win = select(win, i, isgreater(r, max));
+        if (max < r)
+        {
+           win = i;
+           max = r;
+        }
     }
    og_x_win[kNode] = win;
 }

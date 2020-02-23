@@ -3,7 +3,7 @@
 #define _MONJU_BAYESIAN_EDGE_DEVICE_H__
 
 #include "BayesianEdge.h"
-#include "GridCpt.h"
+#include "FullConnectedGridCpt.h"
 #include "ClVariableSet.h"
 
 namespace monju {

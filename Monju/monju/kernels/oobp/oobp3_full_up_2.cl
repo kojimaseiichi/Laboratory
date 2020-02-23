@@ -35,6 +35,7 @@ __kernel void oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}(
     // performe the algorithm
     __global float* g_w_lambda_offset = ig_w_lambda + (${Y} * ${XU} * kWICol);
     float product[${XU}];
+    float sum = 0.f;
     for (int n = 0; n < ${XU}; n ++)
     {
         product[n] = 1.0f;
@@ -42,9 +43,16 @@ __kernel void oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}(
     for (int i = 0; i < ${Y}; i ++)
     {
         prefetch(g_w_lambda_offset, ${XU});
+        sum = 0.f;
         for (int n = 0; n < ${XU}; n ++)
         {
-            product[n] *= g_w_lambda_offset[n];
+            float prd = product[n] * g_w_lambda_offset[n];
+            product[n] = prd;
+            sum += prd;
+        }
+        for (int n = 0; n < ${XU}; n ++)
+        {
+            product[n] /= sum;
         }
         g_w_lambda_offset += ${XU};
     }
@@ -52,8 +60,15 @@ __kernel void oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}(
     // write back the outcome
     __global float* g_x_lambda_offset = og_x_lambda + kWICol * ${XU};
     prefetch(ig_x_r, ${XU});
+    sum = 0.f;
     for (int n = 0; n < ${XU}; n ++)
     {
-        g_x_lambda_offset[n] = product[n] * ig_x_r[n];
+        float prd = product[n] * ig_x_r[n];
+        product[n] = prd;
+        sum += prd;
+    }
+    for (int n = 0; n < ${XU}; n ++)
+    {
+        g_x_lambda_offset[n] = product[n] / sum;
     }
 }

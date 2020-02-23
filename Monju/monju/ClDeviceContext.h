@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_OPEN_CL_DEVICE_SELECT_H__
-#define _MONJU_OPEN_CL_DEVICE_SELECT_H__
+#ifndef _MONJU_CL_DEVICE_CONTEXT_H__
+#define _MONJU_CL_DEVICE_CONTEXT_H__
 
 #include "ClMachine.h"
 #include "ClKernel.h"
@@ -164,4 +164,4 @@ namespace monju
 	};
 }
 
-#endif // !_MONJU_OPEN_CL_DEVICE_SELECT_H__
+#endif // !_MONJU_CL_DEVICE_CONTEXT_H__

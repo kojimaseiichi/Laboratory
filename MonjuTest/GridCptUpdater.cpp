@@ -6,7 +6,7 @@
 #include "monju/PenaltyCalcTask.h"
 #include "monju/util_math.h"
 #include "monju/BayesianNodeStat.h"
-#include "monju/GridCpt.h"
+#include "monju/FullConnectedGridCpt.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -17,7 +17,7 @@ namespace MonjuTest
 	{
 		TEST_METHOD(wtf1)
 		{
-			monju::GridCpt u("grid-cpt-test", { 2, 2 }, { 2, 2 });
+			monju::FullConnectedGridCpt u("grid-cpt-test", { 2, 2 }, { 2, 2 }, 4.0f, 4.0f);
 			monju::MatrixRm<int32_t> winX, winY;
 			winX.resize(2, 1);
 			winY.resize(2, 1);
@@ -27,7 +27,6 @@ namespace MonjuTest
 			lambda.resize(4, 2);
 			monju::MatrixCm<float_t> cpt;
 			cpt.resize(2 * 2 * 2, 2);
-			u.winnerTakerAll(winX, winY, lambda, 0.01f);
 			u.addDelta();
 
 		}
