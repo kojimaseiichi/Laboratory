@@ -5,7 +5,7 @@
 #include "GridMatrixStorage.h"
 #include "Closable.h"
 #include "ConcurrencyContext.h"
-#include "PenaltyCalcTask.h"
+#include "PenaltyCalculation.h"
 
 namespace monju {
 

@@ -11,7 +11,7 @@ monju::BayesianNodeStat::BayesianNodeStat(std::string id, UniformBasisShape shap
 	_coeWinPenalty = coeWinPenalty;
 	_coeLatPenalty = coeLatPenalty;
 
-	_conc.create();
+	//_conc.create();
 }
 
 monju::BayesianNodeStat::~BayesianNodeStat()
@@ -41,12 +41,12 @@ std::future<void> monju::BayesianNodeStat::accumulate(std::weak_ptr<MatrixRm<int
 
 std::future<void> monju::BayesianNodeStat::calcPenalty()
 {
-	PenaltyCalcTask* p = new PenaltyCalcTask(_shape.nodes, _shape.units, _shape.units, _storage, _coeWinPenalty, _coeLatPenalty);
-	const auto task = [=](PenaltyCalcTask* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
+	PenaltyCalculation* p = new PenaltyCalculation(_shape.nodes, _shape.units, _shape.units, _storage, _coeWinPenalty, _coeLatPenalty);
+	const auto task = [=](PenaltyCalculation* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
 	{
 		// LOCK -----------------------------
 		ReadGuard g(_synch);
-		std::unique_ptr<PenaltyCalcTask> p(pr);
+		std::unique_ptr<PenaltyCalculation> p(pr);
 		p->calcPenalty(win, lat, penalty);
 	};
 	return _conc.threadPool().submit(task, p, _win, _lat, _penalty);

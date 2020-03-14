@@ -1,15 +1,5 @@
 #include "BayesianNode.h"
 
-void monju::BayesianNode::initRandom()
-{
-	_setRandomProb(_lambda);
-	_setRandomProb(_pi);
-	_rho->array() = _lambda->array() * _pi->array();
-	_r->setOnes();
-	*_bel = _rho->array().colwise() / _rho->array().rowwise().sum();
-	_win->setOnes();
-}
-
 void monju::BayesianNode::store(std::string dir)
 {
 	std::string extension = "mat2";
@@ -43,8 +33,6 @@ void monju::BayesianNode::load(std::string dir)
 
 void monju::BayesianNode::_setRandomProb(std::shared_ptr<MatrixRm<float_t>> m)
 {
-	m->setRandom();
-	*m = m->array().abs();
-	m->array().colwise() /= m->array().rowwise().sum();
+	util_eigen::set_random_prob(*m);
 }
 

@@ -7,6 +7,7 @@ std::string monju::_ClProgram::_getProgramBuildInfo(cl_program program, std::vec
 	{
 		size_t logSize;
 		clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, 0, nullptr, &logSize);
+		
 		char* buildLog = (char*)malloc((logSize + 1));
 		clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, logSize, buildLog, nullptr);
 		message.append(buildLog == nullptr ? "" : buildLog);

@@ -3,6 +3,7 @@
 #define _MONJU_MATRIX_H__
 
 #include "Eigen/Dense"
+#include "Eigen/Sparse"
 #include "nlohmann/json.hpp"
 #include <map>
 
@@ -24,13 +25,28 @@ namespace monju {
 	template <typename T>
 	using MatrixCm = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
 
+	/// <summary>行優先のスパース行列</summary>
+	template <typename T>
+	using SparseMatrixRm = Eigen::SparseMatrix<T, Eigen::RowMajor>;
+
+	/// <summary>列優先のスパース行列</summary>
+	template <typename T>
+	using SparseMatrixCm = Eigen::SparseMatrix<T, Eigen::ColMajor>;
+
 	/// <summary>nlohmannのJSONクラス</summary>
 	using json = nlohmann::json;
 
 	using params = std::map<std::string, std::string>;
 
+	struct Extent
+	{
+		int32_t rows;
+		int32_t cols;
+	};
+
 	struct UniformBasisShape
 	{
+		Extent extent;
 		uint32_t nodes;
 		uint32_t units;
 	};

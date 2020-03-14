@@ -137,6 +137,15 @@ namespace monju {
 			auto p = m.lock();
 			return !(p->array() == p->array()).all();
 		}
+
+		template <typename T>
+		void set_random_prob(MatrixRm<T>& m)
+		{
+			m.setRandom();
+			m = m.array().abs();
+			m.array().colwise() /= m.array().rowwise().sum();
+		}
+
 	}
 }
 

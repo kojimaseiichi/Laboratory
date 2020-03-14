@@ -3,7 +3,7 @@
 #include <iostream>
 #include "monju/MonjuTypes.h"
 #include "monju/GridMatrixStorage.h"
-#include "monju/PenaltyCalcTask.h"
+#include "monju/PenaltyCalculation.h"
 #include "monju/util_math.h"
 #include "monju/BayesianNodeStat.h"
 #include "monju/BayesianEdgeStat.h"
@@ -26,7 +26,10 @@ namespace MonjuTest
 	{
 		TEST_METHOD(Test2)
 		{
-			std::vector<monju::UniformBasisShape> network{ {8, 8}, {8, 8} };
+			std::vector<monju::UniformBasisShape> network{
+				{{32, 1}, 32, 32},
+				{{32, 1}, 32, 32}
+			};
 			monju::Environment env(R"(C:\dev\test)");
 
 			// CPUの記憶域確保
@@ -99,7 +102,11 @@ namespace MonjuTest
 		}
 		TEST_METHOD(Test1)
 		{
-			std::vector<monju::UniformBasisShape> network{ { 32, 16}, {32, 32}, {16, 32} };
+			std::vector<monju::UniformBasisShape> network{
+				{{32, 1}, 32, 32},
+				{{32, 1}, 32, 32},
+				{{32, 1}, 32, 32}
+			};
 			monju::Environment env(R"(C:\dev\test)");
 
 			// CPUの記憶域確保

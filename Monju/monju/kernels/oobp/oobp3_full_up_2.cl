@@ -31,44 +31,23 @@ __kernel void oobp3_full_up_2_X${X}_Y${Y}_XU${XU}_YU${YU}(
 )
 {
     const size_t kWICol = get_global_id(1);
+    const size_t kLinearCptId = kWICol * ${Y};
 
     // performe the algorithm
-    __global float* g_w_lambda_offset = ig_w_lambda + (${Y} * ${XU} * kWICol);
-    float product[${XU}];
-    float sum = 0.f;
+    __global float* g_w_lambda_group = ig_w_lambda + kLinearCptId * ${XU};
+    float prod_lambda[${XU}];
     for (int n = 0; n < ${XU}; n ++)
-    {
-        product[n] = 1.0f;
-    }
+        prod_lambda[n] = 1.0f;
     for (int i = 0; i < ${Y}; i ++)
     {
-        prefetch(g_w_lambda_offset, ${XU});
-        sum = 0.f;
         for (int n = 0; n < ${XU}; n ++)
-        {
-            float prd = product[n] * g_w_lambda_offset[n];
-            product[n] = prd;
-            sum += prd;
-        }
-        for (int n = 0; n < ${XU}; n ++)
-        {
-            product[n] /= sum;
-        }
-        g_w_lambda_offset += ${XU};
+            prod_lambda[n] *= g_w_lambda_group[n];
+        g_w_lambda_group += ${XU};  // next lambda
     }
 
     // write back the outcome
-    __global float* g_x_lambda_offset = og_x_lambda + kWICol * ${XU};
-    prefetch(ig_x_r, ${XU});
-    sum = 0.f;
+    __global float* g_x_lambda_current = og_x_lambda + kWICol * ${XU};
+    __global float* g_x_r_current = ig_x_r + kWICol * ${XU};
     for (int n = 0; n < ${XU}; n ++)
-    {
-        float prd = product[n] * ig_x_r[n];
-        product[n] = prd;
-        sum += prd;
-    }
-    for (int n = 0; n < ${XU}; n ++)
-    {
-        g_x_lambda_offset[n] = product[n] / sum;
-    }
+        g_x_lambda_current[n] = prod_lambda[n] * g_x_r_current[n];
 }

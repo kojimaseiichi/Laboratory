@@ -67,7 +67,7 @@ namespace monju {
 		}
 		void load(std::string dir)
 		{
-			const int rows = _kCellSize * _shapeY.nodes;
+			const size_t rows = _kCellSize * _shapeY.nodes;
 			std::string extension = "mat";
 			util_eigen::restore_binary(dir, _id, "cpt", extension, *_cpt, rows, _shapeX.nodes);
 			util_eigen::restore_binary(dir, _id, "delta-cpt", extension, *_deltaCpt, rows, _shapeX.nodes);

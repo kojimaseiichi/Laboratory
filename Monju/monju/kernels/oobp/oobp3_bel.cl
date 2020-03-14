@@ -32,37 +32,39 @@ __kernel void oobp3_bel_X${X}_XU${XU}(
     __global int* og_x_win
 )
 {
+    const float kEpsilon = 0.0001f;
     const int kNode = get_global_id(0);
 
     const int kOffset = kNode * ${XU};
-    __global float* g_x_lambda_offset = ig_x_lambda + kOffset;
-    __global float* g_x_pi_offset = ig_x_pi + kOffset;
+    __global float* g_x_lambda_current = ig_x_lambda + kOffset;
+    __global float* g_x_pi_current = ig_x_pi + kOffset;
     __global float* g_x_rho = og_x_rho + kOffset;
     __global float* g_x_bel = og_x_BEL + kOffset;
 
-    float rho[${XU}];
+    float rho_arr[${XU}];
     float sum = 0.0f;
     int win = -1;
-    int max = 0;
-    // prefetch(g_x_lambda_offset, ${XU});
-    // prefetch(g_x_pi_offset, ${XU});
+    float max_rho = 0;
+
     for (int i = 0; i < ${XU}; i ++)
     {
-        float a = g_x_lambda_offset[i] * g_x_pi_offset[i];
-        rho[i] = a;
+        float a = g_x_lambda_current[i] * g_x_pi_current[i];
+        rho_arr[i] = a;
         sum += a;
     }
     for (int i = 0; i < ${XU}; i ++)
     {
-       float r = rho[i];
-        g_x_rho[i] = r;
-        g_x_bel[i] = r / (sum + 0.001f);
-        // win = select(win, i, isgreater(r, max));
-        if (max < r)
-        {
-           win = i;
-           max = r;
-        }
+        float rho = rho_arr[i];
+        g_x_rho[i] = rho;
+        g_x_bel[i] = rho / max(sum, kEpsilon);
+        // if (rho > max_rho)
+        // {
+        //     max_rho = rho;
+        //     win = i;
+        // }
+        int compare = isgreater(rho, max_rho); //rho > max_rho
+        win = select(win, i, compare);
+        max_rho = select(max_rho, rho, compare);
     }
-   og_x_win[kNode] = win;
+    og_x_win[kNode] = win;
 }

@@ -1,6 +1,7 @@
-#include "PenaltyCalcTask.h"
+#include "PenaltyCalculation.h"
+#include <iostream>
 
-monju::PenaltyCalcTask::PenaltyCalcTask(int num_of_nodes, int num_of_units, int active_num_of_nodes, std::weak_ptr<TriangularGridMatrixStorage<int32_t>> pStorage, float coefficient_win_penalty, float coefficient_lat_penalty)
+monju::PenaltyCalculation::PenaltyCalculation(int num_of_nodes, int num_of_units, int active_num_of_nodes, std::weak_ptr<TriangularGridMatrixStorage<int32_t>> pStorage, float coefficient_win_penalty, float coefficient_lat_penalty)
 	:
 	kNumNodes(num_of_nodes),
 	kNumUnits(num_of_units),
@@ -12,7 +13,7 @@ monju::PenaltyCalcTask::PenaltyCalcTask(int num_of_nodes, int num_of_units, int 
 
 }
 
-bool monju::PenaltyCalcTask::calcPenalty(std::weak_ptr<MatrixRm<float_t>> winRateRestriction, std::weak_ptr<MatrixRm<float_t>> lateralInhibition, std::weak_ptr<MatrixRm<float_t>> penalty)
+bool monju::PenaltyCalculation::calcPenalty(std::weak_ptr<MatrixRm<float_t>> winRateRestriction, std::weak_ptr<MatrixRm<float_t>> lateralInhibition, std::weak_ptr<MatrixRm<float_t>> penalty)
 {
 	// カウンティングデータから勝率ペナルティと側抑制ペナルティを計算
 	// 勝率ペナルティ ∝ KL距離
@@ -23,6 +24,8 @@ bool monju::PenaltyCalcTask::calcPenalty(std::weak_ptr<MatrixRm<float_t>> winRat
 
 	// MPEカウントをファイルから取得
 	_loadWinCount(/*out*/mpe_count);
+
+	std::cout << mpe_count << std::endl << std::endl;
 
 	// 勝率計算→KL距離計算→勝率ペナルティ計算（ハイパーパラメタ）
 	if (auto p = winRateRestriction.lock())
@@ -42,7 +45,7 @@ bool monju::PenaltyCalcTask::calcPenalty(std::weak_ptr<MatrixRm<float_t>> winRat
 	return true;
 }
 
-void monju::PenaltyCalcTask::_calcExponentialPenalty(MatrixRm<int32_t>& mpe_count, std::weak_ptr<MatrixRm<float_t>>& winRateRestriction, std::weak_ptr<MatrixRm<float_t>>& lateralInhibition, std::weak_ptr<MatrixRm<float_t>>& penalty)
+void monju::PenaltyCalculation::_calcExponentialPenalty(MatrixRm<int32_t>& mpe_count, std::weak_ptr<MatrixRm<float_t>>& winRateRestriction, std::weak_ptr<MatrixRm<float_t>>& lateralInhibition, std::weak_ptr<MatrixRm<float_t>>& penalty)
 {
 	// KL距離と総合情報量から指数関数の値を計算
 	// 指数関数の発散を防止するためにe^xのx<=20にクリップ
@@ -60,9 +63,11 @@ void monju::PenaltyCalcTask::_calcExponentialPenalty(MatrixRm<int32_t>& mpe_coun
 		.exp();
 	else
 		throw MonjuException(ErrorCode::WeakPointerExpired);
+
+	std::cout << *pe << std::endl << std::endl;
 }
 
-void monju::PenaltyCalcTask::_loadWinCount(MatrixRm<int32_t>& mpe_count)
+void monju::PenaltyCalculation::_loadWinCount(MatrixRm<int32_t>& mpe_count)
 {
 	// ユニットの勝った回数をファイルから取得する
 	// mpe_countの形状　行=ノード、列=ユニット
@@ -81,7 +86,7 @@ void monju::PenaltyCalcTask::_loadWinCount(MatrixRm<int32_t>& mpe_count)
 	mpe_count.array() += 1;
 }
 
-void monju::PenaltyCalcTask::_calcWinRateDistribution(MatrixRm<int32_t>& mpe_count, MatrixRm<float_t>& prob)
+void monju::PenaltyCalculation::_calcWinRateDistribution(MatrixRm<int32_t>& mpe_count, MatrixRm<float_t>& prob)
 {
 	// カウンティングから分布を推定する。
 	// mpe_count 行=ノードI、列=ユニットJ
@@ -93,7 +98,7 @@ void monju::PenaltyCalcTask::_calcWinRateDistribution(MatrixRm<int32_t>& mpe_cou
 	prob.array().colwise() /= prob.rowwise().sum().array(); // 合ってるのか？直感ではprob.colwise().array()...あってる？
 }
 
-void monju::PenaltyCalcTask::_calcWinKLDistance(MatrixRm<int32_t>& mpe_count, MatrixRm<float_t>& message)
+void monju::PenaltyCalculation::_calcWinKLDistance(MatrixRm<int32_t>& mpe_count, MatrixRm<float_t>& message)
 {
 	// カウンティングデータから各ノードのKL距離を計算
 	// 基準の分布は全ユニットの勝率が同じ
@@ -101,6 +106,7 @@ void monju::PenaltyCalcTask::_calcWinKLDistance(MatrixRm<int32_t>& mpe_count, Ma
 	// ノードごとに各ユニットの勝率を計算
 	MatrixRm<float_t> win_prob;
 	_calcWinRateDistribution(mpe_count, /*out*/win_prob);
+	std::cout << win_prob << std::endl << std::endl;
 
 	// KL距離を計算
 	// 目標勝率
@@ -108,9 +114,11 @@ void monju::PenaltyCalcTask::_calcWinKLDistance(MatrixRm<int32_t>& mpe_count, Ma
 	message = win_prob;
 	message.array() = Q / message.array();
 	message.array() = message.array() * message.array().log() * kNumUnits;
+
+	std::cout << message << std::endl << std::endl;
 }
 
-void monju::PenaltyCalcTask::_calcLateralMutualInfo(MatrixRm<float_t>& restriction)
+void monju::PenaltyCalculation::_calcLateralMutualInfo(MatrixRm<float_t>& restriction)
 {
 	// 相互情報量を計算
 
@@ -125,18 +133,20 @@ void monju::PenaltyCalcTask::_calcLateralMutualInfo(MatrixRm<float_t>& restricti
 			_sumLateralMutualInfo(U, V, count, /*out*/restriction);
 	}
 	// restriction.array() = coefficient_lat_penalty * restriction.array() / (count.array() + 1).cast<float_t>();
+
+	std::cout << restriction << std::endl << std::endl;
 }
 
 // ノードU、Vの側抑制ペナルティを計算
 
-void monju::PenaltyCalcTask::_sumLateralMutualInfo(int U, int V, MatrixRm<int32_t>& count, MatrixRm<float>& restriction)
+void monju::PenaltyCalculation::_sumLateralMutualInfo(int U, int V, MatrixRm<int32_t>& count, MatrixRm<float>& restriction)
 {
 	// 相互情報量を計算して積算
 
 	// カウンティングデータ取得
 	if (auto p = _pStorage.lock())
 	{
-		MatrixRowMajorAccessor<int32_t> a(count);
+		MatrixRowMajorAccessor<int32_t, MatrixRm<int32_t>> a(count);
 		p->readCell(a, U, V);
 	}
 	else

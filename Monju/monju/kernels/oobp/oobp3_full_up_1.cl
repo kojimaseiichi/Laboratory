@@ -37,11 +37,13 @@ __kernel void oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     __global float* og_w_lambda
 )
 {
+    const float kEpsilon = 0.0001;
     const size_t kWIRow = get_global_id(0);
     const size_t kWICol = get_global_id(1);
     const size_t kWGRow = get_group_id(0);
     const size_t kWGCol = get_group_id(1);
     const size_t kCptSize = ${XU} * ${YU};
+    const size_t kLinearCptId = kWICol * ${Y} + kWIRow;
 
     // to load data shared among threads in the same work-group
     __local float lo_y_lambda[${YU}];
@@ -55,35 +57,27 @@ __kernel void oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
             lo_y_lambda[n] = g_y_lambda_offset[n];
             lo_y_pi[n] = g_y_pi_offset[n];
         }
-        // event_t e_copy = async_work_group_copy(lo_y_lambda, g_y_lambda_offset, ${YU}, 0);
-        // e_copy = async_work_group_copy(lo_y_pi, g_y_pi_offset, ${YU}, e_copy);
-        // wait_group_events(1, &e_copy);
     }
 
     barrier(CLK_LOCAL_MEM_FENCE);
 
     // to perform algorithm for every work items
-    float w_lambda[${XU}];  // attention! this variable that is belonged to the upper basis
-    __global float* g_w_cpt_offset = ig_w_cpt + (kWICol * ${Y} + kWIRow) * kCptSize;
-    __global float* g_w_kappa_offset = ig_w_kappa + (kWICol * ${Y} + kWIRow) * ${YU};
-    float outer_sum = 0.0f;
+    float w_lambda[${XU}];  // attention! this variable is in the upper basis
+    __global float* g_w_cpt_current = ig_w_cpt + kLinearCptId * kCptSize;
+    __global float* g_w_kappa_current = ig_w_kappa + kLinearCptId * ${YU};
+    float reciprocal_beta = 0.0f;
     for (int j = 0; j < ${XU}; j ++)
     {
-        __global float* g_w_cpt_offset_col = g_w_cpt_offset + ${YU} * j;
+        __global float* g_w_cpt_col_vec = g_w_cpt_current + ${YU} * j;
         float sum = 0.0f;
         for (int i = 0; i < ${YU}; i ++)
-        {
-            sum += lo_y_lambda[i] * (lo_y_pi[i] - g_w_kappa_offset[i] + g_w_cpt_offset_col[i]);
-        }
+            sum += lo_y_lambda[i] * (lo_y_pi[i] - g_w_kappa_current[i] + g_w_cpt_col_vec[i]);
         w_lambda[j] = sum;
-        outer_sum += sum;
+        reciprocal_beta += sum;
     }
     // to calculate the final outcome then write back the outcome to global memory
-    __global float* og_w_lambda_offset = og_w_lambda + (kWICol * ${Y} + kWIRow) * ${XU};
+    __global float* og_w_lambda_current = og_w_lambda + kLinearCptId * ${XU};
     for (int j = 0; j < ${XU}; j ++)
-    {
-        w_lambda[j] /= outer_sum;
-        og_w_lambda_offset[j] = w_lambda[j];
-    }
+        og_w_lambda_current[j] = w_lambda[j] / reciprocal_beta;
 
 }

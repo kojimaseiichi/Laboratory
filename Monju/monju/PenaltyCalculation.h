@@ -1,6 +1,6 @@
 ﻿#pragma once
-#ifndef _MONJU_PENALTY_CALC_TASK_H__
-#define _MONJU_PENALTY_CALC_TASK_H__
+#ifndef _MONJU_PENALTY_CALCULATION_H__
+#define _MONJU_PENALTY_CALCULATION_H__
 
 #include "GridMatrixStorage.h"
 #include "GridMatrixAccessor.h"
@@ -10,7 +10,7 @@ namespace monju {
 	// ベイジアンネットの枠組みにおけるモデルの制約を計算します。
 	// ・一様な勝率となるようなペナルティ
 	// ・ノード同士が独立となるようなペナルティ
-	class PenaltyCalcTask
+	class PenaltyCalculation
 	{
 		// 定数
 	private:
@@ -24,11 +24,7 @@ namespace monju {
 		std::weak_ptr<TriangularGridMatrixStorage<int32_t>> _pStorage;
 
 	public:
-		PenaltyCalcTask(const PenaltyCalcTask&) = delete;
-		PenaltyCalcTask& operator=(const PenaltyCalcTask&) = delete;
-
-	public:
-		PenaltyCalcTask(
+		PenaltyCalculation(
 			int num_of_nodes,
 			int num_of_units,
 			int active_num_of_nodes,
@@ -62,8 +58,15 @@ namespace monju {
 
 		// ノードU、Vの側抑制ペナルティを計算
 		void _sumLateralMutualInfo(int U, int V, MatrixRm<int32_t>& count, /*out*/MatrixRm<float>& restriction);
+
+		// コピー禁止・ムーブ禁止
+	public:
+		PenaltyCalculation(const PenaltyCalculation&) = delete;
+		PenaltyCalculation(PenaltyCalculation&&) = delete;
+		PenaltyCalculation& operator =(const PenaltyCalculation&) = delete;
+		PenaltyCalculation& operator =(PenaltyCalculation&&) = delete;
 	};
 
 } // monju
 
-#endif // !_MONJU_PENALTY_CALC_TASK_H_
+#endif // !_MONJU_PENALTY_CALCULATION_H__

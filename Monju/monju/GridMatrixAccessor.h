@@ -18,17 +18,17 @@ namespace monju {
 		virtual void	writeCell(const ElemType* p) = 0;
 	};
 
-	template <typename ElemType>
+	template <typename ElemType, typename Matrix>
 	class MatrixRowMajorAccessor : public MatrixAccessor<ElemType>
 	{
 	private:
 		const int _kMatRows, _kMatCols;
 
 	private:
-		MatrixRm<ElemType>* _p;
+		Matrix* _p;
 
 	public:
-		MatrixRowMajorAccessor(MatrixRm<ElemType>& r) :
+		MatrixRowMajorAccessor(Matrix& r) :
 			_kMatRows(r.rows()),
 			_kMatCols(r.cols())
 		{
@@ -50,19 +50,19 @@ namespace monju {
 		}
 	};
 
-	template <typename ElemType>
+	template <typename ElemType, typename Matrix>
 	class MatrixColMajorAccessor : public MatrixAccessor<ElemType>
 	{
 	private:
 		const int _kMatRows, _kMatCols;
 
 	private:
-		MatrixCm<ElemType>* _p;
+		Matrix* _p;
 
 	public:
-		MatrixColMajorAccessor(MatrixCm<ElemType>& r) :
-			_kMatRows(r.rows()),
-			_kMatCols(r.cols())
+		MatrixColMajorAccessor(Matrix& r) :
+			_kMatRows(static_cast<int>(r.rows())),
+			_kMatCols(static_cast<int>(r.cols()))
 		{
 			_p = &r;
 		}
@@ -74,7 +74,7 @@ namespace monju {
 		{
 			for (int i = 0; i < _kMatRows; i++)
 			{
-				for (int j = 0; j < _kmatcol; j++)
+				for (int j = 0; j < _kMatCols; j++)
 					*(p++) = _p->coeff(i, j);
 			}
 		}
@@ -82,8 +82,8 @@ namespace monju {
 		{
 			for (int i = 0; i < _kMatRows; i++)
 			{
-				for (int j = 0; j < _kmatcol; j++)
-					_p->coeffRef(i, j) = *(p++);.
+				for (int j = 0; j < _kMatCols; j++)
+					_p->coeffRef(i, j) = *(p++);
 			}
 		}
 	};

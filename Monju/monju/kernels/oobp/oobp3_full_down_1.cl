@@ -34,6 +34,8 @@ __kernel void oobp3_full_down_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     __global float* og_w_kappa
 )
 {
+    const float kEpsilon = 0.001f;
+
     const size_t kWIRow = get_global_id(0);
     const size_t kWICol = get_global_id(1);
     const size_t kWGRow = get_group_id(0);
@@ -46,9 +48,7 @@ __kernel void oobp3_full_down_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     {
         __global float* g_x_rho_offset = ig_x_rho + (kWICol * ${XU});
         for (int j = 0; j < ${XU}; j ++)
-        {
             lo_u_rho[j] = g_x_rho_offset[j];
-        }
     }
 
     barrier(CLK_LOCAL_MEM_FENCE);
@@ -63,34 +63,26 @@ __kernel void oobp3_full_down_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     prefetch(g_w_lambda_offset, ${XU});
     for (int j = 0; j < ${XU}; j ++)
     {
-        float a = lo_u_rho[j] / g_w_lambda_offset[j];   // 0 divide
+        float a = lo_u_rho[j] / max(g_w_lambda_offset[j], kEpsilon);   // notice 0 divide
         sum += a;
         w_pi[j] = a;
     }
     for (int j = 0; j < ${XU}; j ++)
-    {
-        w_pi[j] /= sum ;    // 0 divide
-    }
+        w_pi[j] /= sum ;    // notice 0 divide
 
     // to calculate the sumation of "cpt_xy(y,x) * pi_y(x)"
     float w_kappa[${YU}];
     for (int i = 0; i < ${YU}; i ++)
-    {
         w_kappa[i] = 0.0f;
-    }
-    sum = 0.f;
     for (int j = 0; j < ${XU}; j ++)
     {
         float pi = w_pi[j];
         __global float* g_w_cpt_offset_col = g_w_cpt_offset + j * ${YU};
-        float kappa = 0.f;
         for (int i = 0; i < ${YU}; i ++)
-            kappa += pi * g_w_cpt_offset_col[i];
-        w_kappa[i] = kappa;
-        sum += kappa;
+            w_kappa[i] += pi * g_w_cpt_offset_col[i];
     }
     
     // to store the outcome
     for (int i = 0; i < ${YU}; i ++)
-        g_w_kappa_offset[i] = w_kappa[i] / sum;
+        g_w_kappa_offset[i] = w_kappa[i];
 }

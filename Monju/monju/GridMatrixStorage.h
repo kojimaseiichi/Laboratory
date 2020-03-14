@@ -35,6 +35,30 @@ namespace monju {
 		void		load(MatrixAccessor<ElemType>& r);
 		void		store(GridMatrixAccessor<ElemType>& r);
 		void		store(MatrixAccessor<ElemType>& r);
+		template <typename Matrix>
+		void		readCellRm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixRowMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_readCell(&a, grow, gcol);
+		}
+		template <typename Matrix>
+		void		writeCellRm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixRowMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_writeCell(&a, grow, gcol);
+		}
+		template <typename Matrix>
+		void		readCellCm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixColMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_readCell(&a, grow, gcol);
+		}
+		template <typename Matrix>
+		void		writeCellCm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixColMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_writeCell(&a, grow, gcol);
+		}
 
 	};
 
@@ -60,6 +84,30 @@ namespace monju {
 		ElemType	addElement(const MatrixIndex& cell, const MatrixIndex& elem, ElemType addent);
 		void		load(GridMatrixAccessor<ElemType>& r);
 		void		store(GridMatrixAccessor<ElemType>& r);
+		template <typename Matrix>
+		void		readCellRm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixRowMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_readCell(&a, grow, gcol);
+		}
+		template <typename Matrix>
+		void		writeCellRm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixRowMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_writeCell(&a, grow, gcol);
+		}
+		template <typename Matrix>
+		void		readCellCm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixColMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_readCell(&a, grow, gcol);
+		}
+		template <typename Matrix>
+		void		writeCellCm(Matrix& matrix, int grow, int gcol)
+		{
+			MatrixColMajorAccessor<ElemType, std::remove_reference<decltype(matrix)>::type> a(matrix);
+			_writeCell(&a, grow ,gcol);
+		}
 
 	};
 
@@ -134,7 +182,7 @@ namespace monju {
 	}
 
 	template<typename ElemType>
-	ElemType RectangularGridMatrixStorage<ElemType>::readElement(const MatrixIndex & cell, const MatrixIndex & elem)
+	ElemType RectangularGridMatrixStorage<ElemType>::readElement(const MatrixIndex& cell, const MatrixIndex& elem)
 	{
 		return _readElement<ElemType>(cell.row, cell.col, elem.row, elem.col);
 	}
@@ -146,7 +194,7 @@ namespace monju {
 	}
 
 	template<typename ElemType>
-	void RectangularGridMatrixStorage<ElemType>::writeElement(const MatrixIndex & cell, const MatrixIndex & elem, ElemType value)
+	void RectangularGridMatrixStorage<ElemType>::writeElement(const MatrixIndex& cell, const MatrixIndex& elem, ElemType value)
 	{
 		_writeElement(cell.row, cell.col, elem.row, elem.col, value);
 	}
@@ -158,7 +206,7 @@ namespace monju {
 	}
 
 	template<typename ElemType>
-	ElemType RectangularGridMatrixStorage<ElemType>::addElement(const MatrixIndex & cell, const MatrixIndex & elem, ElemType addent)
+	ElemType RectangularGridMatrixStorage<ElemType>::addElement(const MatrixIndex& cell, const MatrixIndex& elem, ElemType addent)
 	{
 		return _addElement(cell.row, cell.col, elem.row, elem.col, addent);
 	}
@@ -186,6 +234,7 @@ namespace monju {
 	{
 		_writeCell(&r, 0, 0);
 	}
+
 
 	template<typename ElemType>
 	TriangularGridMatrixStorage<ElemType>::TriangularGridMatrixStorage() :
@@ -231,7 +280,7 @@ namespace monju {
 	}
 
 	template<typename ElemType>
-	ElemType TriangularGridMatrixStorage<ElemType>::readElement(const MatrixIndex & cell, const MatrixIndex & elem)
+	ElemType TriangularGridMatrixStorage<ElemType>::readElement(const MatrixIndex& cell, const MatrixIndex& elem)
 	{
 		return _readElement<ElemType>(cell.row, cell.col, elem.row, elem.col);
 	}
@@ -243,7 +292,7 @@ namespace monju {
 	}
 
 	template<typename ElemType>
-	void TriangularGridMatrixStorage<ElemType>::writeElement(const MatrixIndex & cell, const MatrixIndex & elem, ElemType value)
+	void TriangularGridMatrixStorage<ElemType>::writeElement(const MatrixIndex& cell, const MatrixIndex& elem, ElemType value)
 	{
 		_writeElement(cell.row, cell.col, elem.row, elem.col, value);
 	}
@@ -255,7 +304,7 @@ namespace monju {
 	}
 
 	template<typename ElemType>
-	ElemType TriangularGridMatrixStorage<ElemType>::addElement(const MatrixIndex & cell, const MatrixIndex & elem, ElemType addent)
+	ElemType TriangularGridMatrixStorage<ElemType>::addElement(const MatrixIndex& cell, const MatrixIndex& elem, ElemType addent)
 	{
 		return _addElement(cell.row, cell.col, elem.row, elem.col, addent);
 	}
@@ -271,6 +320,7 @@ namespace monju {
 	{
 		_store(&r);
 	}
+
 
 }
 #endif // _MONJU_GRID_MATRIX_STORAGE_H__

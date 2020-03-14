@@ -3,7 +3,7 @@
 #include <iostream>
 #include "monju/MonjuTypes.h"
 #include "monju/GridMatrixStorage.h"
-#include "monju/PenaltyCalcTask.h"
+#include "monju/PenaltyCalculation.h"
 #include "monju/util_math.h"
 #include "monju/BayesianNodeStat.h"
 #include "monju/FullConnectedGridCpt.h"

@@ -62,7 +62,15 @@ namespace monju {
 		{
 		}
 
-		void initRandom();
+		void initRandom()
+		{
+			_setRandomProb(_lambda);
+			_setRandomProb(_pi);
+			_rho->array() = _lambda->array() * _pi->array();
+			_r->setOnes();
+			*_bel = _rho->array().colwise() / _rho->array().rowwise().sum();
+			_win->setZero();
+		}
 		void store(std::string dir);
 		void load(std::string dir);
 		void findWinnerOfBEL()
