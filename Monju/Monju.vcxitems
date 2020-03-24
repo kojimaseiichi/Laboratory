@@ -14,15 +14,15 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNode.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClDeviceContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEventJoiner.cpp" />
@@ -32,9 +32,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPort.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortCompute.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInput.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Device.cpp" />
@@ -70,15 +70,15 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNode.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClDeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEventJoiner.h" />
@@ -89,9 +89,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Closable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPort.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortCompute.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInput.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernelArguments.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Device.h" />

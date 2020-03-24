@@ -1,21 +1,21 @@
 #pragma once
-#ifndef _MONJU_BAYESIAN_INTER_NODE_COMPUTE_H__
-#define _MONJU_BAYESIAN_INTER_NODE_COMPUTE_H__
+#ifndef _MONJU_BAYESIAN_FULL_CONNECT_EDGE_FMC_H__
+#define _MONJU_BAYESIAN_FULL_CONNECT_EDGE_FMC_H__
 
 #include "MonjuTypes.h"
 #include <map>
 #include <filesystem>
 #include <boost/lexical_cast.hpp>
 #include "BayesianNodeDevice.h"
-#include "BayesianEdgeDevice.h"
+#include "BayesianFullConnectEdgeDevice.h"
 #include "util_file.h"
 #include "ClMachine.h"
 #include "ClFunc.h"
 #include "Environment.h"
 
 namespace monju {
-
-	class BayesianInterNodeCompute
+	// fast massive compute
+	class BayesianFullConnectEdgeFmc
 	{
 	private:
 		const std::string
@@ -41,7 +41,7 @@ namespace monju {
 			_kernelOobpDown2;
 
 	public:
-		BayesianInterNodeCompute(
+		BayesianFullConnectEdgeFmc(
 			UniformBasisShape shapeX,
 			UniformBasisShape shapeY,
 			Environment& env,
@@ -79,7 +79,7 @@ namespace monju {
 				_kKernelOobpDown2,
 				params_map);
 		}
-		~BayesianInterNodeCompute()
+		~BayesianFullConnectEdgeFmc()
 		{
 		}
 
@@ -87,7 +87,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			_up(clDeviceContext, nodeX, nodeY, edge, pJoin);
@@ -99,7 +99,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			_down(clDeviceContext, nodeX, nodeY, edge, pJoin);
@@ -111,7 +111,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			_up(clDeviceContext, nodeX, nodeY, edge, pJoin);
@@ -126,7 +126,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			_upOobp1(clDeviceContext, nodeX, nodeY, edge, pJoin);
@@ -137,7 +137,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			ClFunc func1(_clMachine, _kernelOobpUp1);
@@ -159,7 +159,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			ClFunc func2(_clMachine, _kernelOobpUp2);
@@ -178,7 +178,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			_downOobp1(clDeviceContext, nodeX, nodeY, edge, pJoin);
@@ -188,7 +188,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			ClFunc func1(_clMachine, _kernelOobpDown1);
@@ -208,7 +208,7 @@ namespace monju {
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BayesianNodeDevice& nodeX,
 			BayesianNodeDevice& nodeY,
-			BayesianEdgeDevice& edge,
+			BayesianFullConnectEdgeDevice& edge,
 			ClEventJoiner* pJoin)
 		{
 			ClFunc func2(_clMachine, _kernelOobpDown2);
@@ -225,11 +225,11 @@ namespace monju {
 
 		// コピー禁止・ムーブ禁止
 	public:
-		BayesianInterNodeCompute(const BayesianInterNodeCompute&) = delete;
-		BayesianInterNodeCompute(BayesianInterNodeCompute&&) = delete;
-		BayesianInterNodeCompute& operator =(const BayesianInterNodeCompute&) = delete;
-		BayesianInterNodeCompute& operator =(BayesianInterNodeCompute&&) = delete;
+		BayesianFullConnectEdgeFmc(const BayesianFullConnectEdgeFmc&) = delete;
+		BayesianFullConnectEdgeFmc(BayesianFullConnectEdgeFmc&&) = delete;
+		BayesianFullConnectEdgeFmc& operator =(const BayesianFullConnectEdgeFmc&) = delete;
+		BayesianFullConnectEdgeFmc& operator =(BayesianFullConnectEdgeFmc&&) = delete;
 	};
 }
 
-#endif // !_MONJU_BAYESIAN_INTER_NODE_COMPUTE_H__
+#endif // !_MONJU_BAYESIAN_FULL_CONNECT_EDGE_FMC_H__

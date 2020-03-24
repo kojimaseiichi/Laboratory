@@ -70,25 +70,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNode.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClBuffer.cpp">
@@ -154,13 +139,28 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PenaltyCalculation.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPort.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInput.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortDevice.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortCompute.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
   </ItemGroup>
@@ -255,25 +255,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNode.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdge.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeStat.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianInterNodeCompute.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianEdgeDevice.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeCompute.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClBuffer.h">
@@ -339,13 +324,28 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PenaltyCalculation.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPort.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInput.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortDevice.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputPortCompute.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.h">
+      <Filter>皮質モジュール</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
-#include "BayesianEdge.h"
+#include "BayesianFullConnectEdge.h"
 
-monju::BayesianEdge::BayesianEdge(std::string id, UniformBasisShape shapeX, UniformBasisShape shapeY, float coefficientNeighborGrid, float coefficientNeighborCell)
+monju::BayesianFullConnectEdge::BayesianFullConnectEdge(std::string id, UniformBasisShape shapeX, UniformBasisShape shapeY, float coefficientNeighborGrid, float coefficientNeighborCell)
 	: _cpt(id, shapeX, shapeY, coefficientNeighborGrid, coefficientNeighborCell)
 {
 	_id = id;
@@ -17,19 +17,19 @@ monju::BayesianEdge::BayesianEdge(std::string id, UniformBasisShape shapeX, Unif
 	_kappa->setZero();
 }
 
-monju::BayesianEdge::~BayesianEdge()
+monju::BayesianFullConnectEdge::~BayesianFullConnectEdge()
 {
 
 }
 
-void monju::BayesianEdge::initRandom()
+void monju::BayesianFullConnectEdge::initRandom()
 {
 	_setRandomProb(_lambda, _shapeX.units, _shapeY.nodes);
 	_setRandomProb(_kappa, _shapeY.units, _shapeY.nodes);
 	_cpt.initRandom();
 }
 
-void monju::BayesianEdge::store(std::string dir)
+void monju::BayesianFullConnectEdge::store(std::string dir)
 {
 	std::string extension = "mat2";
 	util_eigen::write_binary(dir, _id, "lambda", extension, *_lambda);
@@ -37,7 +37,7 @@ void monju::BayesianEdge::store(std::string dir)
 	_cpt.store(dir);
 }
 
-void monju::BayesianEdge::load(std::string dir)
+void monju::BayesianFullConnectEdge::load(std::string dir)
 {
 	std::string extension = "mat2";
 	if (util_eigen::read_binary(dir, _id, "lambda", extension, *_lambda) == false)
@@ -47,7 +47,7 @@ void monju::BayesianEdge::load(std::string dir)
 	_cpt.load(dir);
 }
 
-void monju::BayesianEdge::_setRandomProb(std::shared_ptr<MatrixCm<float_t>> m, int unitsPerNode, int oppositNodes)
+void monju::BayesianFullConnectEdge::_setRandomProb(std::shared_ptr<MatrixCm<float_t>> m, int unitsPerNode, int oppositNodes)
 {
 	m->setRandom();
 	*m = m->array().abs();

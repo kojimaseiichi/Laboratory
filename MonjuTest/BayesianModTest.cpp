@@ -6,14 +6,14 @@
 #include "monju/PenaltyCalculation.h"
 #include "monju/util_math.h"
 #include "monju/BayesianNodeStat.h"
-#include "monju/BayesianEdgeStat.h"
+#include "monju/BayesianFullConnectEdgeStat.h"
 #include "monju/BayesianNode.h"
-#include "monju//BayesianEdge.h"
+#include "monju//BayesianFullConnectEdge.h"
 #include "monju/FullConnectedGridCpt.h"
-#include "monju/BayesianEdgeDevice.h"
+#include "monju/BayesianFullConnectEdgeDevice.h"
 #include "monju/BayesianNodeDevice.h"
-#include "monju/BayesianInterNodeCompute.h"
-#include "monju/BayesianNodeCompute.h"
+#include "monju/BayesianFullConnectEdgeFmc.h"
+#include "monju/BayesianNodeFmc.h"
 #include "monju/Environment.h"
 #include "monju/VariableKind.h"
 
@@ -38,7 +38,7 @@ namespace MonjuTest
 			layer1.initRandom();
 			layer2.initRandom();
 
-			monju::BayesianEdge edge1("edge1", network[1], network[0], 4.0f, 4.0f);
+			monju::BayesianFullConnectEdge edge1("edge1", network[1], network[0], 4.0f, 4.0f);
 			edge1.initRandom();
 
 			// 統計情報
@@ -52,12 +52,12 @@ namespace MonjuTest
 				// GPUの記憶域確保
 				monju::BayesianNodeDevice layerDevice1(clMachine, layer1);
 				monju::BayesianNodeDevice layerDevice2(clMachine, layer2);
-				monju::BayesianEdgeDevice edgeDevice1(clMachine, edge1);
+				monju::BayesianFullConnectEdgeDevice edgeDevice1(clMachine, edge1);
 
 				// GPUの計算資源
-				monju::BayesianInterNodeCompute interNodeCmp1(network[1], network[0], env, clMachine);
-				monju::BayesianNodeCompute nodeCmp1(network[0], env, clMachine);
-				monju::BayesianNodeCompute nodeCmp2(network[1], env, clMachine);
+				monju::BayesianFullConnectEdgeFmc interNodeCmp1(network[1], network[0], env, clMachine);
+				monju::BayesianNodeFmc nodeCmp1(network[0], env, clMachine);
+				monju::BayesianNodeFmc nodeCmp2(network[1], env, clMachine);
 
 				// デバイス選択
 				auto deviceId = clMachine->deviceIds().at(0);
@@ -117,15 +117,15 @@ namespace MonjuTest
 			layer1.initRandom();
 			layer2.initRandom();
 
-			monju::BayesianEdge inputEdge("input-edge", network[1], network[0], 4.0f, 4.0f);
-			monju::BayesianEdge edge1("edge1", network[2], network[1], 4.0f, 4.0f);
+			monju::BayesianFullConnectEdge inputEdge("input-edge", network[1], network[0], 4.0f, 4.0f);
+			monju::BayesianFullConnectEdge edge1("edge1", network[2], network[1], 4.0f, 4.0f);
 			inputEdge.initRandom();
 			edge1.initRandom();
 
 			// 統計情報
 			monju::BayesianNodeStat nodeStat1("stat1", network[1], 5.0f, 10.f);
 			monju::BayesianNodeStat nodeStat2("stat2", network[2], 5.0f, 10.f);
-			//monju::BayesianEdgeStat edgeStat();
+			//monju::BayesianFullConnectEdgeStat edgeStat();
 
 			{
 				// GPU使用準備
@@ -135,14 +135,14 @@ namespace MonjuTest
 				monju::BayesianNodeDevice inputLayerDevice(clMachine, inputLayer);
 				monju::BayesianNodeDevice layerDevice1(clMachine, layer1);
 				monju::BayesianNodeDevice layerDevice2(clMachine, layer2);
-				monju::BayesianEdgeDevice inputEdgeDevice(clMachine, inputEdge);
-				monju::BayesianEdgeDevice edgeDevice1(clMachine, edge1);
+				monju::BayesianFullConnectEdgeDevice inputEdgeDevice(clMachine, inputEdge);
+				monju::BayesianFullConnectEdgeDevice edgeDevice1(clMachine, edge1);
 
 				// GPUの計算資源
-				monju::BayesianInterNodeCompute interNodeCmp1(network[1], network[0], env, clMachine);
-				monju::BayesianInterNodeCompute interNodeCmp2(network[2], network[1], env, clMachine);
-				monju::BayesianNodeCompute nodeCmp1(network[1], env, clMachine);
-				monju::BayesianNodeCompute nodeCmp2(network[2], env, clMachine);
+				monju::BayesianFullConnectEdgeFmc interNodeCmp1(network[1], network[0], env, clMachine);
+				monju::BayesianFullConnectEdgeFmc interNodeCmp2(network[2], network[1], env, clMachine);
+				monju::BayesianNodeFmc nodeCmp1(network[1], env, clMachine);
+				monju::BayesianNodeFmc nodeCmp2(network[2], env, clMachine);
 
 				// デバイス選択
 				auto deviceId = clMachine->deviceIds().at(0);

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_BAYESIAN_EDGE_H__
-#define _MONJU_BAYESIAN_EDGE_H__
+#ifndef _MONJU_BAYESIAN_FULL_CONNECT_EDGE_H__
+#define _MONJU_BAYESIAN_FULL_CONNECT_EDGE_H__
 
 #include "Synchronizable.h"
 #include "MonjuTypes.h"
@@ -13,7 +13,7 @@ namespace monju {
 	// 基底間のデータをフィルニ保存
 	// 保持するデータ
 	// ・ベイズ計算的な変数（CPT/OOBP）
-	class BayesianEdge : public Synchronizable
+	class BayesianFullConnectEdge : public Synchronizable
 	{
 	private:
 		std::string _id;
@@ -34,14 +34,14 @@ namespace monju {
 		FullConnectedGridCpt& cpt() { return _cpt; }
 
 	public:
-		BayesianEdge(
+		BayesianFullConnectEdge(
 			std::string id,
 			UniformBasisShape shapeX,
 			UniformBasisShape shapeY,
 			float coefficientNeighborGrid,
 			float coefficientNeighborCell
 		);
-		~BayesianEdge();
+		~BayesianFullConnectEdge();
 		void initRandom();
 		void store(std::string dir);
 		void load(std::string dir);
@@ -58,11 +58,11 @@ namespace monju {
 
 		// コピー禁止・ムーブ禁止
 	public:
-		BayesianEdge(const BayesianEdge&) = delete;
-		BayesianEdge(BayesianEdge&&) = delete;
-		BayesianEdge& operator =(const BayesianEdge&) = delete;
-		BayesianEdge& operator =(BayesianEdge&&) = delete;
+		BayesianFullConnectEdge(const BayesianFullConnectEdge&) = delete;
+		BayesianFullConnectEdge(BayesianFullConnectEdge&&) = delete;
+		BayesianFullConnectEdge& operator =(const BayesianFullConnectEdge&) = delete;
+		BayesianFullConnectEdge& operator =(BayesianFullConnectEdge&&) = delete;
 	};
 }
 
-#endif // !_MONJU_BAYESIAN_EDGE_H__
+#endif // !_MONJU_BAYESIAN_FULL_CONNECT_EDGE_H__

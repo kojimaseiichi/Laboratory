@@ -42,6 +42,19 @@ namespace monju {
 	{
 		int32_t rows;
 		int32_t cols;
+
+		bool operator ==(const Extent& o)
+		{
+			return rows == o.rows && cols == o.cols;
+		}
+		int32_t size() const
+		{
+			return rows * cols;
+		}
+		int32_t linearId(int32_t row, int32_t col) const
+		{
+			return row * cols + col;
+		}
 	};
 
 	struct UniformBasisShape
@@ -49,17 +62,19 @@ namespace monju {
 		Extent extent;
 		uint32_t nodes;
 		uint32_t units;
+
+		bool checkExtent()
+		{
+			return nodes == extent.size();
+		}
 	};
 
-	// 破棄予定
-	union BasisWorkItemCalcPlan
-	{
-		int64_t n;
-		struct {
-			uint32_t adjacent_index; // 各上位基底ノード（列）の隣接する下位基底ノード（行）のインデックス（ID）
-			uint32_t index; // ローカルワークアイテムのインデックス
-		} plan;
-	};
+	// 前方宣言
+	class ClMachine;
+	class ClMemory;
+	class ClVariableSet;
+
+	class ConvLambdaInput;
 }
 
 #endif // !_MONJU_MATRIX_H__

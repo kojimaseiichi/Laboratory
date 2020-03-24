@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_BAYESIAN_EDGE_STAT_H__
-#define _MONJU_BAYESIAN_EDGE_STAT_H__
+#ifndef _MONJU_BAYESIAN_FULL_CONNECT_EDGE_STAT_H__
+#define _MONJU_BAYESIAN_FULL_CONNECT_EDGE_STAT_H__
 
 #include "Closable.h"
 #include "GridMatrixStorage.h"
@@ -9,7 +9,7 @@
 namespace monju {
 
 	// 基底間の統計データをファイルに保存
-	class BayesianEdgeStat
+	class BayesianFullConnectEdgeStat
 	{
 	private:
 		using TStorage = RectangularGridMatrixStorage<int32_t>;
@@ -52,5 +52,5 @@ namespace monju {
 	};
 }
 
-#endif // !_MONJU_BAYESIAN_EDGE_STAT_H__
+#endif // !_MONJU_BAYESIAN_FULL_CONNECT_EDGE_STAT_H__
 

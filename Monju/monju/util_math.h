@@ -24,6 +24,23 @@ namespace monju {
 		float approx2Exp(float x);
 
 		float approx2Gaussian(float x, float variance);
+
+		template <typename T>
+		T clamp(T x, T lowerlimit, T upperlimit)
+		{
+			if (x <= lowerlimit)
+				return lowerlimit;
+			if (x >= upperlimit)
+				return upperlimit;
+			return x;
+		}
+
+		template <typename T>
+		T smoothstep3(T edge0, T edge1, T x)
+		{
+			x = clamp<T>((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+			return x * x * (3 - 2 * x);
+		}
 	}
 }
 

@@ -1,22 +1,22 @@
 #pragma once
-#ifndef _MONJU_BAYESIAN_EDGE_DEVICE_H__
-#define _MONJU_BAYESIAN_EDGE_DEVICE_H__
+#ifndef _MONJU_BAYESIAN_FULL_CONNECT_EDGE_DEVICE_H__
+#define _MONJU_BAYESIAN_FULL_CONNECT_EDGE_DEVICE_H__
 
-#include "BayesianEdge.h"
+#include "BayesianFullConnectEdge.h"
 #include "FullConnectedGridCpt.h"
 #include "ClVariableSet.h"
 
 namespace monju {
 
-	class BayesianEdgeDevice
+	class BayesianFullConnectEdgeDevice
 	{
 	private:
 		std::shared_ptr<ClMachine> _clMachine;
-		BayesianEdge* _pEdge;
+		BayesianFullConnectEdge* _pEdge;
 		std::shared_ptr<ClMemory> _clLambda, _clKappa, _clCpt;
 		ClVariableSet _clVariableSet;
 	public:
-		BayesianEdgeDevice(std::weak_ptr<ClMachine> clMachine, BayesianEdge& edge)
+		BayesianFullConnectEdgeDevice(std::weak_ptr<ClMachine> clMachine, BayesianFullConnectEdge& edge)
 		{
 			_clMachine = clMachine.lock();
 			_pEdge = &edge;
@@ -33,7 +33,7 @@ namespace monju {
 			_clVariableSet.add(_pEdge->kappa(), VariableKind::kappa, _clKappa);
 			_clVariableSet.add(_pEdge->cpt().cpt(), VariableKind::W, _clCpt);
 		}
-		~BayesianEdgeDevice()
+		~BayesianFullConnectEdgeDevice()
 		{
 			_clLambda.reset();
 			_clKappa.reset();
@@ -45,11 +45,11 @@ namespace monju {
 		}
 
 	public:	// コピー禁止・ムーブ禁止
-		BayesianEdgeDevice(const BayesianEdgeDevice&) = delete;
-		BayesianEdgeDevice(BayesianEdgeDevice&&) = delete;
-		BayesianEdgeDevice& operator=(const BayesianEdgeDevice&) = delete;
-		BayesianEdgeDevice& operator=(BayesianEdgeDevice&&) = delete;
+		BayesianFullConnectEdgeDevice(const BayesianFullConnectEdgeDevice&) = delete;
+		BayesianFullConnectEdgeDevice(BayesianFullConnectEdgeDevice&&) = delete;
+		BayesianFullConnectEdgeDevice& operator=(const BayesianFullConnectEdgeDevice&) = delete;
+		BayesianFullConnectEdgeDevice& operator=(BayesianFullConnectEdgeDevice&&) = delete;
 	};
 }
 
-#endif // !_MONJU_BAYESIAN_EDGE_DEVICE_H__
+#endif // !_MONJU_BAYESIAN_FULL_CONNECT_EDGE_DEVICE_H__

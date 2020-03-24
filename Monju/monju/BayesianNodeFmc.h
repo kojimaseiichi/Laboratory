@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_BAYESIAN_NODE_COMPUTE_H__
-#define _MONJU_BAYESIAN_NODE_COMPUTE_H__
+#ifndef _MONJU_BAYESIAN_NODE_FMC_H__
+#define _MONJU_BAYESIAN_NODE_FMC_H__
 
 #include "MonjuTypes.h"
 #include <map>
@@ -12,7 +12,7 @@
 
 namespace monju {
 
-	class BayesianNodeCompute
+	class BayesianNodeFmc
 	{
 	private:
 		const std::string
@@ -25,7 +25,7 @@ namespace monju {
 		std::shared_ptr<ClKernel> _clKernel;
 		
 	public:
-		BayesianNodeCompute(
+		BayesianNodeFmc(
 			UniformBasisShape shape,
 			Environment& env,
 			std::weak_ptr<ClMachine> clMachine)
@@ -44,7 +44,7 @@ namespace monju {
 				_kKernelOobpBel,
 				params_map);
 		}
-		~BayesianNodeCompute()
+		~BayesianNodeFmc()
 		{
 		}
 		void bel(
@@ -80,11 +80,11 @@ namespace monju {
 
 		// コピー禁止・ムーブ禁止
 	public:
-		BayesianNodeCompute(const BayesianNodeCompute&) = delete;
-		BayesianNodeCompute(BayesianNodeCompute&&) = delete;
-		BayesianNodeCompute& operator =(const BayesianNodeCompute&) = delete;
-		BayesianNodeCompute& operator =(BayesianNodeCompute&&) = delete;
+		BayesianNodeFmc(const BayesianNodeFmc&) = delete;
+		BayesianNodeFmc(BayesianNodeFmc&&) = delete;
+		BayesianNodeFmc& operator =(const BayesianNodeFmc&) = delete;
+		BayesianNodeFmc& operator =(BayesianNodeFmc&&) = delete;
 	};
 }
 
-#endif // !_MONJU_BAYESIAN_NODE_COMPUTE_H__
+#endif // !_MONJU_BAYESIAN_NODE_FMC_H__
