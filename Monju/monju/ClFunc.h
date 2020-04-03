@@ -2,12 +2,8 @@
 #ifndef _MONJU_CL_FUNC_H__
 #define _MONJU_CL_FUNC_H__
 
-#include "ClMachine.h"
+#include "MonjuTypes.h"
 #include "ClKernel.h"
-#include "ClMemory.h"
-#include "ClDeviceContext.h"
-#include "ClEventJoiner.h"
-#include "_ClCommandQueue.h"
 
 namespace monju
 {
@@ -33,81 +29,25 @@ namespace monju
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			std::vector<size_t> globalWorkSize,
 			std::vector<size_t>* pLocalWorkSize,
-			ClEventJoiner* pEvent)
-		{
-			// 引数の設定
-			for (int n = 0; n < _args.size(); n++)
-			{
-				const auto& r = _args.at(n);
-				cl_int error = clSetKernelArg(_clKernel->clKernel(), n, r.size, &(r.argValue));
-				if (error != CL_SUCCESS)
-					throw OpenClException(error, "clSetKernelArg");
-			}
-			cl_event ev;
-			// キューに追加
-			auto p = clDeviceContext.lock();
-			if (pLocalWorkSize == nullptr)
-				p->enqueueNDRangeKernel(
-					_clKernel,
-					globalWorkSize,
-					pEvent);
-			else
-				p->enqueueNDRangeKernel(
-					_clKernel,
-					globalWorkSize,
-					*pLocalWorkSize,
-					pEvent);
-		}
+			ClEventJoiner* pEvent);
 
 	public:
-		ClFunc(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<ClKernel> clKernel)
-		{
-			_clMachine = clMachine.lock();
-			_clKernel = clKernel.lock();
-		}
-		~ClFunc()
-		{
-
-		}
-		void pushArgument(float value)
-		{
-			Arg a;
-			a.size = sizeof(float);
-			a.argValue.vFloat = value;
-			_args.push_back(a);
-		}
-		void pushArgument(ClMemory& clMemory)
-		{
-			auto p = clMemory.clBuffer().lock();
-			Arg a;
-			a.size = sizeof(cl_mem);
-			a.argValue.clMem = p->clMem();
-			_args.push_back(a);
-		}
-		void pushArgument(std::weak_ptr<ClMemory> clMemory)
-		{
-			auto p = clMemory.lock();
-			pushArgument(*p);
-		}
-		void clearArguments()
-		{
-			_args.clear();
-		}
+		ClFunc(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<ClKernel> clKernel);
+		~ClFunc();
+		void pushArgument(float value);
+		void pushArgument(ClMemory& clMemory);
+		void pushArgument(std::weak_ptr<ClMemory> clMemory);
+		void clearArguments();
 		void execute(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			std::vector<size_t> globalWorkSize,
 			std::vector<size_t> localWorkSize,
-			ClEventJoiner* pEvent)
-		{
-			_execute(clDeviceContext, globalWorkSize, &localWorkSize, pEvent);
-		}
+			ClEventJoiner* pEvent);
 		void execute(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			std::vector<size_t> globalWorkSize,
-			ClEventJoiner* pEvent)
-		{
-			_execute(clDeviceContext, globalWorkSize, nullptr, pEvent);
-		}
+			ClEventJoiner* pEvent);
+
 		// コピー禁止・ムーブ禁止
 	public:
 		ClFunc(const ClFunc&) = delete;

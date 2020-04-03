@@ -2,10 +2,7 @@
 #ifndef _MONJU_CL_MACHINE_H__
 #define _MONJU_CL_MACHINE_H__
 
-#include "_ClPlatformId.h"
-#include "_ClContext.h"
-#include "_ClCommandQueue.h"
-#include <memory>
+#include "MonjuTypes.h"
 
 namespace monju
 {

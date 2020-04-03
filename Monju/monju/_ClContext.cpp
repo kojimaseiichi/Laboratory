@@ -1,5 +1,9 @@
 #include "_ClContext.h"
 
+#include "OpenClException.h"
+
+#include "_ClPlatformId.h"
+
 void CL_CALLBACK monju::cl_context_notify_error(const char* errinfo, const void* private_info, size_t cb, void* user_data)
 {
 }
@@ -9,7 +13,7 @@ void monju::_ClContext::_createContext(std::vector<cl_device_id>& deviceIds)
 	cl_int error;
 	_context = clCreateContext(
 		nullptr,
-		_deviceIds.size(),
+		static_cast<cl_uint>(_deviceIds.size()),
 		_deviceIds.data(),
 		monju::cl_context_notify_error,	// コールバック関数
 		nullptr,				// コールバックの引数
@@ -26,6 +30,12 @@ void monju::_ClContext::_releaseContext()
 	if (errno != CL_SUCCESS)
 		throw OpenClException(error, "clReleaseContext");
 	_context = nullptr;
+}
+
+monju::_ClContext::_ClContext(const std::vector<cl_device_id> deviceIds)
+{
+	_deviceIds = deviceIds;
+	_createContext(_deviceIds);
 }
 
 monju::_ClContext::~_ClContext()

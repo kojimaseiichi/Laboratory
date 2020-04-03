@@ -1,4 +1,7 @@
 #include "_ClProgram.h"
+#include "OpenClException.h"
+#include "util_str.h"
+#include "_ClContext.h"
 
 std::string monju::_ClProgram::_getProgramBuildInfo(cl_program program, std::vector<cl_device_id> deviceIds)
 {
@@ -24,7 +27,7 @@ std::string monju::_ClProgram::_getSource(std::string soucePath)
 	return cl_source_original;
 }
 
-std::string monju::_ClProgram::_getEditedSource(std::string filePath, params_map params)
+std::string monju::_ClProgram::_getEditedSource(std::string filePath, param_map params)
 {
 	std::string plain_source = _getSource(filePath);
 	std::string edited_source = util_str::parameterizePlaceholders(plain_source, params);
@@ -42,7 +45,7 @@ cl_program monju::_ClProgram::_createProgram(cl_context context, std::string& ed
 	return program;
 }
 
-cl_program monju::_ClProgram::_compileProgram(cl_context context, std::vector<cl_device_id>& deviceIds, std::string filePath, params_map& params)
+cl_program monju::_ClProgram::_compileProgram(cl_context context, std::vector<cl_device_id>& deviceIds, std::string filePath, param_map& params)
 {
 	// OpenCLカーネルソースを取得し、プレースホルダを値に置換する
 	std::string edited_source = _getEditedSource(filePath, params);
@@ -58,7 +61,7 @@ cl_program monju::_ClProgram::_compileProgram(cl_context context, std::vector<cl
 	return program;
 }
 
-void monju::_ClProgram::_create(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, params_map params)
+void monju::_ClProgram::_create(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, param_map params)
 {
 	_program = _compileProgram(context, deviceIds, sourcePath, params);
 }
@@ -73,7 +76,7 @@ void monju::_ClProgram::_release()
 	_program = nullptr;
 }
 
-monju::_ClProgram::_ClProgram(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, params_map params)
+monju::_ClProgram::_ClProgram(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, param_map params)
 {
 	_context = context;
 	_deviceIds = deviceIds;

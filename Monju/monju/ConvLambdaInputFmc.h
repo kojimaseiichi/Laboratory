@@ -50,22 +50,22 @@ namespace monju
 			_shape = p->shape();
 			_clMachine = clMachine.lock();
 
-			std::map<std::string, std::string> params_map;
-			params_map["W"] = boost::lexical_cast<std::string>(_extentInput.cols);
-			params_map["H"] = boost::lexical_cast<std::string>(_extentInput.rows);
-			params_map["FW"] = boost::lexical_cast<std::string>(_extentFilter.cols);
-			params_map["FH"] = boost::lexical_cast<std::string>(_extentFilter.rows);
-			params_map["SW"] = boost::lexical_cast<std::string>(_extentSlide.cols);
-			params_map["SH"] = boost::lexical_cast<std::string>(_extentSlide.rows);
-			params_map["X"] = boost::lexical_cast<std::string>(_shape.nodes);
-			params_map["XU"] = boost::lexical_cast<std::string>(_shape.units);
+			param_map params;
+			params["W"] = boost::lexical_cast<std::string>(_extentInput.cols);
+			params["H"] = boost::lexical_cast<std::string>(_extentInput.rows);
+			params["FW"] = boost::lexical_cast<std::string>(_extentFilter.cols);
+			params["FH"] = boost::lexical_cast<std::string>(_extentFilter.rows);
+			params["SW"] = boost::lexical_cast<std::string>(_extentSlide.cols);
+			params["SH"] = boost::lexical_cast<std::string>(_extentSlide.rows);
+			params["X"] = boost::lexical_cast<std::string>(_shape.nodes);
+			params["XU"] = boost::lexical_cast<std::string>(_shape.units);
 
 			std::filesystem::path kernelPathBase = env.info().kernelFolder;
 			_clKernel = std::make_shared<ClKernel>(
 				_clMachine,
 				(kernelPathBase / _kSrcFile).string(),
 				_kKernel,
-				params_map);
+				params);
 
 		}
 		~ConvLambdaInputFmc()

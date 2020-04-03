@@ -2,19 +2,8 @@
 #ifndef _MONJU_DEVICE_MEMORY_H__
 #define _MONJU_DEVICE_MEMORY_H__
 
-#include <string>
-#include <CL/cl.h>
-#include <fstream>
-#include <map>
-#include <set>
-
-#include "OpenClException.h"
 #include "MonjuTypes.h"
-#include "GridMatrixStorage.h"
-#include "DeviceContext.h"
-#include "Device.h"
-#include "VariableKind.h"
-#include "util_misc.h"
+#include "OpenClException.h"
 
 namespace monju {
 

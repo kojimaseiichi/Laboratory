@@ -2,8 +2,7 @@
 #ifndef _MONJU__CL_CONTEXT_H__
 #define _MONJU__CL_CONTEXT_H__
 
-#include <CL/cl.h>
-#include "_ClPlatformId.h"
+#include "MonjuTypes.h"
 
 namespace monju {
 
@@ -19,11 +18,7 @@ namespace monju {
 		void _releaseContext();
 
 	public:
-		_ClContext(const std::vector<cl_device_id> deviceIds)
-		{
-			_deviceIds = deviceIds;
-			_createContext(_deviceIds);
-		}
+		_ClContext(const std::vector<cl_device_id> deviceIds);
 		~_ClContext();
 		cl_context context() const;
 		std::vector<cl_device_id> deviceIds() const;

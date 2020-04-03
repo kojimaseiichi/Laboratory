@@ -15,9 +15,6 @@ namespace monju {
 	// OpenCLプログラム
 	class DeviceProgram
 	{
-	public:
-		using params_map = std::map<std::string, std::string>;
-
 	private:
 
 		DeviceContext*		_p_context;
@@ -38,7 +35,7 @@ namespace monju {
 		// プレースホルダ置換済みソースコードを取得
 		std::string			_getEditedSource(
 			std::string file_path,
-			params_map params);
+			param_map params);
 
 		// プログラムを作成
 		cl_program			_createProgram(
@@ -51,14 +48,14 @@ namespace monju {
 			cl_context context,
 			std::vector<cl_device_id>& device_id_set,
 			std::string file_path,
-			params_map& params);
+			param_map& params);
 
 		// プログラムコンパイル(CLファイル)、カーネル生成
 		void				_create(
 			DeviceContext& context,
 			std::vector<Device*>& device_set,
 			std::string source_path,
-			params_map& params);
+			param_map& params);
 
 		// コピー禁止・ムーブ禁止
 	public:
@@ -77,7 +74,7 @@ namespace monju {
 			DeviceContext& context,
 			std::vector<Device*>& device_set,
 			std::string cl_file_path,
-			params_map& params);
+			param_map& params);
 
 		void	release();
 

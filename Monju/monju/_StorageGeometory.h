@@ -1,24 +1,18 @@
+/*
+行列グリッドの形状を計算
+形状のパラメータをファイルに保存（JSON）
+
+_StorageGeometory
+	_RectangularStorageGeometory
+	_TriangularStorageGeometory
+*/
 #pragma once
 #ifndef _MONJU_STORAGE_GEOMETORY_H__
 #define _MONJU_STORAGE_GEOMETORY_H__
 
-
-#include <fstream>
-#include <iterator>
-#include <stdint.h>
-#include "nlohmann/json.hpp"
-
-using json = nlohmann::json;
+#include "MonjuTypes.h"
 
 namespace monju {
-
-	enum GridShape
-	{
-		None = 0,
-		Rectangular = 1,	// 普通の行列
-		Trianglar = 2		// 三角行列 U/L区別しない
-	};
-
 	namespace inner {
 
 		class _StorageGeometory
@@ -39,7 +33,7 @@ namespace monju {
 
 			// 変数
 		protected:
-			GridShape			_grid_shape;		// グリッド形状
+			monju::GridShape	_grid_shape;		// グリッド形状
 			int					_grid_rows;			// グリッドの行数
 			int					_grid_cols;			// グリッドの列数
 			int					_mat_rows;			// 行列(セル)の行数

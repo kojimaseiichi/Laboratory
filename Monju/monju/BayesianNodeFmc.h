@@ -33,16 +33,16 @@ namespace monju {
 			_clMachine = clMachine.lock();
 			_shape = shape;
 
-			std::map<std::string, std::string> params_map;
-			params_map["X"] = boost::lexical_cast<std::string>(shape.nodes);
-			params_map["XU"] = boost::lexical_cast<std::string>(shape.units);
+			param_map param_map;
+			param_map["X"] = boost::lexical_cast<std::string>(shape.nodes);
+			param_map["XU"] = boost::lexical_cast<std::string>(shape.units);
 
 			std::filesystem::path kernelPathBase = env.info().kernelFolder;
 			_clKernel = std::make_shared<ClKernel>(
 				_clMachine,
 				(kernelPathBase / _kSrcOobpBel).string(),
 				_kKernelOobpBel,
-				params_map);
+				param_map);
 		}
 		~BayesianNodeFmc()
 		{

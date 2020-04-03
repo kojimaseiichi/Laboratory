@@ -1,8 +1,10 @@
 #include "MonjuException.h"
+#include "ErrorCode.h"
 
 
 monju::MonjuException::MonjuException()
 {
+	_code = ErrorCode::Error;
 }
 
 monju::MonjuException::MonjuException(std::string message)

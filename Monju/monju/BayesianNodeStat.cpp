@@ -1,5 +1,7 @@
 #include "BayesianNodeStat.h"
 
+#include "util_file.h"
+
 monju::BayesianNodeStat::BayesianNodeStat(std::string id, UniformBasisShape shape, float_t coeWinPenalty, float_t coeLatPenalty)
 	: _conc(1)
 {

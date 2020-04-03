@@ -17,6 +17,7 @@
 #include "monju/BayesianNodeFmc.h"
 #include "monju/Environment.h"
 #include "monju/VariableKind.h"
+#include "monju/ClEventJoiner.h"
 
 void test1();
 void test2();
@@ -25,7 +26,9 @@ void test3();
 int main()
 {
 	test3();
+	return 0;
 }
+
 
 void test1()
 {

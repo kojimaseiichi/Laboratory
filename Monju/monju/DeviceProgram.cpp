@@ -1,6 +1,6 @@
 #include "DeviceProgram.h"
 #include "util_str.h"
-
+#include "Device.h"
 
 // プログラムビルド時の情報を取得
 
@@ -31,7 +31,7 @@ std::string monju::DeviceProgram::_getSource(std::string souce_path)
 
 // プレースホルダ置換済みソースコードを取得
 
-std::string monju::DeviceProgram::_getEditedSource(std::string file_path, params_map params)
+std::string monju::DeviceProgram::_getEditedSource(std::string file_path, param_map params)
 {
 	std::string plain_source = _getSource(file_path);
 	std::string edited_source = util_str::parameterizePlaceholders(plain_source, params);
@@ -54,7 +54,7 @@ cl_program monju::DeviceProgram::_createProgram(cl_context context, std::string&
 // カーネルコンパイルしてカーネルプログラムを生成（この状態では実行できない）
 // OpenCLカーネルソースを読み込み、テンプレート変数の具体化、カーネルコンパイル
 
-cl_program monju::DeviceProgram::_compileProgram(cl_context context, std::vector<cl_device_id>& device_id_set, std::string file_path, params_map& params)
+cl_program monju::DeviceProgram::_compileProgram(cl_context context, std::vector<cl_device_id>& device_id_set, std::string file_path, param_map& params)
 {
 	// OpenCLカーネルソースを取得し、プレースホルダを値に置換する
 	std::string edited_source = _getEditedSource(file_path, params);
@@ -72,7 +72,7 @@ cl_program monju::DeviceProgram::_compileProgram(cl_context context, std::vector
 
 // プログラムコンパイル(CLファイル)、カーネル生成
 
-void monju::DeviceProgram::_create(DeviceContext& context, std::vector<Device*>& device_set, std::string source_path, params_map& params)
+void monju::DeviceProgram::_create(DeviceContext& context, std::vector<Device*>& device_set, std::string source_path, param_map& params)
 {
 	_p_context = &context;
 	_device_set = device_set;
@@ -96,7 +96,7 @@ monju::DeviceProgram::~DeviceProgram()
 
 // プログラムを初期化
 
-void monju::DeviceProgram::create(DeviceContext& context, std::vector<Device*>& device_set, std::string cl_file_path, params_map& params)
+void monju::DeviceProgram::create(DeviceContext& context, std::vector<Device*>& device_set, std::string cl_file_path, param_map& params)
 {
 	_create(context, device_set, cl_file_path, params);
 }

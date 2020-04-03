@@ -1,4 +1,5 @@
 #include "_ClPlatformId.h"
+#include "OpenClException.h"
 
 void monju::_ClPlatformId::_getPlatformIds()
 {

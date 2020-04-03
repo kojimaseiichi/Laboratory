@@ -348,6 +348,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ErrorCode.h">
+      <Filter>共通</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">

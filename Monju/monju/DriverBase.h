@@ -2,9 +2,7 @@
 #ifndef _MONJU_DRIVE_BASE_H__
 #define _MONJU_DRIVE_BASE_H__
 
-#include <stdint.h>
-#include "DeviceContext.h"
-#include "Device.h"
+#include "MonjuTypes.h"
 
 namespace monju {
 

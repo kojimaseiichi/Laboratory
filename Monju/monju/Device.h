@@ -2,8 +2,7 @@
 #ifndef _MONJU_DEVICE_H__
 #define _MONJU_DEVICE_H__
 
-#include <CL/cl.h>
-#include "OpenClException.h"
+#include "MonjuTypes.h"
 
 namespace monju {
 

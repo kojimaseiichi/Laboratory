@@ -2,15 +2,9 @@
 #ifndef _MONJU_MONJU_EXCEPTION_H__
 #define _MONJU_MONJU_EXCEPTION_H__
 
-#include <string>
+#include "MonjuTypes.h"
 
 namespace monju {
-
-	enum class ErrorCode
-	{
-		Error = 0,
-		WeakPointerExpired = 1
-	};
 
 	/// <summary>ライブラリの例外クラス</summary>
 	class MonjuException

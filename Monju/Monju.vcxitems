@@ -99,6 +99,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DriverBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Environment.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ErrorCode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />

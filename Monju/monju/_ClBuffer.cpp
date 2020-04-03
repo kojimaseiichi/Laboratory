@@ -1,4 +1,5 @@
 #include "_ClBuffer.h"
+#include "OpenClException.h"
 
 cl_mem monju::_ClBuffer::_createBuffer(cl_context context, size_t size)
 {

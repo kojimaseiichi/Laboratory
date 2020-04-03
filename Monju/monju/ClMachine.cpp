@@ -1,5 +1,11 @@
 #include "ClMachine.h"
 
+#include "MonjuException.h"
+
+#include "_ClPlatformId.h"
+#include "_ClContext.h"
+#include "_ClCommandQueue.h"
+
 void monju::ClMachine::_createPlatformId()
 {
 	_clPlatformId = std::make_shared<_ClPlatformId>(_platformId);

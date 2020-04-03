@@ -2,7 +2,7 @@
 #ifndef _MONJU__CL_COMMAND_QUEUES_H__
 #define _MONJU__CL_COMMAND_QUEUES_H__
 
-#include "_ClPlatformId.h"
+#include "MonjuTypes.h"
 
 namespace monju {
 

@@ -1,8 +1,18 @@
 #include "DeviceKernel.h"
+
 #include "MonjuException.h" 
-#include <fstream>
-#include <map>
-#include <boost/regex.hpp>
+#include "DeviceContext.h"
+#include "DeviceProgram.h"
+#include "Device.h"
+#include "OpenClException.h"
+#include "util_str.h"
+
+
+monju::DeviceKernel::DeviceKernel()
+{
+	_p_program = nullptr;
+	_kernel = nullptr;
+}
 
 monju::DeviceKernel::~DeviceKernel()
 {
@@ -11,7 +21,7 @@ monju::DeviceKernel::~DeviceKernel()
 
 // コンパイル済みカーネルプログラムをデバイスに配置して実行可能な状態に遷移
 
-cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string kernel_name, std::map<std::string, std::string>& params)
+cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string kernel_name, param_map& params)
 {
 	std::string parameterized_kernel_name = util_str::parameterizePlaceholders(kernel_name, params);
 	cl_int error_code;
@@ -23,14 +33,14 @@ cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string ker
 
 // カーネルを実行可能な状態に遷移（_compileProgram、_createKernel）
 
-void monju::DeviceKernel::_initKernel(cl_program program, std::string kernel_name, std::map<std::string, std::string>& params)
+void monju::DeviceKernel::_initKernel(cl_program program, std::string kernel_name, param_map& params)
 {
 	_kernel = _createKernel(program, kernel_name, params);
 }
 
 // プログラムコンパイル(CLファイル)、カーネル生成
 
-void monju::DeviceKernel::_create(DeviceProgram& program, std::string kernel_name, std::map<std::string, std::string>& params)
+void monju::DeviceKernel::_create(DeviceProgram& program, std::string kernel_name, param_map& params)
 {
 	_p_program = &program;
 	_kernel_name = kernel_name;
@@ -92,7 +102,7 @@ void monju::DeviceKernel::_run(Device& device, std::vector<size_t>& global_work_
 
 // OpenCLカーネル生成
 
-void monju::DeviceKernel::create(DeviceProgram& program, std::string kernel_name, std::map<std::string, std::string>& params)
+void monju::DeviceKernel::create(DeviceProgram& program, std::string kernel_name, param_map& params)
 {
 	_create(program, kernel_name, params);
 }

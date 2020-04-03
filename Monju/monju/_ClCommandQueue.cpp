@@ -1,5 +1,9 @@
 #include "_ClCommandQueue.h"
 
+#include "OpenClException.h"
+
+#include "_ClPlatformId.h"
+
 cl_command_queue monju::_ClCommandQueue::_createCommandQueue(cl_context context, cl_device_id deviceId)
 {
 	cl_int error;

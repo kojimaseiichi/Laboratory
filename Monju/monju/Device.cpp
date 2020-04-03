@@ -1,5 +1,7 @@
 #include "Device.h"
 
+#include "OpenClException.h"
+
 
 monju::Device::Device()
 {

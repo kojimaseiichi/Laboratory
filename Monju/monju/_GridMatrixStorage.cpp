@@ -1,5 +1,12 @@
 #include "_GridMatrixStorage.h"
-#include "boost/filesystem.hpp"
+
+#include "MonjuException.h"
+#include "util_file.h"
+#include "Synchronizable.h"
+#include "_StorageGeometory.h"
+#include "MatrixIterator.h"
+#include "Eigen/Dense"
+
 
 monju::inner::_GridMatrixStorage::_GridMatrixStorage(monju::inner::_StorageGeometory* p_geo)
 {
@@ -140,5 +147,17 @@ void monju::inner::_GridMatrixStorage::close()
 {
 	WriteGuard guard(this);
 	_destroy();
+}
+
+monju::GridCellIteratorContainer monju::inner::_GridMatrixStorage::iterateCells()
+{
+	GridCellIteratorContainer c(*_p_geo);
+	return c;
+}
+
+monju::MatrixElementIteratorContainer monju::inner::_GridMatrixStorage::iterateElements()
+{
+	MatrixElementIteratorContainer c(*_p_geo);
+	return c;
 }
 

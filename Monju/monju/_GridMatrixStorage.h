@@ -2,23 +2,13 @@
 #ifndef _MONJU_GRID_MATRIX_STORAGE__H__
 #define _MONJU_GRID_MATRIX_STORAGE__H__
 
-#include <fstream>
-#include <mutex>
-#include <shared_mutex>
-#include <stdint.h>
-#include "MonjuException.h"
 #include "MonjuTypes.h"
-#include "util_file.h"
-#include "Eigen/Dense"
-#include "GridMatrixAccessor.h"
 #include "Synchronizable.h"
-#include "_StorageGeometory.h"
+#include "GridMatrixAccessor.h"
 #include "MatrixIterator.h"
-
 
 namespace monju {
 	namespace inner {
-
 
 		/// <summary>グリッド行列の永続化</summary>
 		class _GridMatrixStorage : public Synchronizable
@@ -87,16 +77,8 @@ namespace monju {
 
 			// 列挙
 		public:
-			GridCellIteratorContainer iterateCells()
-			{
-				GridCellIteratorContainer c(*_p_geo);
-				return c;
-			}
-			MatrixElementIteratorContainer iterateElements()
-			{
-				MatrixElementIteratorContainer c(*_p_geo);
-				return c;
-			}
+			GridCellIteratorContainer iterateCells();
+			MatrixElementIteratorContainer iterateElements();
 			// プロパティ
 		public:
 			GridShape		gridShape() const

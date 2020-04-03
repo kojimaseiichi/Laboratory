@@ -1,5 +1,12 @@
 #include "DeviceMemory.h"
+
+#include "GridMatrixStorage.h"
+#include "DeviceContext.h"
+#include "Device.h"
+#include "VariableKind.h"
+#include "util_misc.h"
 #include "util_math.h"
+
 
 monju::DeviceMemory::DeviceMemory(Device& device) :
 	_read_required(),

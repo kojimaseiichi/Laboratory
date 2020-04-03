@@ -2,9 +2,7 @@
 #ifndef _MONJU__CL_PLATFORM_ID_H__
 #define _MONJU__CL_PLATFORM_ID_H__
 
-#include <CL/cl.h>
-#include <vector>
-#include "OpenClException.h"
+#include "MonjuTypes.h"
 
 namespace monju {
 

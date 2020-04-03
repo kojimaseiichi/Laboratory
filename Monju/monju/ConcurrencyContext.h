@@ -2,7 +2,7 @@
 #ifndef _MONJU_CONCURRENCY_CONTEXT_H__
 #define _MONJU_CONCURRENCY_CONTEXT_H__
 
-#include "mtrebi/ThreadPool.h"
+#include "MonjuTypes.h"
 #include "Closable.h"
 
 namespace monju {
@@ -13,41 +13,18 @@ namespace monju {
 		std::unique_ptr<ThreadPool> _ptp;
 
 	public:
-		ConcurrencyContext(const ConcurrencyContext&) = delete;
-		ConcurrencyContext& operator=(const ConcurrencyContext&) = delete;
+		ConcurrencyContext();
+		ConcurrencyContext(int max_threads);
+		~ConcurrencyContext();
+		void create();
+		void close();
+		ThreadPool& threadPool() const;
+		// コピー・ムーブ不可
 	public:
-
-		ConcurrencyContext()
-		{
-			_ptp.reset();
-		}
-
-		ConcurrencyContext(int max_threads)
-		{
-			_ptp = std::make_unique<ThreadPool>(max_threads);
-		}
-		void create()
-		{
-			_ptp->init();
-		}
-		~ConcurrencyContext()
-		{
-			close();
-		}
-
-		void close()
-		{
-			if (_ptp != nullptr)
-			{
-				_ptp->shutdown();
-				_ptp.reset();
-			}
-		}
-
-		ThreadPool& threadPool() const
-		{
-			return *_ptp;
-		}
+		ConcurrencyContext(const ConcurrencyContext&) = delete;
+		ConcurrencyContext(const ConcurrencyContext&&) = delete;
+		ConcurrencyContext& operator=(const ConcurrencyContext&) = delete;
+		ConcurrencyContext& operator=(const ConcurrencyContext&&) = delete;
 	};
 }
 

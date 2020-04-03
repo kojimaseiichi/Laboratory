@@ -1,5 +1,9 @@
 #include "DeviceKernelArguments.h"
 
+#include "DeviceKernel.h"
+#include "DeviceMemory.h"
+
+
 monju::DeviceKernelArguments::DeviceKernelArguments()
 {
 }

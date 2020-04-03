@@ -1,5 +1,8 @@
 #include "PenaltyCalculation.h"
 #include <iostream>
+#include "ErrorCode.h"
+#include "MonjuException.h"
+
 
 monju::PenaltyCalculation::PenaltyCalculation(int num_of_nodes, int num_of_units, int active_num_of_nodes, std::weak_ptr<TriangularGridMatrixStorage<int32_t>> pStorage, float coefficient_win_penalty, float coefficient_lat_penalty)
 	:

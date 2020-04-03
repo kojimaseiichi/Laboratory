@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "monju/ConvLambdaInputFmc.h"
+#include "monju/MonjuTypes.h"
+//#include "monju/ConvLambdaInputFmc.h"
 
 class MnistTestStack
 {

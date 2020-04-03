@@ -2,8 +2,6 @@
 #ifndef _MONJU__CL_BUFFER_H__
 #define _MONJU__CL_BUFFER_H__
 
-#include <CL/cl.h>
-#include "OpenClException.h"
 #include "MonjuTypes.h"
 
 namespace monju

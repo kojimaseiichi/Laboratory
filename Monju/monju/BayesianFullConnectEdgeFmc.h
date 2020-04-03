@@ -51,33 +51,33 @@ namespace monju {
 			_shapeY = shapeY;
 			_clMachine = clMachine.lock();
 
-			std::map<std::string, std::string> params_map;
-			params_map["X"] = boost::lexical_cast<std::string>(shapeX.nodes);
-			params_map["Y"] = boost::lexical_cast<std::string>(shapeY.nodes);
-			params_map["XU"] = boost::lexical_cast<std::string>(shapeX.units);
-			params_map["YU"] = boost::lexical_cast<std::string>(shapeY.units);
+			param_map param_map;
+			param_map["X"] = boost::lexical_cast<std::string>(shapeX.nodes);
+			param_map["Y"] = boost::lexical_cast<std::string>(shapeY.nodes);
+			param_map["XU"] = boost::lexical_cast<std::string>(shapeX.units);
+			param_map["YU"] = boost::lexical_cast<std::string>(shapeY.units);
 
 			std::filesystem::path kernelPathBase = env.info().kernelFolder;
 			_kernelOobpUp1 = std::make_shared<ClKernel>(
 				_clMachine,
 				kernelPathBase / _kSrcOobpUp1,
 				_kKernelOobpUp1,
-				params_map);
+				param_map);
 			_kernelOobpUp2 = std::make_shared<ClKernel>(
 				_clMachine,
 				kernelPathBase / _kSrcOobpUp2,
 				_kKernelOobpUp2,
-				params_map);
+				param_map);
 			_kernelOobpDown1 = std::make_shared<ClKernel>(
 				_clMachine,
 				kernelPathBase / _kSrcOobpDown1,
 				_kKernelOobpDown1,
-				params_map);
+				param_map);
 			_kernelOobpDown2 = std::make_shared<ClKernel>(
 				_clMachine,
 				kernelPathBase / _kSrcOobpDown2,
 				_kKernelOobpDown2,
-				params_map);
+				param_map);
 		}
 		~BayesianFullConnectEdgeFmc()
 		{

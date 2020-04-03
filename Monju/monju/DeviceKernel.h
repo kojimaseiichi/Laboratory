@@ -3,14 +3,7 @@
 #ifndef _MONJU_DEVICE_KERNEL_H__
 #define _MONJU_DEVICE_KERNEL_H__
 
-#include <string>
-#include <map>
-#include <CL/cl.h>
-#include "DeviceContext.h"
-#include "DeviceProgram.h"
-#include "Device.h"
-#include "OpenClException.h"
-#include "util_str.h"
+#include "MonjuTypes.h"
 
 namespace monju {
 
@@ -20,19 +13,8 @@ namespace monju {
 	{
 		// 生成・初期化・破棄
 	public:
-		DeviceKernel()
-		{
-			_p_program = nullptr;
-			_kernel = nullptr;
-		}
+		DeviceKernel();
 		virtual ~DeviceKernel();
-
-		// コピー禁止・ムーブ禁止
-	protected:
-		DeviceKernel(const DeviceKernel&) = delete;
-		DeviceKernel(DeviceKernel&&) = delete;
-		DeviceKernel& operator=(const DeviceKernel&) = delete;
-		DeviceKernel& operator=(DeviceKernel&&) = delete;
 
 	protected:
 		// 外部依存リソース
@@ -42,14 +24,14 @@ namespace monju {
 
 	protected:
 		// コンパイル済みカーネルプログラムをデバイスに配置して実行可能な状態に遷移
-		cl_kernel			_createKernel(cl_program program, std::string kernel_name, std::map<std::string, std::string>& params);
+		cl_kernel			_createKernel(cl_program program, std::string kernel_name, param_map& params);
 		// カーネルを実行可能な状態に遷移（_compileProgram、_createKernel）
-		void				_initKernel(cl_program program, std::string kernel_name, std::map<std::string, std::string>& params);
+		void				_initKernel(cl_program program, std::string kernel_name, param_map& params);
 		// プログラムコンパイル(CLファイル)、カーネル生成
 		void				_create(
 			DeviceProgram& program,
 			std::string kernel_name,
-			std::map<std::string, std::string>& params);
+			param_map& params);
 		// デバイス上に配置済みのカーネルプログラムを実行
 		// 引数は事前に設定しておく必要がある
 		void				_run(
@@ -73,7 +55,7 @@ namespace monju {
 		void		create(
 			DeviceProgram& program,
 			std::string kernel_name,
-			std::map<std::string, std::string>& params
+			param_map& params
 		);
 		// OpenCLカーネル解放
 		void		release();
@@ -89,6 +71,12 @@ namespace monju {
 			std::vector<size_t>& local_work_size
 		);
 
+		// コピー禁止・ムーブ禁止
+	protected:
+		DeviceKernel(const DeviceKernel&) = delete;
+		DeviceKernel(DeviceKernel&&) = delete;
+		DeviceKernel& operator=(const DeviceKernel&) = delete;
+		DeviceKernel& operator=(DeviceKernel&&) = delete;
 	}; // class DeviceKernel
 } // namespace monju
 

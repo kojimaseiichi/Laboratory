@@ -1,5 +1,7 @@
 #include "DriverBase.h"
 
+#include "DeviceContext.h"
+#include "Device.h"
 
 monju::DriverBase::DriverBase()
 {

@@ -2,10 +2,7 @@
 #ifndef _MONJU_DEVICE_KERNEL_ARGUMENTS_H__
 #define _MONJU_DEVICE_KERNEL_ARGUMENTS_H__
 
-#include <vector>
-#include <set>
-#include "DeviceKernel.h"
-#include "DeviceMemory.h"
+#include "MonjuTypes.h"
 
 namespace monju {
 

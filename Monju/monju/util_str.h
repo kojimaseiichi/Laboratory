@@ -3,9 +3,7 @@
 #ifndef _MONJU_UTIL_STR_H__
 #define _MONJU_UTIL_STR_H__
 
-#include <string>
-#include <map>
-#include <boost/regex.hpp>
+#include "MonjuTypes.h"
 
 namespace monju {
 	namespace util_str {
@@ -51,7 +49,7 @@ namespace monju {
 		}
 
 		// ${A}の形式のプレースホルダーを置換
-		std::string parameterizePlaceholders(std::string source, std::map<std::string, std::string>& params);
+		std::string parameterizePlaceholders(std::string source, param_map& params);
 
 	}
 }

@@ -2,10 +2,7 @@
 #ifndef _MONJU_ENVIRONMENT_H__
 #define _MONJU_ENVIRONMENT_H__
 
-#include <string>
-#include <fstream>
-#include <boost/filesystem.hpp>
-#include "nlohmann/json.hpp"
+#include "MonjuTypes.h"
 
 namespace monju
 {
@@ -23,56 +20,17 @@ namespace monju
 		std::string _workFolder;
 
 		// プロパティファイルへのパス
-		std::string _propertyFilePath(std::string workFolder) const
-		{
-			boost::filesystem::path bwf = boost::filesystem::path(workFolder);
-			boost::filesystem::path full_path = bwf / "properties.json";
-			return full_path.string();
-		}
+		std::string _propertyFilePath(std::string workFolder) const;
 		// プラットフォーム情報をJSON形式でファイルに書き込み
-		void _saveJson(const std::string workFolder) const
-		{
-			std::string fileName = _propertyFilePath(workFolder);
-			std::ofstream o;
-			o.open(fileName, std::ofstream::out | std::ofstream::binary);
-			nlohmann::json j;
-			j["workFolder"] = _info.workFolder;
-			j["kernelFolder"] = _info.kernelFolder;
-			j["platformId"] = _info.platformId;
-			o << j;
-		}
+		void _saveJson(const std::string workFolder) const;
 		// プラットフォーム情報をファイルから読み込み
-		void _loadJson(const std::string workFolder)
-		{
-			std::string fileName = _propertyFilePath(workFolder);
-			std::ifstream i;
-			i.open(fileName, std::ofstream::in | std::ofstream::binary);
-			nlohmann::json j;
-			i >> j;
-			_info = {
-				j["workFolder"].get<std::string>(),
-				j["kernelFolder"].get<std::string>(),
-				j["platformId"].get<int>()
-			};
-		}
+		void _loadJson(const std::string workFolder);
 
 	public:
-		Environment(std::string workFolder)
-		{
-			open(workFolder);
-		}
-		~Environment()
-		{
-		}
-		void open(std::string workFolder)
-		{
-			_workFolder = workFolder;
-			_loadJson(workFolder);
-		}
-		Info info() const
-		{
-			return _info;
-		}
+		Environment(std::string workFolder);
+		~Environment();
+		void open(std::string workFolder);
+		Info info() const;
 
 		// コピー禁止・ムーブ禁止
 	public:
