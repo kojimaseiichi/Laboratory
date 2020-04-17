@@ -12,16 +12,18 @@
 
 namespace monju
 {
+	// bottom層のλに対して入力を与える層
+	// イメージデータをベイジアン計算のλに変換
 	class ConvLambdaInput
 	{
 	private:
 		std::string _id;
 		UniformBasisShape _shapeBottom;
 		Extent _extImage, _extFilter, _extStride;
-		std::shared_ptr<MatrixRm<float_t>> _image;
-		std::shared_ptr<MatrixCm<float_t>> _cpt;
+		std::shared_ptr<MatrixRm<float_t>> _image;	// 入力画像データ
+		std::shared_ptr<MatrixCm<float_t>> _cpt;	// １個のCPT
 		std::weak_ptr<MatrixRm<float_t>> _lambda;
-		std::shared_ptr<MatrixCm<float_t>> _delta; // internal
+		std::shared_ptr<MatrixCm<float_t>> _delta; // CPTの学習結果の差分
 
 	public:
 		std::string id() const { return _id; }

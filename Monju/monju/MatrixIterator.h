@@ -33,7 +33,7 @@ namespace monju {
 	class MatrixIteratorContainer
 	{
 	protected:
-		inner::_StorageGeometory* _p_geo;
+		inner::_StorageGeometory* _p_geo = nullptr;
 
 	protected:
 		virtual bool next(int& row, int& col) = 0;

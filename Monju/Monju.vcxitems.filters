@@ -163,6 +163,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.cpp">
+      <Filter>皮質モジュール</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -350,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ErrorCode.h">
       <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.h">
+      <Filter>皮質モジュール</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

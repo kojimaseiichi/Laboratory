@@ -10,8 +10,8 @@ monju::BayesianFullConnectEdge::BayesianFullConnectEdge(std::string id, UniformB
 	_lambda = std::make_shared<MatrixCm<float_t>>();
 	_kappa = std::make_shared<MatrixCm<float>>();
 
-	_lambda->resize(_shapeY.nodes * _shapeX.units, shapeX.nodes);
-	_kappa->resize(_shapeY.nodes * _shapeY.units, shapeX.nodes);
+	_lambda->resize(static_cast<Eigen::Index>(_shapeY.nodes) * _shapeX.units, shapeX.nodes);
+	_kappa->resize(static_cast<Eigen::Index>(_shapeY.nodes) * _shapeY.units, shapeX.nodes);
 
 	_lambda->setZero();
 	_kappa->setZero();

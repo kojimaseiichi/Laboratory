@@ -29,8 +29,8 @@ namespace monju {
 
 	public:
 		MatrixRowMajorAccessor(Matrix& r) :
-			_kMatRows(r.rows()),
-			_kMatCols(r.cols())
+			_kMatRows(static_cast<int>(r.rows())),
+			_kMatCols(static_cast<int>(r.cols()))
 		{
 			_p = &r;
 		}

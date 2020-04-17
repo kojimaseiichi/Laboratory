@@ -43,6 +43,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Environment.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ImageInputGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Environment.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ErrorCode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />

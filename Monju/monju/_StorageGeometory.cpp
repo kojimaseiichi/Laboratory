@@ -105,12 +105,12 @@ bool monju::inner::_RectangularStorageGeometory::checkFile(std::fstream * stream
 {
 	const int size = _calcFileSize(_mat_rows, _mat_cols, _grid_rows, _grid_cols);
 	const int repeat_size = kPartitionWallSize + _mat_rows * _mat_cols;
-	for (int rep_row = 0; rep_row < _grid_rows; _grid_rows++)
+	for (int rep_row = 0; rep_row < _grid_rows; rep_row++)
 	{
 		for (int rep_col = 0; rep_col < _grid_cols; _grid_cols++)
 		{
 			int offset = rep_row * _grid_cols + rep_col;
-			stream->seekg(offset * repeat_size, std::fstream::beg);
+			stream->seekg(static_cast<std::streamoff>(offset) * repeat_size, std::fstream::beg);
 			for (int n = 0; n < kPartitionWallSize; n++)
 			{
 				char byte = 0;
