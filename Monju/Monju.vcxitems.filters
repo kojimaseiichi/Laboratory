@@ -67,13 +67,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.cpp">
       <Filter>共通</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNode.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClBuffer.cpp">
@@ -145,19 +139,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.cpp">
@@ -166,6 +148,21 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayer.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerFmc.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerUpdaterFmc.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -255,13 +252,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConcurrencyContext.h">
       <Filter>共通</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNode.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClBuffer.h">
@@ -333,19 +324,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.h">
@@ -357,6 +336,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayer.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerFmc.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerUpdaterFmc.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">
@@ -382,6 +376,9 @@
     </Filter>
     <Filter Include="OpenCLコンベンション">
       <UniqueIdentifier>{c7fff8c3-5555-4004-bd4a-a4593e96c2ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="皮質モジュールrebuild">
+      <UniqueIdentifier>{8caad650-3396-4a31-bafe-f9cf3610e021}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

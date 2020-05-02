@@ -14,16 +14,13 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNode.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerFmc.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerUpdaterFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClDeviceContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClEventJoiner.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClFunc.cpp" />
@@ -44,7 +41,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Environment.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ImageInputGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
@@ -53,6 +53,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PenaltyCalculation.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\SparseGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Synchronizable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_file.cpp" />
@@ -71,16 +72,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdge.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNode.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeDevice.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerFmc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerUpdaterFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClDeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClEventJoiner.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClFunc.h" />
@@ -102,7 +100,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Environment.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ErrorCode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.h" />
@@ -115,6 +116,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PenaltyCalculation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\SparseGridCpt.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Synchronizable.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h" />

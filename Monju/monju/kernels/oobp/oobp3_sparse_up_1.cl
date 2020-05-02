@@ -32,8 +32,29 @@
     og_w_lambda     LAMBDA variable that intervenes between two bases and is near the upper basis
 
  */
+
+ typedef struct __attribute__((packed)) cell_addr
+{
+    int grid_row;
+    int grid_col;
+    int cell_index;
+};
+
+/*
+definition in host code
+
+#pragma pack(push, 1)
+typedef struct _cell_addr
+{
+    cl_int grid_row;
+    cl_int grid_col;
+    cl_int cell_index;
+} cell_addr;
+#pragma pack(pop)
+*/
+
 __kernel void oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
-    __global int* ig_cell_inf,
+    __global cell_addr* ig_cell_addr_list,
     size_t offset,
     __global float* ig_y_lambda,
     __global float* ig_y_pi,
@@ -47,26 +68,22 @@ __kernel void oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
     const size_t kCptSize = ${XU} * ${YU};
 
     // get cell info
-    __global int* g_cell_inf = ig_cell_inf + kCellIndex * 4 ;
-    const int kGridRow = g_cell_inf[0];
-    const int kGridCol = g_cell_inf[1];
-    const int kOrderLower = g_cell_inf[2];
-    const int kOrderUpper = g_cell_inf[3];
+    cell_addr cell = ig_cell_addr_list[kCellIndex];
 
     // no cell assigned
     if (kGridRow < 0 || kGridCol < 0)
         return;
 
     // to load variable that is shared among the work group
-    __global float* g_y_pi = ig_y_pi + (kGridCol * ${YU});
-    __global float* g_y_lambda = ig_y_lambda + (kGridCol * ${YU});
-    __global float* g_w_cpt = ig_w_spa_cpt + kCellIndex * kCptSize;
-    __global float* g_w_kappa = ig_w_kappa + kOrderLower * ${YU};
-    __global float* g_w_lambda = og_w_lambda + kOrderUpper * ${XU};
+    __global float* g_y_pi      = ig_y_pi       + cell.grid_row * ${YU};
+    __global float* g_y_lambda  = ig_y_lambda   + cell.grid_row * ${YU};
+    __global float* g_w_cpt     = ig_w_spa_cpt  + cell.cell_index * kCptSize;
+    __global float* g_w_kappa   = ig_w_kappa    + cell.cell_index * ${YU};
+    __global float* g_w_lambda  = og_w_lambda   + cell.cell_index * ${XU};
 
     // to perform algorithm for every work items
     float w_lambda[${XU}];  // attention! this variable that is belonged to the upper basis
-    float sum_z = 0.0f;
+    float B = 0.0f; // beta^-1
     __global float* g_w_cpt_col_vec = g_w_cpt;
     for (int j = 0; j < ${XU}; j ++)
     {
@@ -74,10 +91,11 @@ __kernel void oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(
         for (int i = 0; i < ${YU}; i ++)
             sum += g_y_lambda[i] * (g_y_pi[i] - g_w_kappa[i] + g_w_cpt_col_vec[i]);
         w_lambda[j] = sum;
-        sum_z += sum;
+        B += sum;
+        g_w_cpt_col_vec += ${YU};
     }
     // to calculate the final outcome then write back the outcome to global memory
-    sum_z = max(sum_z, kEpsilon);
+    B = max(B, kEpsilon);
     for (int j = 0; j < ${XU}; j ++)
-        g_w_lambda[j] = w_lambda[j] / sum_z;
+        g_w_lambda[j] = w_lambda[j] / B;
 }1

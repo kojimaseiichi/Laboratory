@@ -26,7 +26,7 @@ namespace monju
 		std::shared_ptr<ClKernel> _clKernel;
 
 		void _execute(
-			std::weak_ptr<ClDeviceContext> clDeviceContext,
+			ClDeviceContext* pDeviceContext,
 			std::vector<size_t> globalWorkSize,
 			std::vector<size_t>* pLocalWorkSize,
 			ClEventJoiner* pEvent);
@@ -42,11 +42,11 @@ namespace monju
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			std::vector<size_t> globalWorkSize,
 			std::vector<size_t> localWorkSize,
-			ClEventJoiner* pEvent);
+			std::weak_ptr<ClEventJoiner> clEventJoiner);
 		void execute(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			std::vector<size_t> globalWorkSize,
-			ClEventJoiner* pEvent);
+			std::weak_ptr<ClEventJoiner> clEventJoiner);
 
 		// コピー禁止・ムーブ禁止
 	public:

@@ -10,7 +10,7 @@
 #include "ClEventJoiner.h"
 #include "OpenClException.h"
 
-void monju::ClFunc::_execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::vector<size_t>* pLocalWorkSize, ClEventJoiner* pEvent)
+void monju::ClFunc::_execute(ClDeviceContext* pDeviceContext, std::vector<size_t> globalWorkSize, std::vector<size_t>* pLocalWorkSize, ClEventJoiner* pEvent)
 {
 	// à¯êîÇÃê›íË
 	for (int n = 0; n < _args.size(); n++)
@@ -22,14 +22,13 @@ void monju::ClFunc::_execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std
 	}
 	cl_event ev;
 	// ÉLÉÖÅ[Ç…í«â¡
-	auto p = clDeviceContext.lock();
 	if (pLocalWorkSize == nullptr)
-		p->enqueueNDRangeKernel(
+		pDeviceContext->enqueueNDRangeKernel(
 			_clKernel,
 			globalWorkSize,
 			pEvent);
 	else
-		p->enqueueNDRangeKernel(
+		pDeviceContext->enqueueNDRangeKernel(
 			_clKernel,
 			globalWorkSize,
 			*pLocalWorkSize,
@@ -75,12 +74,17 @@ void monju::ClFunc::clearArguments()
 	_args.clear();
 }
 
-void monju::ClFunc::execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::vector<size_t> localWorkSize, ClEventJoiner* pEvent)
+void monju::ClFunc::execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::vector<size_t> localWorkSize, std::weak_ptr<ClEventJoiner> clEventJoiner)
 {
-	_execute(clDeviceContext, globalWorkSize, &localWorkSize, pEvent);
+	auto pdc = clDeviceContext.lock();
+	auto pej = clEventJoiner.lock();
+	_execute(pdc.get(), globalWorkSize, &localWorkSize, pej.get());
 }
 
-void monju::ClFunc::execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, ClEventJoiner* pEvent)
+void monju::ClFunc::execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::weak_ptr<ClEventJoiner> clEventJoiner)
 {
-	_execute(clDeviceContext, globalWorkSize, nullptr, pEvent);
+	auto pdc = clDeviceContext.lock();
+	auto pej = clEventJoiner.lock();
+	_execute(pdc.get(), globalWorkSize, nullptr, pej.get());
 }
+

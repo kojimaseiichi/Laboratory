@@ -1,10 +1,10 @@
 // Eigen向けユーティリティ
 #pragma once
-#ifndef _MONJU_EIGEN_UTIL_H__
-#define _MONJU_EIGEN_UTIL_H__
-#include <string>
-#include <fstream>
+#ifndef _MONJU_UTIL_EIGEN_H__
+#define _MONJU_UTIL_EIGEN_H__
+#include "MonjuTypes.h"
 #include "util_file.h"
+
 
 namespace monju {
 	namespace util_eigen {
@@ -139,14 +139,47 @@ namespace monju {
 		}
 
 		template <typename T>
-		void set_random_prob(MatrixRm<T>& m)
+		void set_stratum_prob_randmom(MatrixRm<T>* p)
 		{
-			m.setRandom();
-			m = m.array().abs();
-			m.array().colwise() /= m.array().rowwise().sum();
+			// BEL層のλやπの初期化
+			if (p == nullptr)
+				return;
+			p->setRandom();
+			*p = p->array().abs();
+			p->array().colwise() /= p->array().rowwise().sum();
 		}
 
+		template <typename T>
+		void set_stratum_prob_ramdom(MatrixCm<T>* p, int interval)
+		{
+			// マトリックス層のλやκの初期化
+			if (p == nullptr)
+				return;
+			int rows = static_cast<int>(p->rows()) / interval;
+			for (Eigen::Index col = 0; col < p->cols(); col++)
+			{
+				auto m = p->col(col).reshaped(rows, interval);
+				m.setRandom();
+				m.array().colwise() /= p->array().rowwise().sum();
+			}
+		}
+
+		template <typename T>
+		void set_cpt_random(MatrixCm<T>* p, int cell_size, int cell_rows, int cell_cols)
+		{
+			if (p == nullptr)
+				return;
+			for (Eigen::Index col = 0; col < p->cols(); col++)
+			{
+				for (Eigen::Index row = 0; row < p->rows(); row += cell_size)
+				{
+					auto cell = p->block(row, col, cell_size, 1).reshaped(cell_rows, cell_cols);
+					cell.setRandom();
+					cell.array() /= cell.sum();
+				}
+			}
+		}
 	}
 }
 
-#endif // !_MONJU_EIGEN_UTIL_H__
+#endif // !_MONJU_UTIL_EIGEN_H__

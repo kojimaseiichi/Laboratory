@@ -27,10 +27,12 @@
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <CL/cl.h>
 #include "Eigen/Dense"
 #include "Eigen/Sparse"
+#include "Eigen/Geometry"
 #include "nlohmann/json.hpp"
 
 #include "mtrebi/ThreadPool.h"
@@ -104,6 +106,17 @@ namespace monju {
 		Trianglar = 2		// 三角行列 U/L区別しない
 	};
 
+	// OpenCLカーネルの引数
+#pragma pack(push, 1)
+	typedef struct _cell_addr
+	{
+		cl_int grid_row;
+		cl_int grid_col;
+		cl_int cell_index;
+	} cell_addr;
+#pragma pack(pop)
+
+
 	// 前方宣言
 	class Synchronizable;
 	class OpenClException;
@@ -135,6 +148,14 @@ namespace monju {
 	class DeviceMemory;
 	class DriverBase;
 	class PlatformContext;
+
+	class BelLayer;
+	class BelLayerFmc;
+	class BelLayerUpdaterFmc;
+
+	class FullBayesianMatrixLayer;
+	class FullBayesianMatrixLayerFmc;
+
 
 	class ConvLambdaInput;
 
