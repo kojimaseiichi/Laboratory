@@ -16,15 +16,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Synchronizable.cpp">
       <Filter>共通</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.cpp">
-      <Filter>行列データ永続化</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp">
-      <Filter>行列データ永続化</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp">
-      <Filter>行列データ永続化</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Device.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
@@ -195,21 +186,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Synchronizable.h">
       <Filter>共通</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.h">
-      <Filter>行列データ永続化</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.h">
-      <Filter>行列データ永続化</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h">
-      <Filter>行列データ永続化</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h">
-      <Filter>行列データ永続化</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.h">
-      <Filter>行列データ永続化</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Device.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
