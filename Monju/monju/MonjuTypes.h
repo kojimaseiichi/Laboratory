@@ -28,6 +28,10 @@
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/serialization.hpp>
+
 
 #include <CL/cl.h>
 #include "Eigen/Dense"
@@ -37,7 +41,13 @@
 
 #include "mtrebi/ThreadPool.h"
 
+#include "Extent.h"
+#include "UniformBasisShape.h"
+#include "KernelData.h"
+
 namespace monju {
+
+	const std::string EIGEN_BINARY_FILE_EXT = "ebi";
 
 	/// <summary>行ベクトル（横方向）</summary>
 	template <typename T>
@@ -68,53 +78,12 @@ namespace monju {
 
 	using param_map = std::map<std::string, std::string>;
 
-	struct Extent
-	{
-		int32_t rows;
-		int32_t cols;
-
-		bool operator ==(const Extent& o)
-		{
-			return rows == o.rows && cols == o.cols;
-		}
-		int32_t size() const
-		{
-			return rows * cols;
-		}
-		int32_t linearId(int32_t row, int32_t col) const
-		{
-			return row * cols + col;
-		}
-	};
-
-	struct UniformBasisShape
-	{
-		Extent extent;
-		uint32_t nodes;
-		uint32_t units;
-
-		bool checkExtent()
-		{
-			return nodes == extent.size();
-		}
-	};
-
 	enum class GridShape
 	{
 		None = 0,
 		Rectangular = 1,	// 普通の行列
 		Trianglar = 2		// 三角行列 U/L区別しない
 	};
-
-	// OpenCLカーネルの引数
-#pragma pack(push, 1)
-	typedef struct _cell_addr
-	{
-		cl_int grid_row;
-		cl_int grid_col;
-		cl_int cell_index;
-	} cell_addr;
-#pragma pack(pop)
 
 
 	// 前方宣言

@@ -4,6 +4,9 @@
 #define _MONJU_UTIL_FILE_H__
 
 #include <string>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/serialization.hpp>
 
 namespace monju {
 	namespace util_file {
@@ -18,6 +21,24 @@ namespace monju {
 
 		// ファイルの内容を取得
 		std::string readContent(const std::string& path);
+
+		// シリアル化
+		template <typename T>
+		void serialize(const std::string& path, std::string root, T& obj)
+		{
+			std::ofstream file(path);
+			boost::archive::text_oarchive ar(file);
+			ar << boost::serialization::make_nvp(root.c_str(), obj);
+		}
+
+		// 逆シリアル化
+		template <typename T>
+		void deserialize(const std::string& path, std::string root, T& obj)
+		{
+			std::ifstream file(path);
+			boost::archive::text_iarchive ar(file);
+			ar >> boost::serialization::make_nvp(root.c_str(), obj);
+		}
 	}
 }
 

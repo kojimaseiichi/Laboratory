@@ -45,6 +45,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ImageInputGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
@@ -70,6 +71,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClProgram.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite3.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.h" />
@@ -99,15 +102,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Environment.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ErrorCode.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Extent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixAccessor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ImageInputGripCpt.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\KernelData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixIterator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuTypes.h" />
@@ -119,6 +125,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\SparseGridCpt.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Synchronizable.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\UniformBasisShape.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_file.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_math.h" />
@@ -136,5 +143,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\_ClProgram.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\_GridMatrixStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\_StorageGeometory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sqlite\sqlite3.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.h" />
   </ItemGroup>
 </Project>

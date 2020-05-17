@@ -7,6 +7,7 @@
 #include "VariableKind.h"
 #include "util_eigen.h"
 #include "FullConnectedGridCpt.h"
+#include "GridMatrixData.h"
 
 namespace monju {
 
@@ -15,7 +16,7 @@ namespace monju {
 	// ・ベイズ計算的な変数（CPT/OOBP）
 	class FullBayesianMatrixLayer : public Synchronizable
 	{
-	private:
+	protected:
 		std::string _id;
 		UniformBasisShape _shapeX, _shapeY;
 
@@ -44,31 +45,27 @@ namespace monju {
 			_id = id;
 			_shapeX = shapeX;
 			_shapeY = shapeY;
-			_kCellSize = shapeX.units * shapeY.units;
+
+			_calcCellSize();
 
 			_allocEigenVariables();
 			_setRandom();
+		}
+		FullBayesianMatrixLayer(std::string id, std::string dir)
+		{
+			_id = id;
+			_loadInfo(dir);
+			_calcCellSize();
+			_loadEigen(dir);
 		}
 		~FullBayesianMatrixLayer()
 		{
 
 		}
-		void store(std::string dir)
+		void save(std::string dir)
 		{
-			std::string extension = "mat2";
-			util_eigen::write_binary(dir, _id, "lambda", extension, *_lambda);
-			util_eigen::write_binary(dir, _id, "kappa", extension, *_kappa);
-			util_eigen::write_binary(dir, _id, "cpt", extension, *_cpt);
-		}
-		void load(std::string dir)
-		{
-			std::string extension = "mat2";
-			if (util_eigen::read_binary(dir, _id, "lambda", extension, *_lambda) == false)
-				util_eigen::init_matrix_zero(*_lambda, _shapeY.nodes * _shapeX.units, _shapeX.nodes);
-			if (util_eigen::read_binary(dir, _id, "kappa", extension, *_kappa) == false)
-				util_eigen::init_matrix_zero(*_kappa, _shapeY.nodes * _shapeY.units, _shapeX.nodes);
-			if (util_eigen::read_binary(dir, _id, "cpt", extension, *_cpt) == false)
-				util_eigen::init_matrix_zero(*_cpt, static_cast<Eigen::Index>(_kCellSize) * _shapeY.units, _shapeX.nodes);
+			_storeInfo(dir);
+			_storeEigen(dir));
 		}
 		bool containsNan()
 		{
@@ -78,7 +75,7 @@ namespace monju {
 			return a || b || c;
 		}
 
-	private:
+	protected:
 		void _allocEigenVariables()
 		{
 			_lambda = std::make_shared<MatrixCm<float_t>>();
@@ -95,6 +92,52 @@ namespace monju {
 			util_eigen::set_stratum_prob_ramdom(_lambda.get(), _shapeX.units);
 			util_eigen::set_stratum_prob_ramdom(_kappa.get(), _shapeY.units);
 			util_eigen::set_cpt_random(_cpt.get(), _kCellSize, _shapeY.units, _shapeX.units);
+		}
+		void _storeEigen(std::string& dir)
+		{
+			GridMatrixData data(util_file::combine(dir, _id, "dbm"));
+			for (Eigen::Index col = 0; col < _shapeX.nodes; col++)
+			{
+				for (Eigen::Index row = 0; row < _shapeY.nodes; row++)
+				{
+					data.writeMatrix("lambda", row, col, _lambda->block(row * _shapeX.units, col, _shapeX.units, 1));
+					data.writeMatrix("kappa", row, col, _kappa->block(row * _shapeY.units, col, _shapeY.units, 1));
+					data.writeMatrix("cpt", row, col, _cpt->block(row * _kCellSize, col, _kCellSize, 1));
+				}
+			}
+		}
+		void _storeInfo(std::string& dir)
+		{
+			auto path = util_file::combine(dir, _id, "xml");
+			std::ofstream file(path);
+			boost::archive::text_oarchive ar(file);
+			ar << boost::serialization::make_nvp("shapeX", _shapeX);
+			ar << boost::serialization::make_nvp("shapeY", _shapeY);
+		}
+		void _loadEigen(std::string& dir)
+		{
+			GridMatrixData data(util_file::combine(dir, _id, "dbm"));
+			for (Eigen::Index col = 0; col < _shapeX.nodes; col++)
+			{
+				for (Eigen::Index row = 0; row < _shapeY.nodes; row++)
+				{
+					data.readMatrix("lambda", row, col, _lambda->block(row * _shapeX.units, col, _shapeX.units, 1));
+					data.readMatrix("kappa", row, col, _kappa->block(row * _shapeY.units, col, _shapeY.units, 1));
+					data.readMatrix("cpt", row, col, _cpt->block(row * _kCellSize, col, _kCellSize, 1));
+				}
+			}
+		}
+		void _loadInfo(std::string& dir)
+		{
+			auto path = util_file::combine(dir, _id, "xml");
+			std::ifstream file(path);
+			boost::archive::text_iarchive ar(file);
+			ar >> boost::serialization::make_nvp("shapeX", _shapeX);
+			ar >> boost::serialization::make_nvp("shapeY", _shapeY);
+		}
+		void _calcCellSize()
+		{
+			_kCellSize = _shapeX.units * _shapeY.units;
 		}
 
 		// コピー禁止・ムーブ禁止

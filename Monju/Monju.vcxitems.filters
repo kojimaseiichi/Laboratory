@@ -163,6 +163,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite3.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -351,6 +358,22 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\UniformBasisShape.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Extent.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\KernelData.h">
+      <Filter>共通</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)sqlite\sqlite3.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">
@@ -379,6 +402,9 @@
     </Filter>
     <Filter Include="皮質モジュールrebuild">
       <UniqueIdentifier>{8caad650-3396-4a31-bafe-f9cf3610e021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SQLite">
+      <UniqueIdentifier>{45db0289-cba6-4894-9e58-7d680b19bb61}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
