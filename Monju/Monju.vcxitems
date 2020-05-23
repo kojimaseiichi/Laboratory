@@ -45,7 +45,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ImageInputGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp" />
@@ -105,8 +105,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ImageInputGripCpt.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\KernelData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuException.h" />

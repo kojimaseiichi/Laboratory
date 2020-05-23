@@ -3,7 +3,6 @@
 #define _MONJU_PENALTY_CALCULATION_H__
 
 #include "GridMatrixStorage.h"
-#include "GridMatrixAccessor.h"
 
 namespace monju {
 

@@ -78,13 +78,13 @@ namespace monju {
 
 	using param_map = std::map<std::string, std::string>;
 
-	enum class GridShape
-	{
-		None = 0,
-		Rectangular = 1,	// 普通の行列
-		Trianglar = 2		// 三角行列 U/L区別しない
-	};
+	// 行列　種類
+	const int kDensityRectangular = 1;	// 行列
+	const int kDensityLowerTriangular = 2;	// 下三角行列（正方行列）
 
+	// 行列　優先方向
+	const int kRowMajor = 1;
+	const int kColMajor = 2;
 
 	// 前方宣言
 	class Synchronizable;
@@ -128,14 +128,7 @@ namespace monju {
 
 	class ConvLambdaInput;
 
-	namespace inner
-	{
-		class _GridMatrixStorage;
-		class _StorageGeometory;
-		class _RectangularStorageGeometory;
-		class _TriangularStorageGeometory;
-
-	}
+	class GridMatrixStorage;
 
 	class ThreadPool;
 

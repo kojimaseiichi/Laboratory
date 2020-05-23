@@ -5,6 +5,7 @@
 #include "sqlite3.h"
 #include <string>
 #include <stdint.h>
+#include <memory>
 
 namespace monju
 {
@@ -16,12 +17,6 @@ namespace monju
 		class BlobReader;
 		class BlobWriter;
 		class SQLiteException;
-
-		void throwExceptionIfNotEquals(int result, int assumed)
-		{
-			if (result != assumed)
-				throw SQLiteException(result);
-		}
 
 		class SQLiteException
 		{
@@ -38,6 +33,11 @@ namespace monju
 			int code() const { return _code; }
 		};
 
+		void throwExceptionIfNotEquals(int result, int assumed)
+		{
+			if (result != assumed)
+				throw SQLiteException(result);
+		}
 
 		class Database
 		{
@@ -62,7 +62,7 @@ namespace monju
 			}
 
 		public:
-			void exec(std::string& sql)
+			void exec(const std::string& sql)
 			{
 				int result = sqlite3_exec(_db, sql.c_str(), nullptr, nullptr, nullptr);
 				throwExceptionIfNotEquals(result, SQLITE_OK);
@@ -155,7 +155,7 @@ namespace monju
 					throwExceptionIfNotEquals(result, SQLITE_OK);
 				}
 			}
-			
+
 		public:
 			int bytes() const
 			{
@@ -170,7 +170,7 @@ namespace monju
 			{
 				int result = sqlite3_blob_write(_blob, buffer, size, offset);
 				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}			
+			}
 		};
 
 		class BlobReader

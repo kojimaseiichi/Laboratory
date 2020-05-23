@@ -154,12 +154,14 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp">
       <Filter>SQLite</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite3.c">
       <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.cpp">
+      <Filter>行列データ永続化</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -343,12 +345,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\KernelData.h">
       <Filter>共通</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.h">
       <Filter>SQLite</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)sqlite\sqlite3.h">
       <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h">
+      <Filter>行列データ永続化</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@
 #include "VariableKind.h"
 #include "util_eigen.h"
 #include "FullConnectedGridCpt.h"
-#include "GridMatrixData.h"
+#include "GridMatrixStorage.h"
 
 namespace monju {
 
@@ -65,7 +65,7 @@ namespace monju {
 		void save(std::string dir)
 		{
 			_storeInfo(dir);
-			_storeEigen(dir));
+			_storeEigen(dir);
 		}
 		bool containsNan()
 		{
@@ -95,7 +95,7 @@ namespace monju {
 		}
 		void _storeEigen(std::string& dir)
 		{
-			GridMatrixData data(util_file::combine(dir, _id, "dbm"));
+			GridMatrixStorage data(util_file::combine(dir, _id, "dbm"));
 			for (Eigen::Index col = 0; col < _shapeX.nodes; col++)
 			{
 				for (Eigen::Index row = 0; row < _shapeY.nodes; row++)
@@ -116,7 +116,7 @@ namespace monju {
 		}
 		void _loadEigen(std::string& dir)
 		{
-			GridMatrixData data(util_file::combine(dir, _id, "dbm"));
+			GridMatrixStorage data(util_file::combine(dir, _id, "dbm"));
 			for (Eigen::Index col = 0; col < _shapeX.nodes; col++)
 			{
 				for (Eigen::Index row = 0; row < _shapeY.nodes; row++)
