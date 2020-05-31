@@ -41,8 +41,6 @@
 
 #include "mtrebi/ThreadPool.h"
 
-#include "Extent.h"
-#include "UniformBasisShape.h"
 #include "KernelData.h"
 
 namespace monju {
@@ -90,6 +88,12 @@ namespace monju {
 	class Synchronizable;
 	class OpenClException;
 	class MonjuException;
+
+	class Extent;
+	class Entry;
+	class GridExtent;
+	class GridEntry;
+
 
 	class _ClCommandQueue;
 	class _ClContext;

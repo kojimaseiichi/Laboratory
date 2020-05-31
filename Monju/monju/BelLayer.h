@@ -8,6 +8,8 @@
 #include "VariableKind.h"
 #include "util_eigen.h"
 #include "DeviceMemory.h"
+#include "Extent.h"
+#include "Environment.h"
 
 namespace monju {
 
@@ -19,35 +21,38 @@ namespace monju {
 	{
 	private: // ストレージ
 
+		std::shared_ptr<Environment> _env;
 		std::string _id;
-		UniformBasisShape _shape;
+		LayerStruct _shape;
 		std::shared_ptr<MatrixRm<float_t>>
-			_lambda,	// λ_X(x)
-			_pi,		// π_X(x)
-			_rho,		// ρ_X(x)
-			_r,			// ペナルティc項_X(x)
-			_bel;		// BEL_X(x)
+			_lambda,	// λ_X(x) shape:(nodes, units)
+			_pi,		// π_X(x) shape:(nodes, units)
+			_rho,		// ρ_X(x) shape:(nodes, units)
+			_r,			// ペナルティc項_X(x)  shape:(nodes, units)
+			_bel;		// BEL_X(x)  shape:(nodes, units)
 		std::shared_ptr<MatrixRm<int32_t>>
-			_win;		// 勝者ユニット
+			_win;		// 勝者ユニット  shape:(nodes, 1)
 
 	public:	// コンストラクタ
-		BelLayer(std::string id, UniformBasisShape shape);
+		BelLayer(std::weak_ptr<Environment> env, std::string id, LayerStruct shape);
 		~BelLayer();
 
 	public: // 公開メンバ
 		void initVariables();
-		void store(std::string dir);
-		void load(std::string dir);
+		void store();
+		void load();
 		void findWinner();
 		bool containsNan();
 
 	private: // ヘルパ
+		std::string _dataFileName() const;
+		void _prepareStorage(GridMatrixStorage& storage);
 		void _initHostMemory();
 		void _setRandomProb(std::shared_ptr<MatrixRm<float_t>> m);
 
 	public: // プロパティ
 		std::string id() const { return _id; }
-		UniformBasisShape shape() const { return _shape; }
+		LayerStruct shape() const { return _shape; }
 		std::weak_ptr<MatrixRm<float_t>> lambda() const { return _lambda; }
 		std::weak_ptr<MatrixRm<float_t>> pi() const { return _pi; };
 		std::weak_ptr<MatrixRm<float_t>> rho() const { return _rho; }

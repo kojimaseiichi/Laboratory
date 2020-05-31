@@ -6,6 +6,8 @@
 #include "Closable.h"
 #include "ConcurrencyContext.h"
 #include "PenaltyCalculation.h"
+#include "Extent.h"
+#include "Synchronizable.h"
 
 namespace monju {
 
@@ -13,13 +15,14 @@ namespace monju {
 	class BayesianNodeStat : public Closable
 	{
 	private:
-		using TStorage = TriangularGridMatrixStorage<int32_t>;
+		const std::string _kDataCount = "count";
 
+	private:
 		// ID
 		std::string _id;
-		UniformBasisShape _shape;
+		LayerStruct _shape;
 		// カウンティング
-		std::shared_ptr<TStorage> _storage;
+		std::shared_ptr<GridMatrixStorage> _storage;
 		std::shared_ptr<MatrixRm<float_t>> 
 			_win,			// 勝率ペナルティ
 			_lat,			// 側抑制ペナルティ
@@ -40,7 +43,7 @@ namespace monju {
 	public:
 		BayesianNodeStat(
 			std::string id,
-			UniformBasisShape shape,
+			LayerStruct shape,
 			float_t coeWinPenalty,
 			float_t coeLatPenalty
 

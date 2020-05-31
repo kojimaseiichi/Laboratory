@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "monju/MonjuTypes.h"
+#include "monju/Extent.h"
 //#include "monju/ConvLambdaInputFmc.h"
 
 class MnistTestStack
@@ -14,7 +15,7 @@ private:
 		_extentImage = { 28, 28 },
 		_extentFilter = { 6, 6 },
 		_extentStride = { 2, 2 };
-	std::vector<monju::UniformBasisShape> _network;
+	std::vector<monju::LayerStruct> _network;
 
 public:
 	MnistTestStack()

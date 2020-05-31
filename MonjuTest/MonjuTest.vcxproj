@@ -117,6 +117,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,8 +169,8 @@
     <ClCompile Include="BayesianModTest.cpp" />
     <ClCompile Include="CortexBasisStatTest.cpp" />
     <ClCompile Include="GridCptUpdater.cpp" />
-    <ClCompile Include="TaskPenaltyCalcTest.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
+    <ClCompile Include="TaskPenaltyCalcTest.cpp" />
     <ClCompile Include="OpenCLComponentTest.cpp" />
     <ClCompile Include="OpenCLOobpTest.cpp" />
     <ClCompile Include="pch.cpp">

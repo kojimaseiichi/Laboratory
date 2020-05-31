@@ -20,14 +20,14 @@ namespace monju {
 		float _coeLatPenalty;
 
 	private:
-		std::weak_ptr<TriangularGridMatrixStorage<int32_t>> _pStorage;
+		std::weak_ptr<GridMatrixStorage> _pStorage;
 
 	public:
 		PenaltyCalculation(
 			int num_of_nodes,
 			int num_of_units,
 			int active_num_of_nodes,
-			std::weak_ptr<TriangularGridMatrixStorage<int32_t>> pStorage,
+			std::weak_ptr<GridMatrixStorage> pStorage,
 			float coefficient_win_penalty,
 			float coefficient_lat_penalty);
 

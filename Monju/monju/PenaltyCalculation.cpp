@@ -4,7 +4,7 @@
 #include "MonjuException.h"
 
 
-monju::PenaltyCalculation::PenaltyCalculation(int num_of_nodes, int num_of_units, int active_num_of_nodes, std::weak_ptr<TriangularGridMatrixStorage<int32_t>> pStorage, float coefficient_win_penalty, float coefficient_lat_penalty)
+monju::PenaltyCalculation::PenaltyCalculation(int num_of_nodes, int num_of_units, int active_num_of_nodes, std::weak_ptr<monju::GridMatrixStorage> pStorage, float coefficient_win_penalty, float coefficient_lat_penalty)
 	:
 	kNumNodes(num_of_nodes),
 	kNumUnits(num_of_units),
@@ -80,7 +80,7 @@ void monju::PenaltyCalculation::_loadWinCount(MatrixRm<int32_t>& mpe_count)
 		for (int node = 0; node < kNumNodes; node++)
 		{
 			for (int unit = 0; unit < kNumUnits; unit++)
-				mpe_count.coeffRef(node, unit) = p->readElement(node, node, unit, unit);
+				mpe_count.coeffRef(node, unit) = p->readCoeff<int32_t>("count", node, node, unit, unit);
 		}
 	}
 	else
@@ -149,8 +149,7 @@ void monju::PenaltyCalculation::_sumLateralMutualInfo(int U, int V, MatrixRm<int
 	// カウンティングデータ取得
 	if (auto p = _pStorage.lock())
 	{
-		MatrixRowMajorAccessor<int32_t, MatrixRm<int32_t>> a(count);
-		p->readCell(a, U, V);
+		p->readMatrix("count", U, V, count);
 	}
 	else
 		throw MonjuException(ErrorCode::WeakPointerExpired);

@@ -42,7 +42,7 @@ __kernel void conv_input_slide_up_W${W}_H${H}_FW${FW}_FH${FH}_SW${SW}_SH${SH}_X$
     const size_t kLinearId = kSlideRow * kImageRowStride + kSlideCol;
     const float* image_offset = ig_image + kSlideCol * ${SW} + kSlideRow * kImageRowStride;
 
-    const int input_length = ${FW} * ${FH};
+    const int input_length = ${FW} * ${FH}; // filter size
     float input[${FW} * ${FH}];
 
     for (int h = 0; h < ${FH}; h ++)

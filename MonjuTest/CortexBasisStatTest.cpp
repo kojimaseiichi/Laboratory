@@ -1,3 +1,4 @@
+/*
 #include "pch.h"
 #include "CppUnitTest.h"
 #include <iostream>
@@ -85,3 +86,4 @@ namespace MonjuTest
 		}
 	};
 }
+*/

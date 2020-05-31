@@ -163,6 +163,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.cpp">
       <Filter>行列データ永続化</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Extent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">

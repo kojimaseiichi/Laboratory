@@ -17,7 +17,7 @@ namespace monju {
 	protected:
 		std::string _id;
 		std::string _dir;	// ワークフォルダ
-		UniformBasisShape _shapeX, _shapeY;
+		LayerStruct _shapeX, _shapeY;
 
 		std::shared_ptr<MatrixCm<float_t>>
 			_lambda,				// λ（ノード数Y * ユニット数Y, ノード数X）
@@ -36,8 +36,8 @@ namespace monju {
 
 	public: // プロパティ
 		std::string id() const { return _id; }
-		UniformBasisShape shapeX() const { return _shapeX; }
-		UniformBasisShape shapeY() const { return _shapeY; }
+		LayerStruct shapeX() const { return _shapeX; }
+		LayerStruct shapeY() const { return _shapeY; }
 		std::weak_ptr<MatrixCm<float_t>> lambda() { return _lambda; }
 		std::weak_ptr<MatrixCm<float_t>> kappa() { return _kappa; }
 		std::weak_ptr<MatrixCm<float_t>> cpt() { return _cpt; }
@@ -51,8 +51,8 @@ namespace monju {
 		SparseBayesianMatrixLayer(
 			std::string id,
 			std::string dir,
-			UniformBasisShape shapeX,
-			UniformBasisShape shapeY
+			LayerStruct shapeX,
+			LayerStruct shapeY
 		)
 		{
 			_id = id;
@@ -116,9 +116,9 @@ namespace monju {
 			_kappa = std::make_shared<MatrixCm<float_t>>();
 			_cpt = std::make_shared<MatrixCm<float_t>>();
 
-			_lambda->resize(static_cast<Eigen::Index>(_shapeY.nodes) * _shapeX.units, _shapeX.nodes);
-			_kappa->resize(static_cast<Eigen::Index>(_shapeY.nodes) * _shapeY.units, _shapeX.nodes);
-			_cpt->resize(static_cast<Eigen::Index>(_kCellSize) * _shapeY.nodes, _shapeX.nodes);
+			_lambda->resize(static_cast<Eigen::Index>(_shapeY.nodes.size()) * _shapeX.units.size(), _shapeX.nodes.size());
+			_kappa->resize(static_cast<Eigen::Index>(_shapeY.nodes.size()) * _shapeY.units.size(), _shapeX.nodes.size());
+			_cpt->resize(static_cast<Eigen::Index>(_kCellSize) * _shapeY.nodes.size(), _shapeX.nodes.size());
 		}
 		void _freeSubstantialVariables()
 		{
@@ -129,15 +129,15 @@ namespace monju {
 		void _allocOtherVariables()
 		{
 			_adj = std::make_shared<MatrixCm<int8_t>>();
-			_adj->resize(_shapeY.nodes, _shapeX.nodes);
+			_adj->resize(_shapeY.nodes.size(), _shapeX.nodes.size());
 			_adj->setZero();
 		}
 		void _setRandom()
 		{
 			// ランダムに初期化、確率分布として正規化
-			util_eigen::set_stratum_prob_ramdom(_lambda.get(), _shapeX.units);
-			util_eigen::set_stratum_prob_ramdom(_kappa.get(), _shapeY.units);
-			util_eigen::set_cpt_random(_cpt.get(), _kCellSize, _shapeY.units, _shapeX.units);
+			util_eigen::set_stratum_prob_ramdom(_lambda.get(), _shapeX.units.size());
+			util_eigen::set_stratum_prob_ramdom(_kappa.get(), _shapeY.units.size());
+			util_eigen::set_cpt_random(_cpt.get(), _kCellSize, _shapeY.units.size(), _shapeX.units.size());
 		}
 		void _storeSubstantialVariables()
 		{
@@ -160,16 +160,16 @@ namespace monju {
 		void _loadSubstantialVariables()
 		{
 			if (util_eigen::read_binary(_dir, _id, "lambda", EIGEN_BINARY_FILE_EXT, *_lambda) == false)
-				util_eigen::init_matrix_zero(*_lambda, _shapeY.nodes * _shapeX.units, _shapeX.nodes);
+				util_eigen::init_matrix_zero(*_lambda, _shapeY.nodes.size() * _shapeX.units.size(), _shapeX.nodes.size());
 			if (util_eigen::read_binary(_dir, _id, "kappa", EIGEN_BINARY_FILE_EXT, *_kappa) == false)
-				util_eigen::init_matrix_zero(*_kappa, _shapeY.nodes * _shapeY.units, _shapeX.nodes);
+				util_eigen::init_matrix_zero(*_kappa, _shapeY.nodes.size() * _shapeY.units.size(), _shapeX.nodes.size());
 			if (util_eigen::read_binary(_dir, _id, "cpt", EIGEN_BINARY_FILE_EXT, *_cpt) == false)
-				util_eigen::init_matrix_zero(*_cpt, static_cast<Eigen::Index>(_kCellSize) * _shapeY.units, _shapeX.nodes);
+				util_eigen::init_matrix_zero(*_cpt, static_cast<Eigen::Index>(_kCellSize) * _shapeY.units.size(), _shapeX.nodes.size());
 		}
 		void _loadOtherVariables()
 		{
 			if (util_eigen::read_binary(_dir, _id, "adj", EIGEN_BINARY_FILE_EXT, *_adj) == false)
-				util_eigen::init_matrix_zero(*_adj, static_cast<Eigen::Index>(_shapeY.nodes) * _shapeX.nodes);
+				util_eigen::init_matrix_zero(*_adj, static_cast<Eigen::Index>(_shapeY.nodes.size()), static_cast<Eigen::Index>(_shapeX.nodes.size()));
 		}
 		void _loadInfo()
 		{
@@ -181,7 +181,7 @@ namespace monju {
 		}
 		void _calcCellSize()
 		{
-			_kCellSize = _shapeX.units * _shapeY.units;
+			_kCellSize = _shapeX.units.size() * _shapeY.units.size();
 		}
 		void _makeCellAddrList()
 		{
@@ -206,9 +206,9 @@ namespace monju {
 		void _buildSparseVariables()
 		{
 			// 有効なエッジの
-			_spLambda->resize(_shapeX.units, _cellAddr.size());
+			_spLambda->resize(_shapeX.units.size(), _cellAddr.size());
 			_spLambda->setZero();
-			_spKappa->resize(_shapeY.units, _cellAddr.size());
+			_spKappa->resize(_shapeY.units.size(), _cellAddr.size());
 			_spKappa->setZero();
 			_spCpt->resize(_kCellSize, _cellAddr.size());
 

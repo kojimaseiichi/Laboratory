@@ -1,3 +1,4 @@
+/*
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "monju/DeviceMemory.h"
@@ -91,3 +92,4 @@ namespace MonjuTest
 		}
 	};
 }
+*/

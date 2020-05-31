@@ -14,6 +14,7 @@
 #include "Environment.h"
 #include "ConvLambdaInput.h"
 #include "ConvLambdaInputDevice.h"
+#include "Extent.h"
 
 namespace monju
 {
@@ -35,7 +36,7 @@ namespace monju
 		ClVariableSet _clVariableSet;
 
 		Extent _extentInput, _extentFilter, _extentSlide;
-		UniformBasisShape _shape;
+		LayerStruct _shape;
 
 
 	public:
@@ -57,8 +58,8 @@ namespace monju
 			params["FH"] = boost::lexical_cast<std::string>(_extentFilter.rows);
 			params["SW"] = boost::lexical_cast<std::string>(_extentSlide.cols);
 			params["SH"] = boost::lexical_cast<std::string>(_extentSlide.rows);
-			params["X"] = boost::lexical_cast<std::string>(_shape.nodes);
-			params["XU"] = boost::lexical_cast<std::string>(_shape.units);
+			params["X"] = boost::lexical_cast<std::string>(_shape.nodes.size());
+			params["XU"] = boost::lexical_cast<std::string>(_shape.units.size());
 
 			std::filesystem::path kernelPathBase = env.info().kernelFolder;
 			_clKernel = std::make_shared<ClKernel>(
@@ -75,9 +76,9 @@ namespace monju
 		void convInputSlideUp(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			ClVariableSet& variables,
-			ClEventJoiner* pJoin)
+			std::weak_ptr<ClEventJoiner> join)
 		{
-			_convInputSlideUp(clDeviceContext, variables, pJoin);
+			_convInputSlideUp(clDeviceContext, variables, join);
 			auto p = clDeviceContext.lock();
 			p->flush();
 		}
@@ -85,7 +86,7 @@ namespace monju
 		void _convInputSlideUp(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			ClVariableSet& variables,
-			ClEventJoiner* pJoin)
+			std::weak_ptr<ClEventJoiner> join)
 		{
 			ClFunc func(_clMachine, _clKernel);
 			func.pushArgument(variables.getClMemory(VariableKind::IMAGE));
@@ -93,10 +94,10 @@ namespace monju
 			func.pushArgument(variables.getClMemory(VariableKind::lambda));
 
 			std::vector<size_t> global_work_size = { 
-				static_cast<size_t>(_shape.extent.rows), 
-				static_cast<size_t>(_shape.extent.cols)
+				static_cast<size_t>((_extentInput.rows - _extentFilter.rows) / _extentSlide.rows + 1), 
+				static_cast<size_t>((_extentInput.cols - _extentFilter.cols) / _extentSlide.cols + 1)
 			};
-			func.execute(clDeviceContext, global_work_size, pJoin);
+			func.execute(clDeviceContext, global_work_size, join);
 
 		}
 

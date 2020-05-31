@@ -18,7 +18,7 @@ namespace monju {
 	{
 	protected:
 		std::string _id;
-		UniformBasisShape _shapeX, _shapeY;
+		LayerStruct _shapeX, _shapeY;
 
 		std::shared_ptr<MatrixCm<float_t>>
 			_lambda,				// λ（ノード数Y * ユニット数Y, ノード数X）
@@ -29,8 +29,8 @@ namespace monju {
 
 	public: // プロパティ
 		std::string id() const { return _id; }
-		UniformBasisShape shapeX() const { return _shapeX; }
-		UniformBasisShape shapeY() const { return _shapeY; }
+		LayerStruct shapeX() const { return _shapeX; }
+		LayerStruct shapeY() const { return _shapeY; }
 		std::weak_ptr<MatrixCm<float_t>> lambda() { return _lambda; }
 		std::weak_ptr<MatrixCm<float_t>> kappa() { return _kappa; }
 		std::weak_ptr<MatrixCm<float_t>> cpt() { return _cpt; }
@@ -38,8 +38,8 @@ namespace monju {
 	public:
 		FullBayesianMatrixLayer(
 			std::string id,
-			UniformBasisShape shapeX,
-			UniformBasisShape shapeY
+			LayerStruct shapeX,
+			LayerStruct shapeY
 		)
 		{
 			_id = id;
@@ -82,26 +82,26 @@ namespace monju {
 			_kappa = std::make_shared<MatrixCm<float_t>>();
 			_cpt = std::make_shared<MatrixCm<float_t>>();
 
-			_lambda->resize(static_cast<Eigen::Index>(_shapeY.nodes) * _shapeX.units, _shapeX.nodes);
-			_kappa->resize(static_cast<Eigen::Index>(_shapeY.nodes) * _shapeY.units, _shapeX.nodes);
-			_cpt->resize(static_cast<Eigen::Index>(_kCellSize) * _shapeY.nodes, _shapeX.nodes);
+			_lambda->resize(static_cast<Eigen::Index>(_shapeY.nodes.size()) * _shapeX.units.size(), _shapeX.nodes.size());
+			_kappa->resize(static_cast<Eigen::Index>(_shapeY.nodes.size()) * _shapeY.units.size(), _shapeX.nodes.size());
+			_cpt->resize(static_cast<Eigen::Index>(_kCellSize) * _shapeY.nodes.size(), _shapeX.nodes.size());
 		}
 		void _setRandom()
 		{
 			// ランダムに初期化、確率分布として正規化
-			util_eigen::set_stratum_prob_ramdom(_lambda.get(), _shapeX.units);
-			util_eigen::set_stratum_prob_ramdom(_kappa.get(), _shapeY.units);
-			util_eigen::set_cpt_random(_cpt.get(), _kCellSize, _shapeY.units, _shapeX.units);
+			util_eigen::set_stratum_prob_ramdom(_lambda.get(), _shapeX.units.size());
+			util_eigen::set_stratum_prob_ramdom(_kappa.get(), _shapeY.units.size());
+			util_eigen::set_cpt_random(_cpt.get(), _kCellSize, _shapeY.units.size(), _shapeX.units.size());
 		}
 		void _storeEigen(std::string& dir)
 		{
 			GridMatrixStorage data(util_file::combine(dir, _id, "dbm"));
-			for (Eigen::Index col = 0; col < _shapeX.nodes; col++)
+			for (Eigen::Index col = 0; col < _shapeX.nodes.size(); col++)
 			{
-				for (Eigen::Index row = 0; row < _shapeY.nodes; row++)
+				for (Eigen::Index row = 0; row < _shapeY.nodes.size(); row++)
 				{
-					data.writeMatrix("lambda", row, col, _lambda->block(row * _shapeX.units, col, _shapeX.units, 1));
-					data.writeMatrix("kappa", row, col, _kappa->block(row * _shapeY.units, col, _shapeY.units, 1));
+					data.writeMatrix("lambda", row, col, _lambda->block(row * _shapeX.units.size(), col, _shapeX.units.size(), 1));
+					data.writeMatrix("kappa", row, col, _kappa->block(row * _shapeY.units.size(), col, _shapeY.units.size(), 1));
 					data.writeMatrix("cpt", row, col, _cpt->block(row * _kCellSize, col, _kCellSize, 1));
 				}
 			}
@@ -117,12 +117,12 @@ namespace monju {
 		void _loadEigen(std::string& dir)
 		{
 			GridMatrixStorage data(util_file::combine(dir, _id, "dbm"));
-			for (Eigen::Index col = 0; col < _shapeX.nodes; col++)
+			for (Eigen::Index col = 0; col < _shapeX.nodes.size(); col++)
 			{
-				for (Eigen::Index row = 0; row < _shapeY.nodes; row++)
+				for (Eigen::Index row = 0; row < _shapeY.nodes.size(); row++)
 				{
-					data.readMatrix("lambda", row, col, _lambda->block(row * _shapeX.units, col, _shapeX.units, 1));
-					data.readMatrix("kappa", row, col, _kappa->block(row * _shapeY.units, col, _shapeY.units, 1));
+					data.readMatrix("lambda", row, col, _lambda->block(row * _shapeX.units.size(), col, _shapeX.units.size(), 1));
+					data.readMatrix("kappa", row, col, _kappa->block(row * _shapeY.units.size(), col, _shapeY.units.size(), 1));
 					data.readMatrix("cpt", row, col, _cpt->block(row * _kCellSize, col, _kCellSize, 1));
 				}
 			}
@@ -137,7 +137,7 @@ namespace monju {
 		}
 		void _calcCellSize()
 		{
-			_kCellSize = _shapeX.units * _shapeY.units;
+			_kCellSize = _shapeX.units.size() * _shapeY.units.size();
 		}
 
 		// コピー禁止・ムーブ禁止

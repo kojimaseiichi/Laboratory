@@ -16,7 +16,7 @@ namespace monju {
 			_kSrcOobpBel = "oobp\\oobp3_bel.cl",
 			_kKernelOobpBel = "oobp3_bel_X${X}_XU${XU}";
 
-		UniformBasisShape _shape;
+		LayerStruct _shape;
 
 		std::shared_ptr<Environment> _env;
 		std::shared_ptr<ClMachine> _clMachine;
@@ -24,7 +24,7 @@ namespace monju {
 		
 	public: // コンストラクタ
 		BelLayerUpdaterFmc(
-			UniformBasisShape shape,
+			LayerStruct shape,
 			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine)
 		{
@@ -50,7 +50,7 @@ namespace monju {
 	private: // ヘルパー
 
 		void _initInstance(
-			UniformBasisShape& shape,
+			LayerStruct& shape,
 			std::weak_ptr<Environment> env,
 				std::weak_ptr<ClMachine> clMachine)
 			{
@@ -67,8 +67,8 @@ namespace monju {
 		void _createClKernel()
 		{
 			param_map param_map;
-			param_map["X"] = boost::lexical_cast<std::string>(_shape.nodes);
-			param_map["XU"] = boost::lexical_cast<std::string>(_shape.units);
+			param_map["X"] = boost::lexical_cast<std::string>(_shape.nodes.size());
+			param_map["XU"] = boost::lexical_cast<std::string>(_shape.units.size());
 
 			std::filesystem::path kernelPathBase = _env->info().kernelFolder;
 			_clKernel = std::make_shared<ClKernel>(
@@ -91,7 +91,7 @@ namespace monju {
 			func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::BEL));
 			func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::WIN));
 
-			std::vector<size_t> global_work_size = { _shape.nodes };
+			std::vector<size_t> global_work_size = { static_cast<size_t>(_shape.nodes.size()) };
 
 			func.execute(clDeviceContext, global_work_size, clEventJoiner);
 		}

@@ -40,6 +40,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceContext.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceKernel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Environment.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Extent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FilterUpdater.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />

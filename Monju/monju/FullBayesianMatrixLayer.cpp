@@ -1,2 +1,1 @@
 #include "FullBayesianMatrixLayer.h"
-

@@ -4,6 +4,7 @@
 
 #include "MonjuTypes.h"
 #include "util_eigen.h"
+#include "Extent.h"
 
 namespace monju
 {
@@ -11,7 +12,7 @@ namespace monju
 	{
 	private:
 		std::string _id;
-		UniformBasisShape
+		LayerStruct
 			_shapeX,
 			_shapeY;
 		std::shared_ptr<MatrixCm<float_t>>
@@ -23,16 +24,16 @@ namespace monju
 		std::string id() const { return _id; }
 		std::weak_ptr<MatrixCm<float_t>> cpt() { return _cpt; }
 		std::weak_ptr<MatrixCm<float_t>> deltaCpt() { return _deltaCpt; }
-		UniformBasisShape shapeX() const { return _shapeX; }
-		UniformBasisShape shapeY() const { return _shapeY; }
+		LayerStruct shapeX() const { return _shapeX; }
+		LayerStruct shapeY() const { return _shapeY; }
 
 	public:
 		ImageInputGridCpt(
 			std::string id,
-			UniformBasisShape shapeX,
-			UniformBasisShape shapeY
+			LayerStruct shapeX,
+			LayerStruct shapeY
 		) :
-			_kCellSize(shapeX.units* shapeY.units)
+			_kCellSize(shapeX.units.size() * shapeY.units.size())
 		{
 			_id = id;
 			_shapeX = shapeX;
@@ -42,10 +43,10 @@ namespace monju
 			_cpt = std::make_shared<MatrixCm<float_t>>();
 			_deltaCpt = std::make_shared<MatrixCm<float_t>>();
 
-			_cpt->resize(rows, shapeX.nodes);
+			_cpt->resize(rows, shapeX.nodes.size());
 			_cpt->setZero();
 
-			_deltaCpt->resize(rows, shapeX.nodes);
+			_deltaCpt->resize(rows, shapeX.nodes.size());
 			_deltaCpt->setZero();
 		}
 		void store(std::string dir)
@@ -58,19 +59,19 @@ namespace monju
 		{
 			const size_t rows = _kCellSize * 1;
 			std::string extension = "mat";
-			util_eigen::restore_binary(dir, _id, "cpt", extension, *_cpt, rows, _shapeX.nodes);
-			util_eigen::restore_binary(dir, _id, "delta-cpt", extension, *_deltaCpt, rows, _shapeX.nodes);
+			util_eigen::restore_binary(dir, _id, "cpt", extension, *_cpt, rows, _shapeX.nodes.size());
+			util_eigen::restore_binary(dir, _id, "delta-cpt", extension, *_deltaCpt, rows, _shapeX.nodes.size());
 		}
 		void initRandom()
 		{
 			// CPT
 			_cpt->setRandom();
 			*_cpt = _cpt->array().abs();
-			for (int col = 0; col < _shapeX.nodes; col++)
+			for (int col = 0; col < _shapeX.nodes.size(); col++)
 			{
-				for (int row = 0; row < _shapeY.nodes; row++)
+				for (int row = 0; row < _shapeY.nodes.size(); row++)
 				{
-					auto mm = _cpt->block(row * _kCellSize, col, _kCellSize, 1).reshaped(_shapeY.units, _shapeX.units);
+					auto mm = _cpt->block(row * _kCellSize, col, _kCellSize, 1).reshaped(_shapeY.units.size(), _shapeX.units.size());
 					mm.array().rowwise() /= mm.colwise().sum().array();
 				}
 			}

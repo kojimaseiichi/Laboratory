@@ -1,15 +1,16 @@
 #include "BayesianNodeStat.h"
 
+#include "Synchronizable.h"
 #include "util_file.h"
 
-monju::BayesianNodeStat::BayesianNodeStat(std::string id, UniformBasisShape shape, float_t coeWinPenalty, float_t coeLatPenalty)
+monju::BayesianNodeStat::BayesianNodeStat(std::string id, monju::LayerStruct shape, float_t coeWinPenalty, float_t coeLatPenalty)
 	: _conc(1)
 {
 	_id = id;
 	_shape = shape;
-	_win = std::make_shared<MatrixRm<float_t>>(shape.nodes, shape.units);
-	_lat = std::make_shared<MatrixRm<float_t>>(shape.nodes, shape.units);
-	_penalty = std::make_shared<MatrixRm<float_t>>(shape.nodes, shape.units);
+	_win = std::make_shared<MatrixRm<float_t>>(shape.nodes.size(), shape.units.size());
+	_lat = std::make_shared<MatrixRm<float_t>>(shape.nodes.size(), shape.units.size());
+	_penalty = std::make_shared<MatrixRm<float_t>>(shape.nodes.size(), shape.units.size());
 	_coeWinPenalty = coeWinPenalty;
 	_coeLatPenalty = coeLatPenalty;
 
@@ -25,8 +26,9 @@ std::future<void> monju::BayesianNodeStat::accumulate(std::weak_ptr<MatrixRm<int
 {
 	auto ptrWin = win.lock();
 	auto ptrWinCp = std::make_shared<MatrixRm<int32_t>>(*ptrWin);
-	const auto task = [=](std::weak_ptr<TStorage> sto, std::shared_ptr<MatrixRm<int32_t>> w) -> void
+	const auto task = [=](std::weak_ptr<GridMatrixStorage> sto, std::shared_ptr<MatrixRm<int32_t>> w) -> void
 	{
+		auto inc = [](const int32_t val)->int32_t { return val + 1; };
 		if (auto pSto = sto.lock())
 		{
 			// LOCK -----------------------------
@@ -34,7 +36,7 @@ std::future<void> monju::BayesianNodeStat::accumulate(std::weak_ptr<MatrixRm<int
 			for (int u = 0; u < w->rows(); u++)
 			{
 				for (int v = 0; v <= u; v++)
-					pSto->addElement(u, v, (*w)(u, 0), (*w)(v, 0), 1);
+					pSto->coeffOp<int32_t>(_kDataCount, u, v, (*w)(u, 0), (*w)(v, 0), inc);
 			}
 		}
 	};
@@ -43,7 +45,7 @@ std::future<void> monju::BayesianNodeStat::accumulate(std::weak_ptr<MatrixRm<int
 
 std::future<void> monju::BayesianNodeStat::calcPenalty()
 {
-	PenaltyCalculation* p = new PenaltyCalculation(_shape.nodes, _shape.units, _shape.units, _storage, _coeWinPenalty, _coeLatPenalty);
+	PenaltyCalculation* p = new PenaltyCalculation(_shape.nodes.size(), _shape.units.size(), _shape.units.size(), _storage, _coeWinPenalty, _coeLatPenalty);
 	const auto task = [=](PenaltyCalculation* pr, std::weak_ptr<MatrixRm<float_t>> win, std::weak_ptr<MatrixRm<float_t>> lat, std::weak_ptr<MatrixRm<float_t>> penalty) -> void
 	{
 		// LOCK -----------------------------
@@ -57,8 +59,9 @@ std::future<void> monju::BayesianNodeStat::calcPenalty()
 
 void monju::BayesianNodeStat::create(std::string dir)
 {
-	_storage = std::make_shared<TStorage>();
-	_storage->create(storagePath(dir), _shape.nodes, _shape.units, _shape.units);
+	_storage = std::make_shared<GridMatrixStorage>(storagePath(dir));
+	GridExtent extent = _shape.asGridExtent();
+	_storage->prepare<float_t>(_kDataCount, extent, kDensityRectangular, kRowMajor, kRowMajor);
 	_conc.create();
 }
 

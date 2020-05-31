@@ -8,5 +8,7 @@
 #define PCH_H
 
 // プリコンパイルするヘッダーをここに追加します
+#include <string>
+#include <iostream>
 
 #endif //PCH_H

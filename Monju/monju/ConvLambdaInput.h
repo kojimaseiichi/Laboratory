@@ -1,3 +1,9 @@
+/*
+ConvLambdaInput
+
+2次元の画像データを2次元ベイズ層に入力
+
+*/
 #pragma once
 #ifndef _MONJU_CONV_LAMBDA_INPUT_H__
 #define _MONJU_CONV_LAMBDA_INPUT_H__
@@ -9,6 +15,7 @@
 #include "util_math.h"
 #include "DeviceMemory.h"
 #include "ConvLambdaInputDevice.h"
+#include "Extent.h"
 
 namespace monju
 {
@@ -18,7 +25,7 @@ namespace monju
 	{
 	private:
 		std::string _id;
-		UniformBasisShape _shapeBottom;
+		LayerStruct _shapeBottom;
 		Extent _extImage, _extFilter, _extStride;
 		std::shared_ptr<MatrixRm<float_t>> _image;	// 入力画像データ
 		std::shared_ptr<MatrixCm<float_t>> _cpt;	// １個のCPT
@@ -27,7 +34,7 @@ namespace monju
 
 	public:
 		std::string id() const { return _id; }
-		UniformBasisShape shape() const { return _shapeBottom; }
+		LayerStruct shape() const { return _shapeBottom; }
 		Extent extImage() const { return _extImage; }
 		Extent extFilter() const { return _extFilter; }
 		Extent extStride() const { return _extStride; }
@@ -38,7 +45,7 @@ namespace monju
 	public:
 		ConvLambdaInput(
 			std::string id,
-			UniformBasisShape shapeBottom,
+			LayerStruct shapeBottom,
 			std::weak_ptr<MatrixRm<float_t>> lambda,
 			Extent extImage,
 			Extent extFilter)
@@ -53,18 +60,18 @@ namespace monju
 			_image->resize(extImage.rows, extImage.cols);
 
 			_cpt = std::make_shared<MatrixCm<float_t>>();
-			_cpt->resize(_extFilter.size(), _shapeBottom.units);
+			_cpt->resize(_extFilter.size(), _shapeBottom.units.size());
 
 			_delta = std::make_shared<MatrixCm<float_t>>();
 			_delta->resizeLike(*_cpt);
 			_delta->setZero();
 			
 			// stride計算
-			_extStride = calcStride(_extImage, _shapeBottom.extent, _extFilter);
+			_extStride = calcStride(_extImage, _shapeBottom.nodes, _extFilter);
 
 			// 形状チェック
-			if (!_shapeBottom.checkExtent())
-				throw MonjuException("invalid shapeBottom");
+			//if (!_shapeBottom.checkExtent())
+			//	throw MonjuException("invalid shapeBottom");
 		}
 		~ConvLambdaInput()
 		{
@@ -93,7 +100,7 @@ namespace monju
 		}
 		void up()
 		{
-			Extent extBottom = _shapeBottom.extent;
+			Extent extBottom = _shapeBottom.nodes;
 			auto pLam = _lambda.lock();
 			for (size_t row = 0; row < extBottom.rows; row++)
 			{
@@ -103,29 +110,29 @@ namespace monju
 						.reshaped(1, _extFilter.size()).matrix();	// (1, filter size)
 					auto b = a * (*_cpt);	// (1, units)
 					auto linearId = extBottom.linearId(row, col);
-					pLam->block(linearId, 0, 1, _shapeBottom.units) = b;
+					pLam->block(linearId, 0, 1, _shapeBottom.units.size()) = b;
 				}
 			}
 		}
 		void accumulateCptIncrement(std::weak_ptr<MatrixRm<int32_t>>& win, float lr, float c0, float c1)
 		{
 			auto pw = win.lock();
-			if (pw->size() != _shapeBottom.nodes)
+			if (pw->size() != _shapeBottom.nodes.size())
 				throw MonjuException("unexpected size of win matrix");
-			auto shapedWin = pw->reshaped(_shapeBottom.extent.rows, _shapeBottom.extent.cols);
+			auto shapedWin = pw->reshaped(_shapeBottom.nodes.size(), _shapeBottom.nodes.size());
 			// smoothstep関数のパラメータ
 			const float edge0 = lr * c0;
 			const float edge1 = lr * c1 + 1;
 			// フィルターのサイズ
 			const int sizeFilter = _extFilter.size();
-			for (size_t row = 0; row < _shapeBottom.extent.rows; row++)
+			for (size_t row = 0; row < _shapeBottom.nodes.size(); row++)
 			{
-				for (size_t col = 0; col < _shapeBottom.extent.cols; col++)
+				for (size_t col = 0; col < _shapeBottom.units.size(); col++)
 				{
 					int winUnit = shapedWin(row, col);
 					auto inputVec = _image->block(row, col, _extFilter.rows, _extFilter.cols)
 						.reshaped(sizeFilter, 1);
-					for (int unit = 0; unit < _shapeBottom.units; unit++)
+					for (int unit = 0; unit < _shapeBottom.units.size(); unit++)
 					{
 						float distance = static_cast<float>(std::abs(winUnit - unit));	// トーラスSOM
 						float neighbour = 1 - util_math::smoothstep3(edge0, edge1, distance);	// 近傍関数

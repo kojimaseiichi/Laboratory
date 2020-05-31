@@ -1,10 +1,11 @@
 #include "BelLayer.h"
-
+#include "GridMatrixStorage.h"
 
 // コンストラクタ
 
-monju::BelLayer::BelLayer(std::string id, UniformBasisShape shape)
+monju::BelLayer::BelLayer(std::weak_ptr<Environment> env, std::string id, monju::LayerStruct shape)
 {
+	_env = env.lock();
 	_id = id;
 	_shape = shape;
 
@@ -28,35 +29,28 @@ void monju::BelLayer::initVariables()
 	_win->setZero();
 }
 
-void monju::BelLayer::store(std::string dir)
+void monju::BelLayer::store()
 {
-	std::string extension = "mat2";
-	util_eigen::write_binary(dir, _id, "lambda", extension, *_lambda);
-	util_eigen::write_binary(dir, _id, "pi", extension, *_pi);
-	util_eigen::write_binary(dir, _id, "rho", extension, *_rho);
-	util_eigen::write_binary(dir, _id, "r", extension, *_r);
-	util_eigen::write_binary(dir, _id, "bel", extension, *_bel);
-
-	util_eigen::write_binary(dir, _id, "win", extension, *_win);
+	GridMatrixStorage storage(_dataFileName());
+	_prepareStorage(storage);
+	storage.writeGrid("lambda", *_lambda);
+	storage.writeGrid("pi", *_pi);
+	storage.writeGrid("rho", *_rho);
+	storage.writeGrid("r", *_r);
+	storage.writeGrid("bel", *_bel);
+	storage.writeGrid("win", *_win);
 }
 
-void monju::BelLayer::load(std::string dir)
+void monju::BelLayer::load()
 {
-	std::string extension = "mat2";
-	if (util_eigen::read_binary(dir, _id, "lambda", extension, *_lambda) == false)
-		util_eigen::init_matrix_zero(*_lambda, _shape.nodes, _shape.units);
-	if (util_eigen::read_binary(dir, _id, "pi", extension, *_pi) == false)
-		util_eigen::init_matrix_zero(*_pi, _shape.nodes, _shape.units);
-	if (util_eigen::read_binary(dir, _id, "rho", extension, *_rho) == false)
-		util_eigen::init_matrix_zero(*_rho, _shape.nodes, _shape.units);
-	if (util_eigen::read_binary(dir, _id, "r", extension, *_r) == false)
-		util_eigen::init_matrix_zero(*_r, _shape.nodes, _shape.units);
-	if (util_eigen::read_binary(dir, _id, "bel", extension, *_bel) == false)
-		util_eigen::init_matrix_zero(*_bel, _shape.nodes, _shape.units);
-
-	if (util_eigen::read_binary(dir, _id, "win", extension, *_win) == false)
-		util_eigen::init_matrix_zero(*_win, _shape.nodes, 1);
-
+	GridMatrixStorage storage(_dataFileName());
+	_prepareStorage(storage);
+	storage.readGrid("lambda", *_lambda);
+	storage.readGrid("pi", *_pi);
+	storage.readGrid("rho", *_rho);
+	storage.readGrid("r", *_r);
+	storage.readGrid("bel", *_bel);
+	storage.readGrid("win", *_win);
 }
 
 void monju::BelLayer::findWinner()
@@ -85,24 +79,53 @@ bool monju::BelLayer::containsNan()
 
 void monju::BelLayer::_setRandomProb(std::shared_ptr<MatrixRm<float_t>> m)
 {
-	util_eigen::set_random_prob(*m);
+	util_eigen::set_stratum_prob_randmom(m.get());
+}
+
+
+// ヘルパ
+
+std::string monju::BelLayer::_dataFileName() const
+{
+	return util_file::combine(_env->info().workFolder, _id, "dbm");
+}
+
+void monju::BelLayer::_prepareStorage(GridMatrixStorage& storage)
+{
+	GridExtent gridExtent = _shape.asGridExtent();
+	GridExtent gridExtentWin(gridExtent.grid, Extent(1, 1));
+
+	storage.prepare<float_t>("lambda", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
+	storage.prepare<float_t>("pi", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
+	storage.prepare<float_t>("rho", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
+	storage.prepare<float_t>("r", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
+	storage.prepare<float_t>("bel", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
+	storage.prepare<int32_t>("win", gridExtentWin, kDensityRectangular, kRowMajor, kRowMajor);
 }
 
 void monju::BelLayer::_initHostMemory()
 {
 	// 変数のメモリを確保
-	_lambda = std::make_shared<MatrixRm<float_t>>();
-	_pi = std::make_shared<MatrixRm<float_t>>();
-	_rho = std::make_shared<MatrixRm<float_t>>();
-	_r = std::make_shared<MatrixRm<float_t>>();
-	_bel = std::make_shared<MatrixRm<float_t>>();
-	_win = std::make_shared<MatrixRm<int32_t>>();
+	_lambda	= std::make_shared<MatrixRm<float_t>>();
+	_pi		= std::make_shared<MatrixRm<float_t>>();
+	_rho	= std::make_shared<MatrixRm<float_t>>();
+	_r		= std::make_shared<MatrixRm<float_t>>();
+	_bel	= std::make_shared<MatrixRm<float_t>>();
+	_win	= std::make_shared<MatrixRm<int32_t>>();
 
-	_lambda->resize(_shape.nodes, _shape.units);
-	_pi->resize(_shape.nodes, _shape.units);
-	_rho->resize(_shape.nodes, _shape.units);
-	_r->resize(_shape.nodes, _shape.units);
-	_bel->resize(_shape.nodes, _shape.units);
-	_win->resize(_shape.nodes, 1);
+	// Eigenの初期化
+	Extent e = _shape.flatten();
+	_lambda	->resize(e.rows, e.cols);
+	_pi		->resize(e.rows, e.cols);
+	_rho	->resize(e.rows, e.cols);
+	_r		->resize(e.rows, e.cols);
+	_bel	->resize(e.rows, e.cols);
+	_win	->resize(e.rows, 1);
+
+	// データファイルの使用準備
+	{
+		GridMatrixStorage storage(_dataFileName());
+		_prepareStorage(storage);
+	}
 }
 

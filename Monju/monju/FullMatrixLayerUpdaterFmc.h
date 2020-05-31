@@ -10,6 +10,7 @@
 #include "ClMachine.h"
 #include "ClFunc.h"
 #include "Environment.h"
+#include "Extent.h"
 
 namespace monju {
 	// fast massive compute
@@ -27,7 +28,7 @@ namespace monju {
 			_kKernelOobpDown2 = "oobp3_full_down_2_X${X}_Y${Y}_XU${XU}_YU${YU}";
 
 	private: // ストレージ
-		UniformBasisShape
+		LayerStruct
 			_shapeX,
 			_shapeY;
 		std::shared_ptr<Environment> _env;
@@ -40,8 +41,8 @@ namespace monju {
 
 	public: // コンストラクタ
 		FullMatrixLayerUpdaterFmc(
-			UniformBasisShape shapeX,
-			UniformBasisShape shapeY,
+			LayerStruct shapeX,
+			LayerStruct shapeY,
 			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine)
 		{
@@ -95,8 +96,8 @@ namespace monju {
 
 	private: // ヘルパー
 		void _captureExternalResources(
-			UniformBasisShape shapeX,
-			UniformBasisShape shapeY,
+			LayerStruct shapeX,
+			LayerStruct shapeY,
 			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine)
 		{
@@ -108,10 +109,10 @@ namespace monju {
 		void _createKernel()
 		{
 			param_map param_map; // カーネルのコンパイル時テンプレート変数
-			param_map["X"] = boost::lexical_cast<std::string>(_shapeX.nodes);
-			param_map["Y"] = boost::lexical_cast<std::string>(_shapeY.nodes);
-			param_map["XU"] = boost::lexical_cast<std::string>(_shapeX.units);
-			param_map["YU"] = boost::lexical_cast<std::string>(_shapeY.units);
+			param_map["X"] = boost::lexical_cast<std::string>(_shapeX.nodes.size());
+			param_map["Y"] = boost::lexical_cast<std::string>(_shapeY.nodes.size());
+			param_map["XU"] = boost::lexical_cast<std::string>(_shapeX.units.size());
+			param_map["YU"] = boost::lexical_cast<std::string>(_shapeY.units.size());
 
 			std::filesystem::path kernelPathBase = _env->info().kernelFolder; // カーネルファイルのフォルダ
 
@@ -165,8 +166,8 @@ namespace monju {
 			func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::kappa));
 			func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::lambda));
 
-			std::vector<size_t> global_work_size1 = { _shapeY.nodes, _shapeX.nodes };
-			std::vector<size_t> local_work_size1 = { 1, _shapeX.nodes };
+			std::vector<size_t> global_work_size1 = { static_cast<size_t>(_shapeY.nodes.size()), static_cast<size_t>(_shapeX.nodes.size()) };
+			std::vector<size_t> local_work_size1 = { 1, static_cast<size_t>(_shapeX.nodes.size()) };
 
 			func1.execute(clDeviceContext, global_work_size1, local_work_size1, join);
 			//edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
@@ -184,7 +185,7 @@ namespace monju {
 			func2.pushArgument(layerX.clVariableSet().getClMemory(VariableKind::R));
 			func2.pushArgument(layerX.clVariableSet().getClMemory(VariableKind::lambda));
 
-			std::vector<size_t> global_work_size2 = { 1, _shapeX.nodes };
+			std::vector<size_t> global_work_size2 = { 1, static_cast<size_t>(_shapeX.nodes.size()) };
 
 			func2.execute(clDeviceContext, global_work_size2, join);
 			//nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
@@ -213,8 +214,8 @@ namespace monju {
 			func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::lambda));
 			func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::kappa));
 
-			std::vector<size_t> global_work_size1 = { _shapeY.nodes , _shapeX.nodes };
-			std::vector<size_t> local_work_size1 = { _shapeY.nodes, 1 };
+			std::vector<size_t> global_work_size1 = { static_cast<size_t>(_shapeY.nodes.size()) , static_cast<size_t>(_shapeX.nodes.size()) };
+			std::vector<size_t> local_work_size1 = { static_cast<size_t>(_shapeY.nodes.size()), 1 };
 
 			func1.execute(clDeviceContext, global_work_size1, local_work_size1, join);
 			//edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::kappa);
@@ -230,7 +231,7 @@ namespace monju {
 			func2.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::kappa));
 			func2.pushArgument(layerY.clVariableSet().getClMemory(VariableKind::pi));
 
-			std::vector<size_t> global_work_size2 = { _shapeY.nodes, 1 };
+			std::vector<size_t> global_work_size2 = { static_cast<size_t>(_shapeY.nodes.size()), 1 };
 
 			func2.execute(clDeviceContext, global_work_size2, join);
 			//nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::pi);

@@ -33,11 +33,7 @@ namespace monju
 			int code() const { return _code; }
 		};
 
-		void throwExceptionIfNotEquals(int result, int assumed)
-		{
-			if (result != assumed)
-				throw SQLiteException(result);
-		}
+		void throwExceptionIfNotEquals(int result, int assumed);
 
 		class Database
 		{
@@ -95,17 +91,17 @@ namespace monju
 		public:
 			void paramString(int position, const std::string& text)
 			{
-				int result = sqlite3_bind_text(_stmt, 1, text.c_str(), text.size(), nullptr);
+				int result = sqlite3_bind_text(_stmt, position, text.c_str(), text.size(), nullptr);
 				throwExceptionIfNotEquals(result, SQLITE_OK);
 			}
 			void paramInt32(int position, int32_t value)
 			{
-				int result = sqlite3_bind_int(_stmt, 1, value);
+				int result = sqlite3_bind_int(_stmt, position, value);
 				throwExceptionIfNotEquals(result, SQLITE_OK);
 			}
 			void paramInt64(int position, int64_t value)
 			{
-				int result = sqlite3_bind_int64(_stmt, 1, value);
+				int result = sqlite3_bind_int64(_stmt, position, value);
 				throwExceptionIfNotEquals(result, SQLITE_OK);
 			}
 			void paramZeroBlob(int position, int size)
@@ -171,6 +167,18 @@ namespace monju
 				int result = sqlite3_blob_write(_blob, buffer, size, offset);
 				throwExceptionIfNotEquals(result, SQLITE_OK);
 			}
+			template <typename T>
+			void read(T& val, int offset)
+			{
+				int result = sqlite3_blob_read(_blob, &val, sizeof(T), offset * sizeof(T));
+				throwExceptionIfNotEquals(result, SQLITE_OK);
+			}
+			template <typename T>
+			void write(T& val, int offset)
+			{
+				int result = sqlite3_blob_write(_blob, &val, sizeof(T), offset * sizeof(T));
+				throwExceptionIfNotEquals(result, SQLITE_OK);
+			}
 		};
 
 		class BlobReader
@@ -222,10 +230,11 @@ namespace monju
 				_blob->write(p, size, _position);
 				_position += size;
 			}
+
 			template <typename T>
-			void write(T& value)
+			void write(T value)
 			{
-				_write(&value, sizeof(T));
+				write(&value, sizeof(T));
 			}
 		};
 	}
