@@ -29,9 +29,9 @@ namespace monju {
 	public:
 		BelLayerFmc(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<BelLayer> node)
 		{
-			capturePointer(clMachine, node);
-			initClMemory();
-			initVariableSet();
+			_capturePointer(clMachine, node);
+			_initClMemory();
+			_initVariableSet();
 		}
 		~BelLayerFmc()
 		{
@@ -49,14 +49,14 @@ namespace monju {
 	// ヘルパ
 	private:
 
-		void capturePointer(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<BelLayer> node)
+		void _capturePointer(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<BelLayer> node)
 		{
 			// 参照する外部のポインタをロック
 			_clMachine = clMachine.lock();
 			_node = node.lock();
 		}
 
-		void initClMemory()
+		void _initClMemory()
 		{
 			// OpenCLのデバイス上のメモリを初期化
 			auto lambda = _node->lambda().lock();
@@ -74,7 +74,7 @@ namespace monju {
 			_clWin = std::make_shared<ClMemory>(_clMachine, win->size() * sizeof(int32_t));
 		}
 
-		void initVariableSet()
+		void _initVariableSet()
 		{
 			// 変数コンテナであるVariableSetを初期化
 			_clVariableSet.add(_node->lambda(), VariableKind::lambda, _clLambda);

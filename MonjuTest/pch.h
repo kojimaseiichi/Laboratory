@@ -10,5 +10,6 @@
 // プリコンパイルするヘッダーをここに追加します
 #include <string>
 #include <iostream>
+#include <memory>
 
 #endif //PCH_H

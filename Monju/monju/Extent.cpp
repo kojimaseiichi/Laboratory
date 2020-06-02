@@ -141,6 +141,11 @@ monju::LayerStruct::LayerStruct(Extent nodes, Extent units)
 	this->units = units;
 }
 
+monju::LayerStruct::LayerStruct(int32_t nodes_rows, int32_t nodes_cols, int32_t units_rows, int32_t units_cols)
+	: nodes(nodes_rows, nodes_cols), units(units_rows, units_cols)
+{
+}
+
 monju::LayerStruct& monju::LayerStruct::operator=(const monju::LayerStruct& o)
 {
 	nodes = o.nodes;

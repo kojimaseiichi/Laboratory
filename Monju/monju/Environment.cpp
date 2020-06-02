@@ -5,7 +5,7 @@
 std::string monju::Environment::_propertyFilePath(std::string workFolder) const
 {
 	boost::filesystem::path bwf = boost::filesystem::path(workFolder);
-	boost::filesystem::path full_path = bwf / "properties.json";
+	boost::filesystem::path full_path = bwf / "Environment.json";
 	return full_path.string();
 }
 

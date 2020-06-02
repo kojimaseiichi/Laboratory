@@ -78,6 +78,7 @@ namespace monju
 		LayerStruct();
 		LayerStruct(const LayerStruct& o);
 		LayerStruct(Extent nodes, Extent units);
+		LayerStruct(int32_t nodes_rows, int32_t nodes_cols, int32_t units_rows, int32_t units_cols);
 		LayerStruct& operator=(const LayerStruct& o);
 		bool operator ==(const LayerStruct& o);
 		Extent flatten();

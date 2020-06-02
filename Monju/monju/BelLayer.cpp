@@ -33,24 +33,24 @@ void monju::BelLayer::store()
 {
 	GridMatrixStorage storage(_dataFileName());
 	_prepareStorage(storage);
-	storage.writeGrid("lambda", *_lambda);
-	storage.writeGrid("pi", *_pi);
-	storage.writeGrid("rho", *_rho);
-	storage.writeGrid("r", *_r);
-	storage.writeGrid("bel", *_bel);
-	storage.writeGrid("win", *_win);
+	storage.writeMatrix("lambda", *_lambda);
+	storage.writeMatrix("pi", *_pi);
+	storage.writeMatrix("rho", *_rho);
+	storage.writeMatrix("r", *_r);
+	storage.writeMatrix("bel", *_bel);
+	storage.writeMatrix("win", *_win);
 }
 
 void monju::BelLayer::load()
 {
 	GridMatrixStorage storage(_dataFileName());
 	_prepareStorage(storage);
-	storage.readGrid("lambda", *_lambda);
-	storage.readGrid("pi", *_pi);
-	storage.readGrid("rho", *_rho);
-	storage.readGrid("r", *_r);
-	storage.readGrid("bel", *_bel);
-	storage.readGrid("win", *_win);
+	storage.readMatrix("lambda", *_lambda);
+	storage.readMatrix("pi", *_pi);
+	storage.readMatrix("rho", *_rho);
+	storage.readMatrix("r", *_r);
+	storage.readMatrix("bel", *_bel);
+	storage.readMatrix("win", *_win);
 }
 
 void monju::BelLayer::findWinner()
@@ -92,15 +92,15 @@ std::string monju::BelLayer::_dataFileName() const
 
 void monju::BelLayer::_prepareStorage(GridMatrixStorage& storage)
 {
-	GridExtent gridExtent = _shape.asGridExtent();
-	GridExtent gridExtentWin(gridExtent.grid, Extent(1, 1));
+	Extent extent = _shape.flatten();
+	Extent extentWin(extent.rows, 1);
 
-	storage.prepare<float_t>("lambda", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
-	storage.prepare<float_t>("pi", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
-	storage.prepare<float_t>("rho", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
-	storage.prepare<float_t>("r", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
-	storage.prepare<float_t>("bel", gridExtent, kDensityRectangular, kRowMajor, kRowMajor);
-	storage.prepare<int32_t>("win", gridExtentWin, kDensityRectangular, kRowMajor, kRowMajor);
+	storage.prepare<float_t>("lambda", extent, kRowMajor);
+	storage.prepare<float_t>("pi", extent, kRowMajor);
+	storage.prepare<float_t>("rho", extent, kRowMajor);
+	storage.prepare<float_t>("r", extent, kRowMajor);
+	storage.prepare<float_t>("bel", extent, kRowMajor);
+	storage.prepare<int32_t>("win", extentWin, kRowMajor);
 }
 
 void monju::BelLayer::_initHostMemory()

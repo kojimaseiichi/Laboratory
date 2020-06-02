@@ -167,6 +167,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BayesianModTest.cpp" />
+    <ClCompile Include="BelLayerTest.cpp" />
     <ClCompile Include="CortexBasisStatTest.cpp" />
     <ClCompile Include="GridCptUpdater.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
