@@ -171,6 +171,7 @@
     <ClCompile Include="CortexBasisStatTest.cpp" />
     <ClCompile Include="GridCptUpdater.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
+    <ClCompile Include="RBNTest.cpp" />
     <ClCompile Include="TaskPenaltyCalcTest.cpp" />
     <ClCompile Include="OpenCLComponentTest.cpp" />
     <ClCompile Include="OpenCLOobpTest.cpp" />

@@ -20,7 +20,7 @@ namespace monju {
 	private:
 		// ID
 		std::string _id;
-		LayerStruct _shape;
+		LayerShape _shape;
 		// カウンティング
 		std::shared_ptr<GridMatrixStorage> _storage;
 		std::shared_ptr<MatrixRm<float_t>> 
@@ -43,7 +43,7 @@ namespace monju {
 	public:
 		BayesianNodeStat(
 			std::string id,
-			LayerStruct shape,
+			LayerShape shape,
 			float_t coeWinPenalty,
 			float_t coeLatPenalty
 

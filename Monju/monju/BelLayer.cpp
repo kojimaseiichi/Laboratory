@@ -3,7 +3,7 @@
 
 // コンストラクタ
 
-monju::BelLayer::BelLayer(std::weak_ptr<Environment> env, std::string id, monju::LayerStruct shape)
+monju::BelLayer::BelLayer(std::weak_ptr<Environment> env, std::string id, monju::LayerShape shape)
 {
 	_env = env.lock();
 	_id = id;

@@ -22,12 +22,12 @@ namespace monju
 		template <typename T>
 		void add(std::weak_ptr<T> weakPtr, VariableKind variableKind, std::weak_ptr<ClMemory> clMemory);
 		void clear();
-		void enqueueReadAll(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent);
-		void enqueueWriteAll(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent);
-		void enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, VariableKind variable);
-		void enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, VariableKind variable);
-		void enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables);
-		void enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables);
+		void enqueueReadAll(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event);
+		void enqueueWriteAll(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event);
+		void enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, VariableKind variable);
+		void enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, VariableKind variable);
+		void enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, std::vector<VariableKind> variables);
+		void enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, std::vector<VariableKind> variables);
 		std::weak_ptr<ClMemory> getClMemory(VariableKind variableKind);
 
 	};

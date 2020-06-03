@@ -25,44 +25,50 @@ void monju::ClVariableSet::clear()
 	_variableMap.clear();
 }
 
-void monju::ClVariableSet::enqueueReadAll(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent)
+void monju::ClVariableSet::enqueueReadAll(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event)
 {
-	auto p = deviceContext.lock();
+	auto dc = deviceContext.lock();
+	auto ev = event.lock();
 	for (auto e : _variableMap)
-		_enqueueRead(e.second, *p, pEvent);
+		_enqueueRead(e.second, *dc, ev.get());
 }
 
-void monju::ClVariableSet::enqueueWriteAll(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent)
+void monju::ClVariableSet::enqueueWriteAll(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event)
 {
 	auto p = deviceContext.lock();
+	auto ev = event.lock();
 	for (auto e : _variableMap)
-		_enqueueWrite(e.second, *p, pEvent);
+		_enqueueWrite(e.second, *p, ev.get());
 }
 
-void monju::ClVariableSet::enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, VariableKind variable)
+void monju::ClVariableSet::enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, VariableKind variable)
 {
 	auto p = deviceContext.lock();
-	_enqueueRead(_variableMap.at(variable), *p, pEvent);
+	auto ev = event.lock();
+	_enqueueRead(_variableMap.at(variable), *p, ev.get());
 }
 
-void monju::ClVariableSet::enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, VariableKind variable)
+void monju::ClVariableSet::enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, VariableKind variable)
 {
 	auto p = deviceContext.lock();
-	_enqueueWrite(_variableMap.at(variable), *p, pEvent);
+	auto ev = event.lock();
+	_enqueueWrite(_variableMap.at(variable), *p, ev.get());
 }
 
-void monju::ClVariableSet::enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables)
+void monju::ClVariableSet::enqueueRead(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, std::vector<VariableKind> variables)
 {
 	auto p = deviceContext.lock();
+	auto ev = event.lock();
 	for (auto va : variables)
-		_enqueueRead(_variableMap.at(va), *p, pEvent);
+		_enqueueRead(_variableMap.at(va), *p, ev.get());
 }
 
-void monju::ClVariableSet::enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, ClEventJoiner* pEvent, std::vector<VariableKind> variables)
+void monju::ClVariableSet::enqueueWrite(std::weak_ptr<ClDeviceContext> deviceContext, std::weak_ptr<ClEventJoiner> event, std::vector<VariableKind> variables)
 {
 	auto p = deviceContext.lock();
+	auto ev = event.lock();
 	for (auto va : variables)
-		_enqueueWrite(_variableMap.at(va), *p, pEvent);
+		_enqueueWrite(_variableMap.at(va), *p, ev.get());
 }
 
 std::weak_ptr<monju::ClMemory> monju::ClVariableSet::getClMemory(VariableKind variableKind)

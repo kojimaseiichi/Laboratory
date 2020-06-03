@@ -14,17 +14,17 @@ namespace monju
 	{
 	private:
 		std::string _id;
-		LayerStruct _shape;
+		LayerShape _shape;
 		std::shared_ptr<MatrixRm<float_t>>
 			_lambda;	// ƒÉ(x)
 
 	public:
 		std::string id() const { return _id; }
-		LayerStruct shape() const { return _shape; }
+		LayerShape shape() const { return _shape; }
 		std::weak_ptr<MatrixRm<float_t>> lambda() const { return _lambda; }
 
 	public:
-		BayesianLambdaInputNode(std::string id, LayerStruct shape)
+		BayesianLambdaInputNode(std::string id, LayerShape shape)
 		{
 			_id = id;
 			_shape = shape;

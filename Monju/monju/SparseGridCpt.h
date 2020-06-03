@@ -20,7 +20,7 @@ namespace monju
 		std::string _id;
 		Environment* _pEnv;
 
-		LayerStruct
+		LayerShape
 			_shapeX,
 			_shapeY;
 		std::shared_ptr<MatrixCm<byte_t>> _incidence;			// Ú‘±s—ñ ƒm[ƒhÚ‘±
@@ -38,8 +38,8 @@ namespace monju
 		SparseGridCpt(
 			std::string id,
 			Environment& environment,
-			LayerStruct shapeX,
-			LayerStruct shapeY,
+			LayerShape shapeX,
+			LayerShape shapeY,
 			float coefficientNeighborGrid,
 			float coefficientNeighborCell
 		) :

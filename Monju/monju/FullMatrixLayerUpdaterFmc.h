@@ -28,7 +28,7 @@ namespace monju {
 			_kKernelOobpDown2 = "oobp3_full_down_2_X${X}_Y${Y}_XU${XU}_YU${YU}";
 
 	private: // ストレージ
-		LayerStruct
+		LayerShape
 			_shapeX,
 			_shapeY;
 		std::shared_ptr<Environment> _env;
@@ -41,8 +41,8 @@ namespace monju {
 
 	public: // コンストラクタ
 		FullMatrixLayerUpdaterFmc(
-			LayerStruct shapeX,
-			LayerStruct shapeY,
+			LayerShape shapeX,
+			LayerShape shapeY,
 			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine)
 		{
@@ -96,8 +96,8 @@ namespace monju {
 
 	private: // ヘルパー
 		void _captureExternalResources(
-			LayerStruct shapeX,
-			LayerStruct shapeY,
+			LayerShape shapeX,
+			LayerShape shapeY,
 			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine)
 		{

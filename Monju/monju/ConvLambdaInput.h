@@ -25,7 +25,7 @@ namespace monju
 	{
 	private:
 		std::string _id;
-		LayerStruct _shapeBottom;
+		LayerShape _shapeBottom;
 		Extent _extImage, _extFilter, _extStride;
 		std::shared_ptr<MatrixRm<float_t>> _image;	// “ü—Í‰æ‘œƒf[ƒ^
 		std::shared_ptr<MatrixCm<float_t>> _cpt;	// ‚PŒÂ‚ÌCPT
@@ -34,7 +34,7 @@ namespace monju
 
 	public:
 		std::string id() const { return _id; }
-		LayerStruct shape() const { return _shapeBottom; }
+		LayerShape shape() const { return _shapeBottom; }
 		Extent extImage() const { return _extImage; }
 		Extent extFilter() const { return _extFilter; }
 		Extent extStride() const { return _extStride; }
@@ -45,7 +45,7 @@ namespace monju
 	public:
 		ConvLambdaInput(
 			std::string id,
-			LayerStruct shapeBottom,
+			LayerShape shapeBottom,
 			std::weak_ptr<MatrixRm<float_t>> lambda,
 			Extent extImage,
 			Extent extFilter)

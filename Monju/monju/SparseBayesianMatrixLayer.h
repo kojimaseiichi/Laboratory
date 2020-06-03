@@ -17,7 +17,7 @@ namespace monju {
 	protected:
 		std::string _id;
 		std::string _dir;	// ワークフォルダ
-		LayerStruct _shapeX, _shapeY;
+		LayerShape _shapeX, _shapeY;
 
 		std::shared_ptr<MatrixCm<float_t>>
 			_lambda,				// λ（ノード数Y * ユニット数Y, ノード数X）
@@ -36,8 +36,8 @@ namespace monju {
 
 	public: // プロパティ
 		std::string id() const { return _id; }
-		LayerStruct shapeX() const { return _shapeX; }
-		LayerStruct shapeY() const { return _shapeY; }
+		LayerShape shapeX() const { return _shapeX; }
+		LayerShape shapeY() const { return _shapeY; }
 		std::weak_ptr<MatrixCm<float_t>> lambda() { return _lambda; }
 		std::weak_ptr<MatrixCm<float_t>> kappa() { return _kappa; }
 		std::weak_ptr<MatrixCm<float_t>> cpt() { return _cpt; }
@@ -51,8 +51,8 @@ namespace monju {
 		SparseBayesianMatrixLayer(
 			std::string id,
 			std::string dir,
-			LayerStruct shapeX,
-			LayerStruct shapeY
+			LayerShape shapeX,
+			LayerShape shapeY
 		)
 		{
 			_id = id;

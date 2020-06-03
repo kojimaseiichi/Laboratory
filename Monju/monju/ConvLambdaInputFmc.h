@@ -36,7 +36,7 @@ namespace monju
 		ClVariableSet _clVariableSet;
 
 		Extent _extentInput, _extentFilter, _extentSlide;
-		LayerStruct _shape;
+		LayerShape _shape;
 
 
 	public:

@@ -16,7 +16,7 @@ namespace monju {
 			_kSrcOobpBel = "oobp\\oobp3_bel.cl",
 			_kKernelOobpBel = "oobp3_bel_X${X}_XU${XU}";
 
-		LayerStruct _shape;
+		LayerShape _shape;
 
 		std::shared_ptr<Environment> _env;
 		std::shared_ptr<ClMachine> _clMachine;
@@ -24,7 +24,7 @@ namespace monju {
 		
 	public: // コンストラクタ
 		BelLayerUpdaterFmc(
-			LayerStruct shape,
+			LayerShape shape,
 			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine)
 		{
@@ -50,7 +50,7 @@ namespace monju {
 	private: // ヘルパー
 
 		void _initInstance(
-			LayerStruct& shape,
+			LayerShape& shape,
 			std::weak_ptr<Environment> env,
 				std::weak_ptr<ClMachine> clMachine)
 			{

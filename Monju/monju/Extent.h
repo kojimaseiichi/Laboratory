@@ -69,18 +69,18 @@ namespace monju
 		}
 	};
 
-	// TODO LayerStruct -> LayerExtent
-	class LayerStruct
+	// TODO LayerShape -> LayerExtent
+	class LayerShape
 	{
 	public:
 		Extent nodes, units;
 
-		LayerStruct();
-		LayerStruct(const LayerStruct& o);
-		LayerStruct(Extent nodes, Extent units);
-		LayerStruct(int32_t nodes_rows, int32_t nodes_cols, int32_t units_rows, int32_t units_cols);
-		LayerStruct& operator=(const LayerStruct& o);
-		bool operator ==(const LayerStruct& o);
+		LayerShape();
+		LayerShape(const LayerShape& o);
+		LayerShape(Extent nodes, Extent units);
+		LayerShape(int32_t nodes_rows, int32_t nodes_cols, int32_t units_rows, int32_t units_cols);
+		LayerShape& operator=(const LayerShape& o);
+		bool operator ==(const LayerShape& o);
 		Extent flatten();
 		GridExtent asGridExtent();
 
@@ -108,7 +108,7 @@ namespace monju
 		int32_t size() const;
 		bool contains(const GridEntry& e) const;
 		bool contains(const int32_t grid_row, const int32_t grid_col, const int32_t row, const int32_t col) const;
-		void setCpt(const LayerStruct& x, const LayerStruct& y)
+		void setCpt(const LayerShape& x, const LayerShape& y)
 		{
 			grid.set(y.nodes.size(), x.nodes.size());
 			matrix.set(y.units.size(), x.nodes.size());

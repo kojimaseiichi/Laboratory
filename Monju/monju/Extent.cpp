@@ -125,45 +125,45 @@ int32_t monju::GridEntry::linearId(const GridExtent& extent, const int grid_majo
 		matrix.linearId(extent.matrix, matrix_major);
 }
 
-monju::LayerStruct::LayerStruct()
+monju::LayerShape::LayerShape()
 {
 }
 
-monju::LayerStruct::LayerStruct(const LayerStruct& o)
+monju::LayerShape::LayerShape(const LayerShape& o)
 {
 	nodes = o.nodes;
 	units = o.units;
 }
 
-monju::LayerStruct::LayerStruct(Extent nodes, Extent units)
+monju::LayerShape::LayerShape(Extent nodes, Extent units)
 {
 	this->nodes = nodes;
 	this->units = units;
 }
 
-monju::LayerStruct::LayerStruct(int32_t nodes_rows, int32_t nodes_cols, int32_t units_rows, int32_t units_cols)
+monju::LayerShape::LayerShape(int32_t nodes_rows, int32_t nodes_cols, int32_t units_rows, int32_t units_cols)
 	: nodes(nodes_rows, nodes_cols), units(units_rows, units_cols)
 {
 }
 
-monju::LayerStruct& monju::LayerStruct::operator=(const monju::LayerStruct& o)
+monju::LayerShape& monju::LayerShape::operator=(const monju::LayerShape& o)
 {
 	nodes = o.nodes;
 	units = o.units;
 	return *this;
 }
 
-bool monju::LayerStruct::operator ==(const monju::LayerStruct& o)
+bool monju::LayerShape::operator ==(const monju::LayerShape& o)
 {
 	return nodes == o.nodes && units == o.units;
 }
 
-monju::Extent monju::LayerStruct::flatten()
+monju::Extent monju::LayerShape::flatten()
 {
 	return Extent(nodes.size(), units.size());
 }
 
-monju::GridExtent monju::LayerStruct::asGridExtent()
+monju::GridExtent monju::LayerShape::asGridExtent()
 {
 	return GridExtent(nodes, units);
 }

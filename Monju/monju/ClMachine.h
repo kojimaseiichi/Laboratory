@@ -27,6 +27,7 @@ namespace monju
 		std::weak_ptr<_ClPlatformId> clPlatformId() const;
 		std::weak_ptr<_ClContext> clContext() const;
 		std::vector<cl_device_id> deviceIds() const;
+		cl_device_id defaultDeviceId() const;
 
 		// コピー禁止・ムーブ禁止
 	public:

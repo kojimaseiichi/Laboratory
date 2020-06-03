@@ -60,3 +60,10 @@ std::vector<cl_device_id> monju::ClMachine::deviceIds() const
 	return _clContext->deviceIds();
 }
 
+cl_device_id monju::ClMachine::defaultDeviceId() const
+{
+	if (_clContext->deviceIds().size() == 0)
+		throw MonjuException();
+	return _clContext->deviceIds().at(0);
+}
+

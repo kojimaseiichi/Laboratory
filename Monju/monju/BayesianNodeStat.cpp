@@ -3,7 +3,7 @@
 #include "Synchronizable.h"
 #include "util_file.h"
 
-monju::BayesianNodeStat::BayesianNodeStat(std::string id, monju::LayerStruct shape, float_t coeWinPenalty, float_t coeLatPenalty)
+monju::BayesianNodeStat::BayesianNodeStat(std::string id, monju::LayerShape shape, float_t coeWinPenalty, float_t coeLatPenalty)
 	: _conc(1)
 {
 	_id = id;

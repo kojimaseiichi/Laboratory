@@ -17,7 +17,7 @@ namespace monju {
 	{
 	private:
 		std::string _id;
-		LayerStruct
+		LayerShape
 			_shapeX,
 			_shapeY;
 		std::shared_ptr<MatrixCm<float_t>>
@@ -35,14 +35,14 @@ namespace monju {
 		std::string id() const { return _id; }
 		std::weak_ptr<MatrixCm<float_t>> cpt() { return _cpt; }
 		std::weak_ptr<MatrixCm<float_t>> deltaCpt() { return _deltaCpt; }
-		LayerStruct shapeX() const { return _shapeX; }
-		LayerStruct shapeY() const { return _shapeY; }
+		LayerShape shapeX() const { return _shapeX; }
+		LayerShape shapeY() const { return _shapeY; }
 
 	public:
 		FullConnectedGridCpt(
 			std::string id,
-			LayerStruct shapeX,
-			LayerStruct shapeY,
+			LayerShape shapeX,
+			LayerShape shapeY,
 			float coefficientNeighborGrid,
 			float coefficientNeighborCell
 		) :

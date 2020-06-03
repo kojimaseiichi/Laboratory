@@ -4,6 +4,9 @@
 #include <boost/filesystem.hpp>
 
 #include "monju/BelLayer.h"
+#include "monju/BelLayerFmc.h"
+#include "monju/BelLayerUpdaterFmc.h"
+#include "monju/ClEventJoiner.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -21,7 +24,7 @@ namespace monju
 				env = std::make_shared<Environment>(R"(C:\monju\test\BelLayer)");
 			}
 
-			TEST_METHOD(Instantiate)
+			TEST_METHOD(TestHostMemory)
 			{
 				boost::filesystem::remove(R"(C:\monju\test\BelLayer\t1.dbm)");
 				
@@ -29,7 +32,7 @@ namespace monju
 				MatrixRm<float_t> lambda, pi, rho, r, bel;
 				MatrixRm<int32_t> win;
 
-				LayerStruct shape(30, 30, 30, 30);
+				LayerShape shape(30, 30, 30, 30);
 				Extent ext = shape.flatten();
 				lambda.resize(ext.rows, ext.cols);
 				pi.resize(ext.rows, ext.cols);
@@ -105,11 +108,11 @@ namespace monju
 					}
 				}
 			}
-			TEST_METHOD(Probability)
+			TEST_METHOD(TestHostMemoryProbability)
 			{
 				boost::filesystem::remove(R"(C:\monju\test\BelLayer\t1.dbm)");
 				std::string id = "t1";
-				LayerStruct shape(5, 10, 5, 10);
+				LayerShape shape(5, 10, 5, 10);
 				Extent ext = shape.flatten();
 				BelLayer belLayer(env, id, shape);
 				belLayer.initVariables();
@@ -128,6 +131,30 @@ namespace monju
 					auto p = belLayer.bel().lock();
 					Assert::IsTrue(one.isApprox(p->rowwise().sum(), prec));
 				}
+			}
+
+			TEST_METHOD(TestDeviceMemory)
+			{
+				boost::filesystem::remove(R"(C:\monju\test\BelLayer\t1.dbm)");
+				std::string id = "t1";
+				LayerShape shape(5, 10, 5, 10);
+				Extent ext = shape.flatten();
+				const int platformId = 1;
+				
+				std::shared_ptr<ClMachine> machine = std::make_shared<ClMachine>(platformId);
+				std::shared_ptr<ClDeviceContext> dc = std::make_shared<ClDeviceContext>(machine, machine->defaultDeviceId());
+				std::shared_ptr<ClEventJoiner> join = std::make_shared<ClEventJoiner>();
+
+				std::shared_ptr<BelLayer> layer = std::make_shared<BelLayer>(env, id, shape);
+				std::shared_ptr<BelLayerFmc> fmc = std::make_shared<BelLayerFmc>(machine, layer);
+				std::shared_ptr<BelLayerUpdaterFmc> update = std::make_shared<BelLayerUpdaterFmc>(shape, env, machine);
+
+				
+				layer->initVariables();
+				
+				fmc->clVariableSet().enqueueWriteAll(dc, join);
+				update->bel(dc, fmc, join);
+				fmc->clVariableSet().enqueueReadAll(dc, join);
 			}
 		};
 	}

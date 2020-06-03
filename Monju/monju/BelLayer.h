@@ -23,7 +23,7 @@ namespace monju {
 
 		std::shared_ptr<Environment> _env;
 		std::string _id;
-		LayerStruct _shape;
+		LayerShape _shape;
 		std::shared_ptr<MatrixRm<float_t>>
 			_lambda,	// λ_X(x) shape:(nodes, units)
 			_pi,		// π_X(x) shape:(nodes, units)
@@ -34,7 +34,7 @@ namespace monju {
 			_win;		// 勝者ユニット  shape:(nodes, 1)
 
 	public:	// コンストラクタ
-		BelLayer(std::weak_ptr<Environment> env, std::string id, LayerStruct shape);
+		BelLayer(std::weak_ptr<Environment> env, std::string id, LayerShape shape);
 		~BelLayer();
 
 	public: // 公開メンバ
@@ -52,7 +52,7 @@ namespace monju {
 
 	public: // プロパティ
 		std::string id() const { return _id; }
-		LayerStruct shape() const { return _shape; }
+		LayerShape shape() const { return _shape; }
 		std::weak_ptr<MatrixRm<float_t>> lambda() const { return _lambda; }
 		std::weak_ptr<MatrixRm<float_t>> pi() const { return _pi; };
 		std::weak_ptr<MatrixRm<float_t>> rho() const { return _rho; }
