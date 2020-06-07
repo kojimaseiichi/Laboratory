@@ -167,7 +167,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp">
       <Filter>皮質モジュールrebuild</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -360,7 +362,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h">
       <Filter>皮質モジュールrebuild</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">

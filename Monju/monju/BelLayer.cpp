@@ -89,9 +89,8 @@ void monju::BelLayer::copyData(const BelLayer& o)
 void monju::BelLayer::performBel()
 {
 	*_bel = *_rho = _pi->array() * _lambda->array() * _r->array();
-	auto a = _rho->rowwise().sum();
-	_bel->array().colwise() /= a.array();
-	*_win = _bel->rowwise().maxCoeff().cast<int32_t>();
+	_bel->array().colwise() /= _rho->rowwise().sum().array();
+	findWinner();
 }
 
 void monju::BelLayer::_setRandomProb(std::shared_ptr<MatrixRm<float_t>> m)

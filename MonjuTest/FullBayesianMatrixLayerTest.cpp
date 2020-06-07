@@ -136,7 +136,7 @@ namespace monju
 				boost::filesystem::remove(R"(C:\monju\test\FullBayesianMatrixLayer\y2.dbm)");
 				boost::filesystem::remove(R"(C:\monju\test\FullBayesianMatrixLayer\m2.dbm)");
 
-				LayerShape shapeX(2, 2, 1, 2), shapeY(2, 2, 1, 3);
+				LayerShape shapeX(2, 2, 1, 2), shapeY(3, 2, 1, 3);
 				GridExtent gextCpt(shapeX, shapeY), gextLambda(shapeX, shapeY), gextKappa(shapeX, shapeY);
 				gextLambda.matrix.rows = 1;
 				gextKappa.matrix.cols = 1;
@@ -173,7 +173,7 @@ namespace monju
 				ly2->copyData(*ly);
 				m2->copyData(*m);
 
-				float prec = 0.01f;
+				float prec = 0.001f;
 
 				// UP
 				// ホスト
@@ -219,7 +219,7 @@ namespace monju
 				// DOWN
 				// ホスト
 				m2->performDown(*lx2, *ly2);
-				ly2->bel();
+				ly2->performBel();
 				// デバイス
 				update->down(dc, fmc_lx, fmc_ly, fmc_m, join);
 				update_y->bel(dc, fmc_ly, join);
@@ -236,6 +236,11 @@ namespace monju
 				{
 					auto a = ly->lambda().lock();
 					auto b = ly2->lambda().lock();
+					Assert::IsTrue(a->isApprox(*b, prec));
+				}
+				{
+					auto a = ly->pi().lock();
+					auto b = ly2->pi().lock();
 					Assert::IsTrue(a->isApprox(*b, prec));
 				}
 				{
