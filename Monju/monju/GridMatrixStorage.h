@@ -86,6 +86,23 @@ namespace monju
 			}
 		}
 
+		bool getExtent(const char* pzName, GridExtent& grid_extent)
+		{
+			std::string name(pzName);
+			return getExtent(name, grid_extent);
+		}
+
+		bool getExtent(const std::string& name, GridExtent& grid_extent)
+		{
+			_grid_matrix_t entry = { 0 };
+			if (_findGridMatrix(name, entry))
+			{
+				grid_extent = entry.grid_extent;
+				return true;
+			}
+			return false;
+		}
+
 		template <typename T>
 		void prepare(const char* pzName, Extent matrix_extent, int mat_major)
 		{

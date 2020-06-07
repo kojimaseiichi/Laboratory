@@ -57,12 +57,11 @@ void monju::BelLayer::findWinner()
 {
 	// ノードごとの最大のユニットを特定
 	// Eigenにおいて、行ごとのargmaxの計算はloopなしで実現できない
-	for (Eigen::Index nRow = 0; nRow < _bel->rows(); nRow++)
+	MatrixRm<float_t>::Index maxarg;
+	for (Eigen::Index row = 0; row < _bel->rows(); row++)
 	{
-		auto row = _bel->row(nRow);
-		MatrixRm<float_t>::Index maxarg;
-		row.maxCoeff(&maxarg);
-		(*_win)(nRow, 0) = static_cast<int32_t>(maxarg);
+		_bel->row(row).maxCoeff(&maxarg);
+		(*_win)(row, 0) = static_cast<int32_t>(maxarg);
 	}
 }
 
@@ -75,6 +74,24 @@ bool monju::BelLayer::containsNan()
 	bool e = util_eigen::contains_nan<MatrixRm<float_t>>(_bel);
 	bool f = util_eigen::contains_nan<MatrixRm<int32_t>>(_win);
 	return a || b || c || d || e || f;
+}
+
+void monju::BelLayer::copyData(const BelLayer& o)
+{
+	*_lambda = *o._lambda;
+	*_pi = *o._pi;
+	*_rho = *o._rho;
+	*_r = *o._r;
+	*_bel = *o._bel;
+	*_win = *o._win;
+}
+
+void monju::BelLayer::performBel()
+{
+	*_bel = *_rho = _pi->array() * _lambda->array() * _r->array();
+	auto a = _rho->rowwise().sum();
+	_bel->array().colwise() /= a.array();
+	*_win = _bel->rowwise().maxCoeff().cast<int32_t>();
 }
 
 void monju::BelLayer::_setRandomProb(std::shared_ptr<MatrixRm<float_t>> m)

@@ -151,8 +151,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.cpp">
       <Filter>皮質モジュールrebuild</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp">
       <Filter>SQLite</Filter>
@@ -163,7 +161,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.cpp">
       <Filter>行列データ永続化</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Extent.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Extent.cpp">
+      <Filter>共通</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -334,8 +338,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayer.h">
       <Filter>皮質モジュールrebuild</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullMatrixLayerUpdaterFmc.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\SparseBayesianMatrixLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\UniformBasisShape.h">
       <Filter>共通</Filter>
@@ -355,6 +357,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.h">
       <Filter>行列データ永続化</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerFmc.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">

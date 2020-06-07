@@ -43,6 +43,8 @@ namespace monju {
 		void load();
 		void findWinner();
 		bool containsNan();
+		void copyData(const BelLayer& o);
+		void performBel();
 
 	private: // ƒwƒ‹ƒp
 		std::string _dataFileName() const;

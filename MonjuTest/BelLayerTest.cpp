@@ -135,8 +135,12 @@ namespace monju
 
 			TEST_METHOD(TestDeviceMemory)
 			{
+				// CPU‚ÆGPU‚ÌŒvŽZŒ‹‰Ê‚ð”äŠr
+
 				boost::filesystem::remove(R"(C:\monju\test\BelLayer\t1.dbm)");
+				boost::filesystem::remove(R"(C:\monju\test\BelLayer\t2.dbm)");
 				std::string id = "t1";
+				std::string id2 = "t2";
 				LayerShape shape(5, 10, 5, 10);
 				Extent ext = shape.flatten();
 				const int platformId = 1;
@@ -146,15 +150,52 @@ namespace monju
 				std::shared_ptr<ClEventJoiner> join = std::make_shared<ClEventJoiner>();
 
 				std::shared_ptr<BelLayer> layer = std::make_shared<BelLayer>(env, id, shape);
+				std::shared_ptr<BelLayer> layer2 = std::make_shared<BelLayer>(env, id2, shape);
 				std::shared_ptr<BelLayerFmc> fmc = std::make_shared<BelLayerFmc>(machine, layer);
-				std::shared_ptr<BelLayerUpdaterFmc> update = std::make_shared<BelLayerUpdaterFmc>(shape, env, machine);
+				std::shared_ptr<BelLayerUpdaterFmc> update = std::make_shared<BelLayerUpdaterFmc>(env, shape, machine);
 
 				
 				layer->initVariables();
+				layer2->copyData(*layer);
+				layer2->performBel();
+				layer2->findWinner();
 				
 				fmc->clVariableSet().enqueueWriteAll(dc, join);
 				update->bel(dc, fmc, join);
 				fmc->clVariableSet().enqueueReadAll(dc, join);
+
+				float prec = 0.001f;
+				{
+					auto p1 = layer->lambda().lock();
+					auto p2 = layer2->lambda().lock();
+					Assert::IsTrue(p1->isApprox(*p2, prec));
+				}
+				{
+					auto p1 = layer->pi().lock();
+					auto p2 = layer2->pi().lock();
+					Assert::IsTrue(p1->isApprox(*p2, prec));
+				}
+				{
+					auto p1 = layer->r().lock();
+					auto p2 = layer2->r().lock();
+					Assert::IsTrue(p1->isApprox(*p2, prec));
+				}
+				{
+					auto p1 = layer->rho().lock();
+					auto p2 = layer2->rho().lock();
+					Assert::IsTrue(p1->isApprox(*p2, prec));
+				}
+				{
+					auto p1 = layer->bel().lock();
+					auto p2 = layer2->bel().lock();
+					Assert::IsTrue(p1->isApprox(*p2, prec));
+				}
+				{
+					auto p1 = layer->win().lock();
+					auto p2 = layer2->win().lock();
+					auto v = (*p1)(0, 0);
+					Assert::IsTrue(p1->isApprox(*p2, prec));
+				}
 			}
 		};
 	}

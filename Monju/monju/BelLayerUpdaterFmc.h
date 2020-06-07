@@ -11,93 +11,41 @@ namespace monju {
 
 	class BelLayerUpdaterFmc
 	{
-	private: // ストレージ
+	private:/*フィール*/
 		const std::string
 			_kSrcOobpBel = "oobp\\oobp3_bel.cl",
 			_kKernelOobpBel = "oobp3_bel_X${X}_XU${XU}";
-
 		LayerShape _shape;
-
 		std::shared_ptr<Environment> _env;
 		std::shared_ptr<ClMachine> _clMachine;
 		std::shared_ptr<ClKernel> _clKernel;
 		
-	public: // コンストラクタ
+	public:/*コンストラクタ*/
 		BelLayerUpdaterFmc(
-			LayerShape shape,
 			std::weak_ptr<Environment> env,
-			std::weak_ptr<ClMachine> clMachine)
-		{
-			_initInstance(shape, env, clMachine);
-			_createClKernel();
-		}
-		~BelLayerUpdaterFmc()
-		{
-		}
+			LayerShape shape,
+			std::weak_ptr<ClMachine> clMachine);
+		~BelLayerUpdaterFmc();
 		void bel(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
-			std::weak_ptr<BelLayerFmc> node,
-			std::weak_ptr<ClEventJoiner> clEventJoiner)
-		{
-			/// デバイスに必要なデータが転送されている前提
+			std::weak_ptr<BelLayerFmc> layer,
+			std::weak_ptr<ClEventJoiner> clEventJoiner);
 
-			auto p = clDeviceContext.lock();
-			// joinはnull可能
-			_bel(clDeviceContext, node, clEventJoiner);
-			p->flush(); // コマンドキューをフラッシュ
-		}
-
-	private: // ヘルパー
-
+	private:/*ヘルパー*/
 		void _initInstance(
 			LayerShape& shape,
 			std::weak_ptr<Environment> env,
-				std::weak_ptr<ClMachine> clMachine)
-			{
-				_capturePointers(env, clMachine);
-			_shape = shape;
-		}
+			std::weak_ptr<ClMachine> clMachine);
 		void _capturePointers(
 			std::weak_ptr<Environment> env,
-			std::weak_ptr<ClMachine> clMachine)
-		{
-			_env = env.lock();
-			_clMachine = clMachine.lock();
-		}
-		void _createClKernel()
-		{
-			param_map param_map;
-			param_map["X"] = boost::lexical_cast<std::string>(_shape.nodes.size());
-			param_map["XU"] = boost::lexical_cast<std::string>(_shape.units.size());
-
-			std::filesystem::path kernelPathBase = _env->info().kernelFolder;
-			_clKernel = std::make_shared<ClKernel>(
-				_clMachine,
-				(kernelPathBase / _kSrcOobpBel).string(),
-				_kKernelOobpBel,
-				param_map);
-		}
+			std::weak_ptr<ClMachine> clMachine);
+		void _createClKernel();
 		void _bel(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
-			std::weak_ptr<BelLayerFmc> node,
-			std::weak_ptr<ClEventJoiner> clEventJoiner)
-		{
-			auto pNode = node.lock();
+			std::weak_ptr<BelLayerFmc> layer,
+			std::weak_ptr<ClEventJoiner> clEventJoiner);
 
-			ClFunc func(_clMachine, _clKernel);
-			func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::lambda));
-			func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::pi));
-			func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::rho));
-			func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::BEL));
-			func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::WIN));
-
-			std::vector<size_t> global_work_size = { static_cast<size_t>(_shape.nodes.size()) };
-
-			func.execute(clDeviceContext, global_work_size, clEventJoiner);
-		}
-
-		// コピー禁止・ムーブ禁止
-	public:
+	public: /*コピー禁止・ムーブ禁止*/
 		BelLayerUpdaterFmc(const BelLayerUpdaterFmc&) = delete;
 		BelLayerUpdaterFmc(BelLayerUpdaterFmc&&) = delete;
 		BelLayerUpdaterFmc& operator =(const BelLayerUpdaterFmc&) = delete;

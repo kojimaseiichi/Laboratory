@@ -8,8 +8,10 @@
 
 namespace monju {
 
+	// マトリックス層のデバイスのメモリを供給
 	class FullBayesianMatrixLayerFmc
 	{
+	/*フィールド*/
 	private:
 		std::shared_ptr<ClMachine> _clMachine;
 		std::shared_ptr< FullBayesianMatrixLayer> _edge;
@@ -19,46 +21,22 @@ namespace monju {
 			_clCpt;
 		ClVariableSet _clVariableSet;
 
-	public: // コンストラクタ
-		FullBayesianMatrixLayerFmc(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<FullBayesianMatrixLayer> edge)
-		{
-			_lockOuterResources(clMachine, edge);
-			_allocClMemory();
+	/*コンストラクタ*/
+	public:
+		FullBayesianMatrixLayerFmc(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<FullBayesianMatrixLayer> edge);
+		~FullBayesianMatrixLayerFmc();
 
-		}
-		~FullBayesianMatrixLayerFmc()
-		{
-		}
+	/*プロパティ*/
+	public:
+		ClVariableSet& clVariableSet();
 
-	public: // プロパティ
-		ClVariableSet& clVariableSet()
-		{
-			return _clVariableSet;
-		}
+	/*ヘルパー*/
+	private:
+		void _lockOuterResources(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<FullBayesianMatrixLayer> edge);
+		void _allocClMemory();
 
-	private: // ヘルパー
-		void _lockOuterResources(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<FullBayesianMatrixLayer> edge)
-		{
-			_clMachine = clMachine.lock();
-			_edge = edge.lock();
-		}
-
-		void _allocClMemory()
-		{
-			auto lambda = _edge->lambda().lock();
-			auto kappa = _edge->kappa().lock();
-			auto cpt = _edge->cpt().lock();
-
-			_clLambda = std::make_shared<ClMemory>(_clMachine, lambda->size() * sizeof(float_t));
-			_clKappa = std::make_shared<ClMemory>(_clMachine, kappa->size() * sizeof(float_t));
-			_clCpt = std::make_shared<ClMemory>(_clMachine, cpt->size() * sizeof(float_t));
-
-			_clVariableSet.add(_edge->lambda(), VariableKind::lambda, _clLambda);
-			_clVariableSet.add(_edge->kappa(), VariableKind::kappa, _clKappa);
-			_clVariableSet.add(_edge->cpt(), VariableKind::W, _clCpt);
-		}
-
-	public:	// コピー禁止・ムーブ禁止
+	/*コピー禁止・ムーブ禁止*/
+	public:
 		FullBayesianMatrixLayerFmc(const FullBayesianMatrixLayerFmc&) = delete;
 		FullBayesianMatrixLayerFmc(FullBayesianMatrixLayerFmc&&) = delete;
 		FullBayesianMatrixLayerFmc& operator=(const FullBayesianMatrixLayerFmc&) = delete;

@@ -169,6 +169,7 @@
     <ClCompile Include="BayesianModTest.cpp" />
     <ClCompile Include="BelLayerTest.cpp" />
     <ClCompile Include="CortexBasisStatTest.cpp" />
+    <ClCompile Include="FullBayesianMatrixLayerTest.cpp" />
     <ClCompile Include="GridCptUpdater.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
     <ClCompile Include="RBNTest.cpp" />

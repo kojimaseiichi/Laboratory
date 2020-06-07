@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MONJU_FULL_MATRIX_LAYER_UPDATER_FMC_H__
-#define _MONJU_FULL_MATRIX_LAYER_UPDATER_FMC_H__
+#ifndef _MONJU_BAYESIAN_FULL_MATRIX_LAYER_UPDATER_FMC_H__
+#define _MONJU_BAYESIAN_FULL_MATRIX_LAYER_UPDATER_FMC_H__
 
 #include "MonjuTypes.h"
 #include <boost/lexical_cast.hpp>
@@ -11,10 +11,11 @@
 #include "ClFunc.h"
 #include "Environment.h"
 #include "Extent.h"
+#include "ClEventJoiner.h"
 
 namespace monju {
 	// fast massive compute
-	class FullMatrixLayerUpdaterFmc
+	class FullBayesianMatrixLayerUpdaterFmc
 	{
 	private: // OpenCLのファイルとカーネル名
 		const std::string
@@ -40,56 +41,65 @@ namespace monju {
 			_kernelOobpDown2;
 
 	public: // コンストラクタ
-		FullMatrixLayerUpdaterFmc(
+		FullBayesianMatrixLayerUpdaterFmc(
+			std::weak_ptr<Environment> env,
 			LayerShape shapeX,
 			LayerShape shapeY,
-			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine)
 		{
 			_captureExternalResources(shapeX, shapeY, env, clMachine);
 			_createKernel();
 		}
-		~FullMatrixLayerUpdaterFmc()
+		~FullBayesianMatrixLayerUpdaterFmc()
 		{
 		}
 
 	public: // 公開メンバ
 		void up(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
-			BelLayerFmc& layerX,
-			BelLayerFmc& layerY,
-			FullBayesianMatrixLayerFmc& matrixLayer,
+			std::weak_ptr<BelLayerFmc> x,
+			std::weak_ptr<BelLayerFmc> y,
+			std::weak_ptr<FullBayesianMatrixLayerFmc> m,
 			std::weak_ptr<ClEventJoiner> join)
 		{
 			// 全結合逆方向(up)確率伝播(oobp)
-			_up(clDeviceContext, layerX, layerY, matrixLayer, join);
+			auto layerX = x.lock();
+			auto layerY = y.lock();
+			auto layerM = m.lock();
+			_up(clDeviceContext, *layerX, *layerY, *layerM, join);
 			auto pDeviceContext = clDeviceContext.lock();
 			pDeviceContext->flush();
 		}
 
 		void down(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
-			BelLayerFmc& nodeX,
-			BelLayerFmc& nodeY,
-			FullBayesianMatrixLayerFmc& edge,
+			std::weak_ptr<BelLayerFmc> x,
+			std::weak_ptr<BelLayerFmc> y,
+			std::weak_ptr<FullBayesianMatrixLayerFmc> m,
 			std::weak_ptr<ClEventJoiner> join)
 		{
 			// 全結合順方向(down)確率伝播(oobp)
-			_down(clDeviceContext, nodeX, nodeY, edge, join);
+			auto layerX = x.lock();
+			auto layerY = y.lock();
+			auto layerM = m.lock();
+			_down(clDeviceContext, *layerX, *layerY, *layerM, join);
 			auto pDeviceContext = clDeviceContext.lock();
 			pDeviceContext->flush();
 		}
 
 		void both(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
-			BelLayerFmc& nodeX,
-			BelLayerFmc& nodeY,
-			FullBayesianMatrixLayerFmc& edge,
+			std::weak_ptr<BelLayerFmc> x,
+			std::weak_ptr<BelLayerFmc> y,
+			std::weak_ptr<FullBayesianMatrixLayerFmc> m,
 			std::weak_ptr<ClEventJoiner> join)
 		{
 			// 全結合双方向確率伝播
-			_up(clDeviceContext, nodeX, nodeY, edge, join);
-			_down(clDeviceContext, nodeX, nodeY, edge, join);
+			auto layerX = x.lock();
+			auto layerY = y.lock();
+			auto layerM = m.lock();
+			_up(clDeviceContext, *layerX, *layerY, *layerM, join);
+			_down(clDeviceContext, *layerX, *layerY, *layerM, join);
 			auto pDeviceContext = clDeviceContext.lock();
 			pDeviceContext->flush();
 		}
@@ -170,7 +180,7 @@ namespace monju {
 			std::vector<size_t> local_work_size1 = { 1, static_cast<size_t>(_shapeX.nodes.size()) };
 
 			func1.execute(clDeviceContext, global_work_size1, local_work_size1, join);
-			//edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
+			//matrixLayer.clVariableSet().enqueueRead(clDeviceContext, join, VariableKind::lambda);
 		}
 
 		void _upOobp2(
@@ -188,7 +198,7 @@ namespace monju {
 			std::vector<size_t> global_work_size2 = { 1, static_cast<size_t>(_shapeX.nodes.size()) };
 
 			func2.execute(clDeviceContext, global_work_size2, join);
-			//nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::lambda);
+			//layerX.clVariableSet().enqueueRead(clDeviceContext, join, VariableKind::lambda);
 		}
 
 		void _down(
@@ -240,11 +250,11 @@ namespace monju {
 
 		// コピー禁止・ムーブ禁止
 	public:
-		FullMatrixLayerUpdaterFmc(const FullMatrixLayerUpdaterFmc&) = delete;
-		FullMatrixLayerUpdaterFmc(FullMatrixLayerUpdaterFmc&&) = delete;
-		FullMatrixLayerUpdaterFmc& operator =(const FullMatrixLayerUpdaterFmc&) = delete;
-		FullMatrixLayerUpdaterFmc& operator =(FullMatrixLayerUpdaterFmc&&) = delete;
+		FullBayesianMatrixLayerUpdaterFmc(const FullBayesianMatrixLayerUpdaterFmc&) = delete;
+		FullBayesianMatrixLayerUpdaterFmc(FullBayesianMatrixLayerUpdaterFmc&&) = delete;
+		FullBayesianMatrixLayerUpdaterFmc& operator =(const FullBayesianMatrixLayerUpdaterFmc&) = delete;
+		FullBayesianMatrixLayerUpdaterFmc& operator =(FullBayesianMatrixLayerUpdaterFmc&&) = delete;
 	};
 }
 
-#endif // !_MONJU_FULL_MATRIX_LAYER_UPDATER_FMC_H__
+#endif // !_MONJU_BAYESIAN_FULL_MATRIX_LAYER_UPDATER_FMC_H__

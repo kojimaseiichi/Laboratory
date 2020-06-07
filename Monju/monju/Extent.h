@@ -103,8 +103,16 @@ namespace monju
 		GridExtent(const GridExtent& o);
 		GridExtent(Extent grid, Extent matrix);
 		GridExtent(const int grid_rows, const int grid_cols, const int mat_rows, const int mat_cols);
+		GridExtent(const LayerShape& x, const LayerShape& y)
+		{
+			grid.rows = y.nodes.size();
+			grid.cols = x.nodes.size();
+			matrix.rows = y.units.size();
+			matrix.cols = x.units.size();
+		}
 		GridExtent& operator=(const GridExtent& o);
 		bool operator ==(const GridExtent& o);
+		bool operator !=(const GridExtent& o);
 		int32_t size() const;
 		bool contains(const GridEntry& e) const;
 		bool contains(const int32_t grid_row, const int32_t grid_col, const int32_t row, const int32_t col) const;

@@ -201,6 +201,11 @@ bool monju::GridExtent::operator ==(const monju::GridExtent& o)
 	return grid == o.grid && matrix == o.matrix;
 }
 
+bool monju::GridExtent::operator !=(const monju::GridExtent& o)
+{
+	return !(*this == o);
+}
+
 int32_t monju::GridExtent::size() const
 {
 	return grid.size() * matrix.size();
