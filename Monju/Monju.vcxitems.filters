@@ -130,9 +130,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.cpp">
-      <Filter>皮質モジュール</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
@@ -170,6 +167,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.cpp">
       <Filter>皮質モジュールrebuild</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -316,9 +314,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputDevice.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.h">
-      <Filter>皮質モジュール</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ConvLambdaInputFmc.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
@@ -365,6 +360,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.h">
       <Filter>皮質モジュールrebuild</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">

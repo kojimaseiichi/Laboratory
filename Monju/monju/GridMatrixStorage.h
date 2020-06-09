@@ -242,6 +242,34 @@ namespace monju
 			_manipulateMatrixCoeff<T>(entry, cell, row, col, f);
 		}
 
+		template <typename T>
+		void coeffOp(const char* pzName, std::vector<int32_t> rowInfo, std::vector<int32_t> colInfo, const std::function<T(T)> f)
+		{
+			std::string name(pzName);
+			coeffOp(name, rowInfo, colInfo, f);
+		}
+
+		template <typename T>
+		void coeffOp(const std::string name, std::vector<int32_t> rowInfo, std::vector<int32_t> colInfo, const std::function<T(T)> f)
+		{
+			_grid_matrix_t entry = { 0 };
+			if (!_findGridMatrix(name, entry)) throw MonjuException();
+			for (int grow = 0; grow < rowInfo.size(); grow++)
+			{
+				for (int gcol = 0; gcol < rowInfo.size(); gcol++)
+				{
+					if (!_checkMatrixEntry(entry, grow, gcol, rowInfo[grow], colInfo[gcol])) throw MonjuException();
+					_cell_data_t cell = { 0 };
+					if (!_findCellData(entry.rowid, grow, gcol, cell))
+					{
+						_makeCellData(entry, grow, gcol, cell);
+						_addCellData(entry, cell);
+					}
+					_manipulateMatrixCoeff<T>(entry, cell, rowInfo[grow], colInfo[gcol], f);
+				}
+			}
+		}
+
 		template <typename Func>
 		void coeffOp(const char* pzName, GridEntry at, Func f)
 		{

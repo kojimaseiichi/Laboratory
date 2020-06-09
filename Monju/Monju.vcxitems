@@ -14,7 +14,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp" />
@@ -73,7 +73,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianFullConnectEdgeStat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h" />

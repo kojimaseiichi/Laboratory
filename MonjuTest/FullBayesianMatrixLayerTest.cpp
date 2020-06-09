@@ -119,8 +119,8 @@ namespace monju
 						{
 							auto p = ml->kappa().lock();
 							auto b = p->block(row * gextKappa.matrix.size(), col, gextKappa.matrix.size(), 1).reshaped(gextKappa.matrix.rows, gextKappa.matrix.cols);
-							float one = b.sum();
-							Assert::IsTrue(std::abs(1.f - one) < prec);
+							float zero = b.sum();
+							Assert::IsTrue(std::abs(0.f - zero) < prec);
 						}
 					}
 				}
@@ -226,7 +226,7 @@ namespace monju
 				fmc_m->clVariableSet().enqueueReadAll(dc, join);
 				fmc_lx->clVariableSet().enqueueReadAll(dc, join);
 				fmc_ly->clVariableSet().enqueueReadAll(dc, join);
-
+				join->join();
 				// ŒŸØ
 				{
 					auto a = m->kappa().lock();
