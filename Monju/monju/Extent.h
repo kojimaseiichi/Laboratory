@@ -26,11 +26,7 @@ namespace monju
 		Extent(const Extent& o);
 		Extent& operator =(const Extent& o);
 		bool operator ==(const Extent& o);
-		void set(int32_t rows, int32_t cols)
-		{
-			this->rows = rows;
-			this->cols = cols;
-		}
+		void set(int32_t rows, int32_t cols);
 		int32_t size() const;
 		bool isSquare() const;
 		bool contains(const Entry& e) const;
@@ -103,32 +99,16 @@ namespace monju
 		GridExtent(const GridExtent& o);
 		GridExtent(Extent grid, Extent matrix);
 		GridExtent(const int grid_rows, const int grid_cols, const int mat_rows, const int mat_cols);
-		GridExtent(const LayerShape& x, const LayerShape& y)
-		{
-			grid.rows = y.nodes.size();
-			grid.cols = x.nodes.size();
-			matrix.rows = y.units.size();
-			matrix.cols = x.units.size();
-		}
+		GridExtent(const LayerShape& x, const LayerShape& y);
 		GridExtent& operator=(const GridExtent& o);
 		bool operator ==(const GridExtent& o);
 		bool operator !=(const GridExtent& o);
 		int32_t size() const;
 		bool contains(const GridEntry& e) const;
 		bool contains(const int32_t grid_row, const int32_t grid_col, const int32_t row, const int32_t col) const;
-		void setCpt(const LayerShape& x, const LayerShape& y)
-		{
-			grid.set(y.nodes.size(), x.nodes.size());
-			matrix.set(y.units.size(), x.nodes.size());
-		}
-		Extent flattenRm() const
-		{
-			return Extent(grid.rows, grid.cols * matrix.size());
-		}
-		Extent flattenCm() const
-		{
-			return Extent(grid.rows * matrix.size(), grid.cols);
-		}
+		void cross(const LayerShape& x, const LayerShape& y);
+		Extent flattenRm() const;
+		Extent flattenCm() const;
 	private:
 		friend class boost::serialization::access;
 		template <class Archive>

@@ -64,7 +64,7 @@ namespace monju
 
 			// CPT
 			GridExtent cptExtent;
-			cptExtent.setCpt(_shapeX, _shapeY);
+			cptExtent.cross(_shapeX, _shapeY);
 			_storage->prepare<float_t>("cpt", cptExtent, kDensityRectangular, kColMajor, kColMajor);
 			auto cptMatShape = cptExtent.flattenCm();
 			_deltaCpt->resize(cptMatShape.rows, cptMatShape.cols);

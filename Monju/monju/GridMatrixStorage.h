@@ -198,13 +198,9 @@ namespace monju
 			if (!_findGridMatrix(name, entry)) throw MonjuException();
 			if (!_checkMatrixEntry(m, entry)) throw MonjuException();
 
-			_cell_data_t cellData = { 0 };
-			if (!_findCellData(entry.rowid, grid_row, grid_col, cellData))
-			{
-				_makeCellData(entry, grid_row, grid_col, cellData);
-				_addCellData(entry, cellData);
-			}
-			_writeMatrixData(entry, cellData, m);
+			_cell_data_t cell = { 0 };
+			_getCellData(entry, grid_row, grid_col, cell);
+			_writeMatrixData(entry, cell, m);
 		}
 
 		template <typename Matrix>
@@ -234,12 +230,39 @@ namespace monju
 			if (!_findGridMatrix(name, entry)) throw MonjuException();
 			if (!_checkMatrixEntry(entry, grid_row, grid_col, row, col)) throw MonjuException();
 			_cell_data_t cell = { 0 };
-			if (!_findCellData(entry.rowid, grid_row, grid_col, cell))
-			{
-				_makeCellData(entry, grid_row, grid_col, cell);
-				_addCellData(entry, cell);
-			}
+			_getCellData(entry, grid_row, grid_col, cell);
 			_manipulateMatrixCoeff<T>(entry, cell, row, col, f);
+		}
+
+		// TODO
+		// Matrix単位でデータセット間で変換する
+		template <typename MatrixSrc, typename MatrixDest>
+		void _convMatrix(std::string nameSrc, std::string nameDest,
+			const std::function<void(MatrixSrc&, MatrixDest&)> init,
+			const std::function<void(MatrixSrc&, MatrixDest&)> conv)
+		{
+			_grid_matrix_t entrySrc = { 0 }, entryDest = { 0 };
+			if (!_findGridMatrix(nameSrc, entrySrc)) throw MonjuException();
+			if (!_findGridMatrix(nameDest, entryDest)) throw MonjuException();
+			if (entrySrc.grid_extent != entryDest.grid_extent) throw MonjuException();
+			// マトリックス初期化
+			MatrixSrc src;
+			MatrixDest dest;
+			init(src, dest);
+
+			_cell_data_t cellSrc, cellDest;
+			auto gext = entrySrc.grid_extent.grid;
+			for (int gcol = 0; gcol < gext.cols; gcol++)
+			{
+				for (int grow = 0; grow < gext.rows; grow++)
+				{
+					_getCellData(entrySrc, grow, gcol, cellSrc);
+					_getCellData(entryDest, grow, gcol, cellDest);
+					_readMatrixData(entrySrc, cellSrc, src);
+					conv(src, dest);
+					_writeMatrixData(entryDest, cellDest, dest);
+				}
+			}
 		}
 
 		template <typename T>
@@ -253,7 +276,10 @@ namespace monju
 		void coeffOp(const std::string name, std::vector<int32_t> rowInfo, std::vector<int32_t> colInfo, const std::function<T(T)> f)
 		{
 			_grid_matrix_t entry = { 0 };
-			if (!_findGridMatrix(name, entry)) throw MonjuException();
+			if (!_findGridMatrix(name, entry))
+				throw MonjuException();
+			if (rowInfo.size() != entry.grid_extent.grid.rows || colInfo.size() != entry.grid_extent.grid.cols)
+				throw MonjuException();
 			for (int grow = 0; grow < rowInfo.size(); grow++)
 			{
 				for (int gcol = 0; gcol < rowInfo.size(); gcol++)
@@ -324,7 +350,7 @@ namespace monju
 			_writeCoeffData(entry, cell, row, col);
 		}
 
-	private:
+	protected:
 		template <typename Matrix>
 		bool _checkMatrixShape(const Matrix& m, const _grid_matrix_t& entry)
 		{
@@ -424,6 +450,15 @@ namespace monju
 				stmt.step();
 			}
 			entry.rowid = _db->lastRowId();
+		}
+
+		void  _getCellData(_grid_matrix_t& entry, const int grid_row, const int grid_col, _cell_data_t cell)
+		{
+			if (!_findCellData(entry.rowid, grid_row, grid_col, cell))
+			{
+				_makeCellData(entry, grid_row, grid_col, cell);
+				_addCellData(entry, cell);
+			}
 		}
 
 		void _addCellData(const _grid_matrix_t& entry, _cell_data_t& cell)

@@ -29,6 +29,12 @@ bool monju::Extent::operator ==(const monju::Extent& o)
 	return rows == o.rows && cols == o.cols;
 }
 
+void monju::Extent::set(int32_t rows, int32_t cols)
+{
+	this->rows = rows;
+	this->cols = cols;
+}
+
 int32_t monju::Extent::size() const
 {
 	return rows * cols;
@@ -189,6 +195,14 @@ monju::GridExtent::GridExtent(const int grid_rows, const int grid_cols, const in
 {
 }
 
+monju::GridExtent::GridExtent(const LayerShape& x, const LayerShape& y)
+{
+	grid.rows = y.nodes.size();
+	grid.cols = x.nodes.size();
+	matrix.rows = y.units.size();
+	matrix.cols = x.units.size();
+}
+
 monju::GridExtent& monju::GridExtent::operator=(const monju::GridExtent& o)
 {
 	grid = o.grid;
@@ -219,4 +233,20 @@ bool monju::GridExtent::contains(const GridEntry& e) const
 bool monju::GridExtent::contains(const int32_t grid_row, const int32_t grid_col, const int32_t row, const int32_t col) const
 {
 	return grid.contains(grid_row, grid_col) && matrix.contains(row, col);
+}
+
+void monju::GridExtent::cross(const LayerShape& x, const LayerShape& y)
+{
+	grid.set(y.nodes.size(), x.nodes.size());
+	matrix.set(y.units.size(), x.nodes.size());
+}
+
+monju::Extent monju::GridExtent::flattenRm() const
+{
+	return Extent(grid.rows, grid.cols * matrix.size());
+}
+
+monju::Extent monju::GridExtent::flattenCm() const
+{
+	return Extent(grid.rows * matrix.size(), grid.cols);
 }

@@ -14,23 +14,17 @@
 namespace monju {
 
 	// 相関の勝者ユニットの分割表
-	class ContingencyTableStorage
+	// CPTを計算
+	class ContingencyTableStorage : GridMatrixStorage
 	{
 	private:
-		std::shared_ptr<Environment> _env;
-		std::string _id;
 		GridExtent _gridExtent;
-		std::shared_ptr<GridMatrixStorage> _storage;
-		Synchronizable _synch;
-		ConcurrencyContext _conc;
 
 	public:/*コンストラクタ*/
-		ContingencyTableStorage(std::weak_ptr<Environment> env, std::string id, LayerShape x, LayerShape y)
+		ContingencyTableStorage(std::string fileName, LayerShape x, LayerShape y)
+			: GridMatrixStorage(fileName)
 		{
-			_env = env.lock();
-			_id = id;
-			_gridExtent.setCpt(x, y);
-			_storage = std::make_shared<GridMatrixStorage>(_dataFileName());
+			_gridExtent.cross(x, y);
 		}
 		~ContingencyTableStorage()
 		{
@@ -38,45 +32,55 @@ namespace monju {
 		}
 
 	public:/*公開メンバ*/
-		std::future<void> add(std::weak_ptr<MatrixRm<int32_t>> winX, std::weak_ptr<MatrixRm<int32_t>> winY)
+		void increment(std::weak_ptr<MatrixRm<int32_t>> winX, std::weak_ptr<MatrixRm<int32_t>> winY)
 		{
 			auto px = winX.lock();
 			auto py = winY.lock();
-			auto x = _toVector(*px);
-			auto y = _toVector(*py);
-			const auto task = [](Synchronizable& synch, std::shared_ptr<GridMatrixStorage> storage, std::unique_ptr<std::vector<int32_t>> ax, std::unique_ptr<std::vector<int32_t>> ay) -> void
+			auto ax = _toVector(*px);
+			auto ay = _toVector(*py);
+			this->coeffOp<int32_t>(
+					"ct",
+					ax,
+					ay,
+					[](const int32_t v)->int32_t {
+						return v + 1;
+					});
+		}
+		void calcCpt(std::weak_ptr<MatrixCm<float_t>> cpt)
+		{
+			// カウンティング情報をストレージから取得してCPTを計算
+			auto p = cpt.lock();
+			auto flat = _gridExtent.flattenCm();
+			if (flat.rows != p->rows() || flat.cols != p->cols())
+				throw MonjuException();
+			MatrixCm<int32_t> count;
+			count.resize(flat.rows, flat.cols);
+			this->readGrid("ct", count);
+			*p = count.cast<float_t>();
+			const int matSize = _gridExtent.matrix.size();
+			for (int gcol = 0; gcol < flat.cols; gcol++)
 			{
-				// LOCK -----------------------------
-				WriteGuard g(synch);
-				for (int col = 0; col < ax->size(); col++)
+				for (int grow = 0; grow < flat.rows; grow++)
 				{
-					for (int row = 0; row < ay->size(); row++)
-						storage->coeffOp<int32_t>("ct", *ax, *ay,
-							[](const int32_t v)->int32_t {return v + 1; });
+					auto v = p->block(grow * matSize, gcol, matSize, 1).reshaped(_gridExtent.matrix.rows, _gridExtent.matrix.cols);
+					auto sum = v.sum();
+					v.array() /= sum;
 				}
-			};
-			auto wrapper = [&]()
-			{
-				task(_synch, _storage, std::move(x), std::move(y));
-			};
-			return _conc.threadPool().submit(wrapper);
+			}
 		}
 
 	private:/*ヘルパ*/
-		std::string _dataFileName() const
-		{
-			return util_file::combine(_env->info().workFolder, _id, "dbm");
-		}
 		void _prepareStorage()
 		{
-			_storage->prepare<int32_t>("ct", _gridExtent, kDensityRectangular, kColMajor, kColMajor);
+			this->prepare<int32_t>("ct", _gridExtent, kDensityRectangular, kColMajor, kColMajor);
+			this->prepare<float_t>("cpt", _gridExtent, kDensityRectangular, kColMajor, kColMajor);
 		}
-		std::unique_ptr<std::vector<int32_t>> _toVector(MatrixRm<int32_t>& win) const
+		std::vector<int32_t>&& _toVector(MatrixRm<int32_t>& win) const
 		{
-			auto v = std::make_unique<std::vector<int32_t>>();
+			std::vector<int32_t> v;
 			for (int row = 0; row < win.rows(); row++)
-				v->push_back(win(row, 0));
-			return v;
+				v.push_back(win(row, 0));
+			return std::move(v);
 		}
 
 	};
