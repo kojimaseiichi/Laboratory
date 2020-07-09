@@ -3,7 +3,8 @@
     You can write this source only with Latin-1 character set. DO NOT use Japanese characters.
 
  # SUMMARY
-    This kernel is to compute the beysian stochastic propagation that is performed through the full-connected network by OOBP algorithm.
+    This kernel is to drive a sort of bayesian network.
+    The algorithm performs a propagating stochastic variables through the the network that is a full-connected bipartile graph.
     You may need to call oobp3_full_up_2() to obtain LAMBDA from "og_w_lambda" in the basis after this kernel execution done
 
  # WORK ITEM
@@ -22,11 +23,11 @@
     YU: number of units per node in the lower basis
 
  # PARAMETERS
-    ig_y_lambda     LAMBDA variable in the lower basis
-    ig_y_pi         PI variable in the lower basis
+    ig_y_lambda     LAMBDA in the lower basis
+    ig_y_pi         PI in the lower basis
     ig_w_cpt        the CPT matrix that intervenes between two bases
-    ig_w_kappa      KAPPA variable that intervenes between two bases and is near the lower basis
-    og_w_lambda     LAMBDA variable that intervenes between two bases and is near the upper basis
+    ig_w_kappa      KAPPA that intervenes between two bases and is near the lower basis
+    og_w_lambda     LAMBDA that intervenes between two bases and is near the upper basis
 
  */
 __kernel void oobp3_full_up_1_X${X}_Y${Y}_XU${XU}_YU${YU}(

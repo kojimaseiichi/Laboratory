@@ -3,7 +3,8 @@
     We can write this source only with Latin-1 character set. DO NOT use Japanese characters.
 
  # SUMMARY
-    This kernel is to compute the bayesian stochastic propagation that is performed through the full-connected network by OOBP algorithm.
+    This kernel is to drive a sort of bayesian network.
+    The algorithm performs a propagating stochastic variables through the the network that is a full-connected bipartile graph.
     You may need to call oobp3_full_down_2() to obtain LAMBDA from "og_w_kappa" in the basis after this kernel execution done
 
  # WORK ITEM
