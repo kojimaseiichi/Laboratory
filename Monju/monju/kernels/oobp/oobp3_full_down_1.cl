@@ -5,7 +5,7 @@
  # SUMMARY
     This kernel is to drive a sort of bayesian network.
     The algorithm performs a propagating stochastic variables through the the network that is a full-connected bipartile graph.
-    You may need to call oobp3_full_down_2() to obtain LAMBDA from "og_w_kappa" in the basis after this kernel execution done
+    You may need to call oobp3_full_down_2() to compute LAMBDA from "og_w_kappa" in the basis after this kernel execution done
 
  # WORK ITEM
     [0] threads for every nodes in the lower basis (number of rows)
