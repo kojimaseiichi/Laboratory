@@ -14,7 +14,8 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_ai.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.cpp" />
@@ -59,7 +60,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Synchronizable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_file.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_math.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_mm.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_str.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\VariablesBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\_ClBuffer.cpp" />
@@ -73,7 +73,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_ai.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianLambdaInputNodeDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BayesianNodeStat.h" />
@@ -125,7 +126,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_file.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_math.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_misc.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_mm.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_str.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariableKind.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariablesBase.h" />

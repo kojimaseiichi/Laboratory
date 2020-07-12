@@ -19,12 +19,13 @@ SQLiteデータベースは以下のテーブルで構成
 #include "sqlite\sqlite_wrapper.h"
 #include "MonjuException.h"
 #include "Extent.h"
+#include <boost/lexical_cast.hpp>
 
 namespace monju
 {
 	class GridMatrixStorage
 	{
-	private:
+	protected:
 		// 構造体　grid_matrixテーブルの属性
 		struct _grid_matrix_t
 		{
@@ -45,11 +46,13 @@ namespace monju
 			int grid_col;
 		};
 
-	private:
+	protected:
+		std::string _path;
 		std::shared_ptr<sqlite::Database> _db;
 
 	public:
 		GridMatrixStorage(const std::string& path)
+			:_path(path)
 		{
 			_db = std::make_shared<sqlite::Database>(path);
 			_createTables();
@@ -62,6 +65,29 @@ namespace monju
 		void close()
 		{
 			_db.reset();
+		}
+
+		std::string path() const
+		{
+			return _path;
+		}
+
+		template <typename T>
+		bool findKey(const std::string& key, T& val)
+		{
+			return _findKey(key, val);
+		}
+
+		template <typename T>
+		void setKey(const std::string& key, T val)
+		{
+			if (!_setKeyValue(key, val))
+				_addKey(key, val);
+		}
+
+		void removeKey(const std::string& key)
+		{
+			_removeKey(key);
 		}
 
 		template <typename T>
@@ -86,6 +112,21 @@ namespace monju
 			}
 		}
 
+		template <typename T>
+		void prepare(const char* pzName, Extent matrix_extent, int mat_major)
+		{
+			std::string name(pzName);
+			prepare<T>(name, matrix_extent, mat_major);
+		}
+
+		template <typename T>
+		void prepare(const std::string& name, Extent matrix_extent, int mat_major)
+		{
+			Extent grid(1, 1);
+			GridExtent gridExtent(grid, matrix_extent);
+			prepare<T>(name, gridExtent, kDensityRectangular, kRowMajor, mat_major);
+		}
+
 		bool getExtent(const char* pzName, GridExtent& grid_extent)
 		{
 			std::string name(pzName);
@@ -103,19 +144,27 @@ namespace monju
 			return false;
 		}
 
-		template <typename T>
-		void prepare(const char* pzName, Extent matrix_extent, int mat_major)
+		void setZeros(const std::string& name)
 		{
-			std::string name(pzName);
-			prepare<T>(name, matrix_extent, mat_major);
+			_grid_matrix_t entry = { 0 };
+			if (!_findGridMatrix(name, entry)) throw MonjuException();
+			_setCellDataZeros(entry);
 		}
 
-		template <typename T>
-		void prepare(const std::string& name, Extent matrix_extent, int mat_major)
+		void clearGrid(const std::string& name)
 		{
-			Extent grid(1, 1);
-			GridExtent gridExtent(grid, matrix_extent);
-			prepare<T>(name, gridExtent, kDensityRectangular, kRowMajor, mat_major);
+			_grid_matrix_t entry = { 0 };
+			if (!_findGridMatrix(name, entry)) throw MonjuException();
+			_clearAllMatrices(entry);
+		}
+
+		bool removeGrid(const std::string& name)
+		{
+			_grid_matrix_t entry = { 0 };
+			if (!_findGridMatrix(name, entry)) return false;
+			_deleteAllCellData(entry);
+			_deleteGridMatrix(entry);
+			return true;
 		}
 
 		template <typename Grid>
@@ -234,37 +283,6 @@ namespace monju
 			_manipulateMatrixCoeff<T>(entry, cell, row, col, f);
 		}
 
-		// TODO
-		// Matrix単位でデータセット間で変換する
-		template <typename MatrixSrc, typename MatrixDest>
-		void _convMatrix(std::string nameSrc, std::string nameDest,
-			const std::function<void(MatrixSrc&, MatrixDest&)> init,
-			const std::function<void(MatrixSrc&, MatrixDest&)> conv)
-		{
-			_grid_matrix_t entrySrc = { 0 }, entryDest = { 0 };
-			if (!_findGridMatrix(nameSrc, entrySrc)) throw MonjuException();
-			if (!_findGridMatrix(nameDest, entryDest)) throw MonjuException();
-			if (entrySrc.grid_extent != entryDest.grid_extent) throw MonjuException();
-			// マトリックス初期化
-			MatrixSrc src;
-			MatrixDest dest;
-			init(src, dest);
-
-			_cell_data_t cellSrc, cellDest;
-			auto gext = entrySrc.grid_extent.grid;
-			for (int gcol = 0; gcol < gext.cols; gcol++)
-			{
-				for (int grow = 0; grow < gext.rows; grow++)
-				{
-					_getCellData(entrySrc, grow, gcol, cellSrc);
-					_getCellData(entryDest, grow, gcol, cellDest);
-					_readMatrixData(entrySrc, cellSrc, src);
-					conv(src, dest);
-					_writeMatrixData(entryDest, cellDest, dest);
-				}
-			}
-		}
-
 		template <typename T>
 		void coeffOp(const char* pzName, std::vector<int32_t> rowInfo, std::vector<int32_t> colInfo, const std::function<T(T)> f)
 		{
@@ -351,6 +369,37 @@ namespace monju
 		}
 
 	protected:
+		// Matrix単位でデータセット間で変換する
+		template <typename MatrixSrc, typename MatrixDest>
+		void _convMatrix(std::string nameSrc, std::string nameDest,
+			const std::function<void(MatrixSrc&, MatrixDest&)> init,
+			const std::function<void(MatrixSrc&, MatrixDest&)> conv)
+		{
+			_grid_matrix_t entrySrc = { 0 }, entryDest = { 0 };
+			if (!_findGridMatrix(nameSrc, entrySrc)) throw MonjuException();
+			if (!_findGridMatrix(nameDest, entryDest)) throw MonjuException();
+			if (entrySrc.grid_extent != entryDest.grid_extent) throw MonjuException();
+			// マトリックス初期化
+			MatrixSrc src;
+			MatrixDest dest;
+			init(src, dest);
+
+			_cell_data_t cellSrc, cellDest;
+			auto gext = entrySrc.grid_extent.grid;
+			for (int gcol = 0; gcol < gext.cols; gcol++)
+			{
+				for (int grow = 0; grow < gext.rows; grow++)
+				{
+					_getCellData(entrySrc, grow, gcol, cellSrc);
+					_getCellData(entryDest, grow, gcol, cellDest);
+					_readMatrixData(entrySrc, cellSrc, src);
+					conv(src, dest);
+					_writeMatrixData(entryDest, cellDest, dest);
+				}
+			}
+		}
+
+	protected:
 		template <typename Matrix>
 		bool _checkMatrixShape(const Matrix& m, const _grid_matrix_t& entry)
 		{
@@ -426,8 +475,84 @@ namespace monju
 					"constraint pk_cell_data primary key (grid_id, grid_row, grid_col) "
 				");"
 				;
+			const std::string ddlKeyValue =
+				"create table if not exists key_value ( "
+					"key text, "
+					"value text, "
+					"constraint pk_key_value primary key (key) "
+				");"
+				;
 			_db->exec(ddlGridMatrix);
 			_db->exec(ddlCellData);
+			_db->exec(ddlKeyValue);
+		}
+
+		template <typename T>
+		bool _findKey(const std::string& name, T& val)
+		{
+			std::string sql =
+				"select value from key_value where key = ?"
+				;
+			{
+				sqlite::Statement stmt(_db, sql);
+				int pa = 1;
+				stmt.paramString(pa++, name);
+				if (stmt.step())
+				{
+					int col = 0;
+					std::string value = stmt.column_text(col++);
+					val = boost::lexical_cast<T>(value);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		template <typename T>
+		void _addKey(const std::string& key, T& val)
+		{
+			std::string sql =
+				"insert into key_value(key ,value) values (?, ?)"
+				;
+			std::string value = boost::lexical_cast<std::string>(val);
+			{
+				sqlite::Statement stmt(_db, sql);
+				int pa = 1;
+				stmt.paramString(pa++, key);
+				stmt.paramString(pa++, value);
+				stmt.step();
+			}
+		}
+
+		template <typename T>
+		bool _setKeyValue(const std::string& key, T& val)
+		{
+			std::string sql =
+				"update key_value set value = ? where key = ?"
+				;
+			std::string value = boost::lexical_cast<std::string>(val);
+			{
+				sqlite::Statement stmt(_db, sql);
+				int pa = 1;
+				stmt.paramString(pa++, value);
+				stmt.paramString(pa++, key);
+				stmt.step();
+				return _db->changes() > 0;
+			}
+		}
+
+		bool _removeKey(const std::string& key)
+		{
+			std::string sql =
+				"delete from key_value where key = ?"
+				;
+			{
+				sqlite::Statement stmt(_db, sql);
+				int pa = 1;
+				stmt.paramString(pa++, key);
+				stmt.step();
+				return _db->changes() > 0;
+			}
 		}
 
 		void _addGridMatrix(const std::string& name, _grid_matrix_t& entry)
@@ -452,7 +577,7 @@ namespace monju
 			entry.rowid = _db->lastRowId();
 		}
 
-		void  _getCellData(_grid_matrix_t& entry, const int grid_row, const int grid_col, _cell_data_t cell)
+		void  _getCellData(_grid_matrix_t& entry, const int grid_row, const int grid_col, _cell_data_t& cell)
 		{
 			if (!_findCellData(entry.rowid, grid_row, grid_col, cell))
 			{
@@ -477,6 +602,20 @@ namespace monju
 				stmt.step();
 			}
 			cell.rowid = _db->lastRowId();
+		}
+
+		void _setCellDataZeros(const _grid_matrix_t& entry)
+		{
+			const std::string sql =
+				"update cell_data set data = ? where grid_id = ?"
+				;
+			{
+				sqlite::Statement stmt(_db, sql);
+				int pa = 1;
+				stmt.paramZeroBlob(pa++, entry.grid_extent.matrix.size() * entry.coeff_size);
+				stmt.paramInt64(pa++, entry.rowid);
+				stmt.step();
+			}
 		}
 
 		bool _findGridMatrix(const std::string& name, _grid_matrix_t& entry)
@@ -531,16 +670,38 @@ namespace monju
 			return false;
 		}
 
-		void _setBlobZero(std::string& name, const int grid_row, const int grid_col, const int bytes)
+		void _clearAllMatrices(const _grid_matrix_t& entry)
 		{
-			std::string sql = R"(update matrix_data set matrix = ? where name = ? and grid_row = ? and grid_col = ?;)";
+			const std::string sql =
+				"update cell_data set data = NULL where grid_id = ?"
+				;
 			{
 				sqlite::Statement stmt(_db, sql);
-				int pa = 1;
-				stmt.paramZeroBlob(pa++, bytes);
-				stmt.paramString(pa++, name);
-				stmt.paramInt32(pa++, grid_row);
-				stmt.paramInt32(pa++, grid_col);
+				stmt.paramInt64(1, entry.rowid);
+				stmt.step();
+			}
+		}
+
+		void _deleteGridMatrix(const _grid_matrix_t& entry)
+		{
+			const std::string sql =
+				"delete from grid_matrix where rowid = ?"
+				;
+			{
+				sqlite::Statement stmt(_db, sql);
+				stmt.paramInt64(1, entry.rowid);
+				stmt.step();
+			}
+		}
+
+		void _deleteAllCellData(const _grid_matrix_t& entry)
+		{
+			const std::string sql =
+				"delete from cell_data where grid_id = ?"
+				;
+			{
+				sqlite::Statement stmt(_db, sql);
+				stmt.paramInt64(1, entry.rowid);
 				stmt.step();
 			}
 		}

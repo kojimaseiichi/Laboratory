@@ -7,6 +7,7 @@ monju::FullBayesianMatrixLayer::FullBayesianMatrixLayer(std::weak_ptr<Environmen
 	_shapeX = shapeX;
 	_shapeY = shapeY;
 	_gridExtent = GridExtent(shapeX, shapeY);
+	_storage = std::make_unique<MatrixLayerStorage>(_dataFileName(), shapeX, shapeY);
 
 
 	_initHostMemory();
@@ -25,12 +26,26 @@ void monju::FullBayesianMatrixLayer::initVariables()
 
 void monju::FullBayesianMatrixLayer::store()
 {
-	_storeMatrices(_dataFileName());
+	_storage->storeLambda(*_lambda);
+	_storage->storeKappa(*_kappa);
+	_storage->storeCpt(*_cpt);
+}
+
+void monju::FullBayesianMatrixLayer::store(std::string path)
+{
+	_storeMatrices(path);
 }
 
 void monju::FullBayesianMatrixLayer::load()
 {
-	_loadMatrices(_dataFileName());
+	_storage->loadLambda(*_lambda);
+	_storage->loadKappa(*_kappa);
+	_storage->loadCpt(*_cpt);
+}
+
+void monju::FullBayesianMatrixLayer::load(std::string path)
+{
+	_loadMatrices(path);
 }
 
 bool monju::FullBayesianMatrixLayer::containsNan() const
@@ -151,11 +166,6 @@ void monju::FullBayesianMatrixLayer::_initHostMemory()
 	_kappa->resize(static_cast<Eigen::Index>(flatKappa.rows), static_cast<Eigen::Index>(flatKappa.cols));
 	auto flatCpt = extCpt.flattenCm();
 	_cpt->resize(static_cast<Eigen::Index>(flatCpt.rows), static_cast<Eigen::Index>(flatCpt.cols));
-
-	{
-		GridMatrixStorage storage(_dataFileName());
-		_prepareStorage(storage, extCpt, extLambda, extKappa);
-	}
 }
 
 void monju::FullBayesianMatrixLayer::_prepareStorage(GridMatrixStorage& storage, GridExtent cptExtent, GridExtent lambdaExtent, GridExtent kappaExtent)

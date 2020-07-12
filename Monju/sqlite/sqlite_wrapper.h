@@ -24,13 +24,10 @@ namespace monju
 			int _code;
 
 		public: // コンストラクタ
-			SQLiteException(int code)
-			{
-				_code = code;
-			}
+			SQLiteException(int code);
 
 		public: // プロパティ
-			int code() const { return _code; }
+			int code() const;
 		};
 
 		void throwExceptionIfNotEquals(int result, int assumed);
@@ -43,30 +40,13 @@ namespace monju
 			sqlite3* _db;
 
 		public: // コンストラクタ
-			Database(std::string path)
-			{
-				int result = sqlite3_open(path.c_str(), &_db);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			~Database()
-			{
-				if (_db != nullptr)
-				{
-					int result = sqlite3_close(_db);
-					throwExceptionIfNotEquals(result, SQLITE_OK);
-				}
-			}
+			Database(std::string path);
+			~Database();
 
 		public:
-			void exec(const std::string& sql)
-			{
-				int result = sqlite3_exec(_db, sql.c_str(), nullptr, nullptr, nullptr);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			sqlite3_int64 lastRowId()
-			{
-				return sqlite3_last_insert_rowid(_db);
-			}
+			void exec(const std::string& sql);
+			sqlite3_int64 lastRowId();
+			int changes();
 		};
 
 		class Statement
@@ -76,56 +56,18 @@ namespace monju
 			sqlite3_stmt* _stmt;
 
 		public:
-			Statement(std::weak_ptr<Database> db, std::string sql)
-			{
-				_db = db.lock();
-				int result = sqlite3_prepare(_db->_db, sql.c_str(), sql.size(), &_stmt, nullptr);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			~Statement()
-			{
-				int result = sqlite3_finalize(_stmt);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
+			Statement(std::weak_ptr<Database> db, std::string sql);
+			~Statement();
 
 		public:
-			void paramString(int position, const std::string& text)
-			{
-				int result = sqlite3_bind_text(_stmt, position, text.c_str(), text.size(), nullptr);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			void paramInt32(int position, int32_t value)
-			{
-				int result = sqlite3_bind_int(_stmt, position, value);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			void paramInt64(int position, int64_t value)
-			{
-				int result = sqlite3_bind_int64(_stmt, position, value);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			void paramZeroBlob(int position, int size)
-			{
-				int result = sqlite3_bind_zeroblob(_stmt, position, size);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			bool step()
-			{
-				int result = sqlite3_step(_stmt);
-				if (result == SQLITE_ROW)
-					return true;
-				if (result == SQLITE_DONE)
-					return false;
-				throw SQLiteException(result);
-			}
-			int column_int32(int nCol)
-			{
-				return sqlite3_column_int(_stmt, nCol);
-			}
-			int column_int64(int nCol)
-			{
-				return sqlite3_column_int64(_stmt, nCol);
-			}
+			void paramString(int position, const std::string& text);
+			void paramInt32(int position, int32_t value);
+			void paramInt64(int position, int64_t value);
+			void paramZeroBlob(int position, int size);
+			bool step();
+			int column_int32(int nCol);
+			int column_int64(int nCol);
+			std::string column_text(int nCol);
 
 		private:
 		};
@@ -137,48 +79,17 @@ namespace monju
 			sqlite3_blob* _blob;
 
 		public:	// コンストラクタ
-			Blob(std::weak_ptr<Database> db, std::string table, std::string column, int64_t iRow)
-			{
-				_db = db.lock();
-				int result = sqlite3_blob_open(_db->_db, "main", table.c_str(), column.c_str(), iRow, 1, &_blob);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			~Blob()
-			{
-				if (_blob != nullptr)
-				{
-					int result = sqlite3_blob_close(_blob);
-					throwExceptionIfNotEquals(result, SQLITE_OK);
-				}
-			}
+			Blob(std::weak_ptr<Database> db, std::string table, std::string column, int64_t iRow);
+			~Blob();
 
 		public:
-			int bytes() const
-			{
-				return sqlite3_blob_bytes(_blob);
-			}
-			void read(void* buffer, int size, int offset)
-			{
-				int result = sqlite3_blob_read(_blob, buffer, size, offset);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
-			void write(const void* buffer, int size, int offset)
-			{
-				int result = sqlite3_blob_write(_blob, buffer, size, offset);
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
+			int bytes() const;
+			void read(void* buffer, int size, int offset);
+			void write(const void* buffer, int size, int offset);
 			template <typename T>
-			void read(T& val, int offset)
-			{
-				int result = sqlite3_blob_read(_blob, &val, sizeof(T), offset * sizeof(T));
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
+			void read(T& val, int offset);
 			template <typename T>
-			void write(T& val, int offset)
-			{
-				int result = sqlite3_blob_write(_blob, &val, sizeof(T), offset * sizeof(T));
-				throwExceptionIfNotEquals(result, SQLITE_OK);
-			}
+			void write(T& val, int offset);
 		};
 
 		class BlobReader
@@ -188,24 +99,11 @@ namespace monju
 			int _position;
 
 		public: // コンストラクタ
-			BlobReader(Blob& blob)
-			{
-				_blob = &blob;
-				_position = 0;
-			}
-			~BlobReader()
-			{
-			}
-			void read(void* p, int size)
-			{
-				_blob->read(p, size, _position);
-				_position += size;
-			}
+			BlobReader(Blob& blob);
+			~BlobReader();
+			void read(void* p, int size);
 			template <typename T>
-			void read(T& t)
-			{
-				read(&t, sizeof(T));
-			}
+			void read(T& t);
 		};
 
 		class BlobWriter
@@ -215,29 +113,38 @@ namespace monju
 			int _position;
 
 		public: // コンストラクタ
-			BlobWriter(Blob& blob)
-			{
-				_blob = &blob;
-				_position = 0;
-			}
-			~BlobWriter()
-			{
-			}
+			BlobWriter(Blob& blob);
+			~BlobWriter();
 
 		public:
-			void write(const void* p, int size)
-			{
-				_blob->write(p, size, _position);
-				_position += size;
-			}
-
+			void write(const void* p, int size);
 			template <typename T>
-			void write(T value)
-			{
-				write(&value, sizeof(T));
-			}
+			void write(T value);
 		};
-	}
+
+		template<typename T>
+		void Blob::read(T& val, int offset)
+		{
+			int result = sqlite3_blob_read(_blob, &val, sizeof(T), offset * sizeof(T));
+			throwExceptionIfNotEquals(result, SQLITE_OK);
+		}
+		template<typename T>
+		void Blob::write(T& val, int offset)
+		{
+			int result = sqlite3_blob_write(_blob, &val, sizeof(T), offset * sizeof(T));
+			throwExceptionIfNotEquals(result, SQLITE_OK);
+		}
+		template<typename T>
+		void BlobReader::read(T& t)
+		{
+			read(&t, sizeof(T));
+		}
+		template<typename T>
+		void BlobWriter::write(T value)
+		{
+			write(&value, sizeof(T));
+		}
+}
 }
 
 #endif // !_MONJU_SQLITE_DATABASE_H__

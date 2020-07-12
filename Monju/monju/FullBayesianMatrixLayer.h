@@ -7,7 +7,7 @@
 #include "VariableKind.h"
 #include "util_eigen.h"
 #include "FullConnectedGridCpt.h"
-#include "GridMatrixStorage.h"
+#include "MatrixLayerStorage.h"
 #include "Environment.h"
 #include "BelLayer.h"
 
@@ -27,6 +27,8 @@ namespace monju {
 			_lambda,				// λ（ノード数Y * ユニット数Y, ノード数X）
 			_kappa,					// κ（ノード数Y * ユニット数X, ノード数X）
 			_cpt;					// 重み行列（ユニット数Y * ユニット数X * ノード数Y, ノード数X）
+		std::unique_ptr<MatrixLayerStorage> _storage;
+
 
 	public: // プロパティ
 		std::string id() const { return _id; }
@@ -46,7 +48,9 @@ namespace monju {
 		~FullBayesianMatrixLayer();
 		void initVariables();
 		void store();
+		void store(std::string path);
 		void load();
+		void load(std::string path);
 		bool containsNan() const;
 		void copyData(const FullBayesianMatrixLayer& o);
 		void performUp(BelLayer& x, BelLayer& y);

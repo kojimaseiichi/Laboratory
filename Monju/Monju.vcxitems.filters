@@ -4,9 +4,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_file.cpp">
       <Filter>ユーティリティ</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_mm.cpp">
-      <Filter>ユーティリティ</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_str.cpp">
       <Filter>ユーティリティ</Filter>
     </ClCompile>
@@ -167,7 +164,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.cpp">
       <Filter>皮質モジュールrebuild</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_ai.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -177,9 +175,6 @@
       <Filter>ユーティリティ</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_misc.h">
-      <Filter>ユーティリティ</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_mm.h">
       <Filter>ユーティリティ</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_str.h">
@@ -360,7 +355,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullBayesianMatrixLayerUpdaterFmc.h">
       <Filter>皮質モジュールrebuild</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ContingencyTableStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_ai.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">

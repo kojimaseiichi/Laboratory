@@ -9,8 +9,91 @@ namespace monju
 {
 	namespace test
 	{
-		TEST_CLASS(GridMatrixStorage)
+		TEST_CLASS(GridMatrixStorageTest)
 		{
+			TEST_METHOD(KeyValueTest)
+			{
+				std::string file = "C:\\monju\\test\\GridMatrixStorage\\KeyValueTest.dbm";
+				boost::filesystem::remove(file);
+				monju::GridMatrixStorage storage(file);
+				
+				storage.setKey("a", 100);
+				int a;
+				Assert::IsTrue(storage.findKey("a", a));
+				Assert::AreEqual(a, 100);
+
+				storage.setKey("b", 3.14f);
+				float b;
+				Assert::IsTrue(storage.findKey("b", b));
+				Assert::AreEqual(b, 3.14f);
+
+				storage.setKey("c", "hoge");
+				std::string c;
+				Assert::IsTrue(storage.findKey("c", c));
+				Assert::AreEqual(c, std::string("hoge"));
+
+				storage.removeKey("a");
+				Assert::IsFalse(storage.findKey("a", a));
+				storage.removeKey("b");
+				Assert::IsFalse(storage.findKey("b", b));
+				storage.removeKey("c");
+				Assert::IsFalse(storage.findKey("c", c));
+			}
+			
+			TEST_METHOD(RemoveTest)
+			{
+				std::string file = "C:\\monju\\test\\GridMatrixStorage\\GridRemoveTest.dbm";
+				boost::filesystem::remove(file);
+				GridExtent grid(2, 2, 3, 4);
+				Extent flatten = grid.flattenCm();
+				std::string name = "grid";
+				monju::MatrixCm<float> m1;
+				m1.resize(flatten.rows, flatten.cols);
+				m1 <<
+					1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+					2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+					3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15,
+					4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16;
+				// １回目のprepare
+				{
+					monju::GridMatrixStorage storage(file);
+					storage.prepare<int32_t>(name, grid, kDensityRectangular, kColMajor, kColMajor);
+					storage.writeGrid(name, m1);
+				}
+				// グリッド削除
+				{
+					monju::GridMatrixStorage storage(file);
+					storage.setZeros(name);
+					storage.removeGrid(name);
+				}
+			}
+
+			TEST_METHOD(ClearTest)
+			{
+				std::string file = "C:\\monju\\test\\GridMatrixStorage\\GridClearTest.dbm";
+				boost::filesystem::remove(file);
+				GridExtent grid(2, 2, 3, 4);
+				Extent flatten = grid.flattenCm();
+				std::string name = "grid";
+				monju::MatrixCm<float> m1;
+				m1.resize(flatten.rows, flatten.cols);
+				m1 <<
+					1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+					2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+					3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15,
+					4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16;
+				// １回目のprepare
+				{
+					monju::GridMatrixStorage storage(file);
+					storage.prepare<int32_t>(name, grid, kDensityRectangular, kColMajor, kColMajor);
+					storage.writeGrid(name, m1);
+				}
+				// グリッド削除
+				{
+					monju::GridMatrixStorage storage(file);
+					storage.clearGrid(name);
+				}
+			}
 
 			TEST_METHOD(MatrixReadWrite)
 			{
@@ -37,6 +120,10 @@ namespace monju
 				}
 				float prec = 0.001f;
 				Assert::IsTrue(m1.isApprox(m2, prec));
+				// グリッド削除
+				{
+
+				}
 			}
 
 			TEST_METHOD(GridReadWrite)
