@@ -19,20 +19,23 @@ namespace monju {
 	// CPTを計算・更新
 	class MatrixLayerStorage : public GridMatrixStorage
 	{
+#pragma region Private Field
 	private:
-		std::unique_ptr<GridMatrixStorage> _ps;
 		ConcurrencyContext _conc;
 		GridExtent _gridExtent;
 		GridExtent _gridExtentLambda;
 		GridExtent _gridExtentKappa;
 		Synchronizable _syn;
-
-		const std::string _CONTINGENCY_TABLE = "ct"; // contingency table(int32_t)
-		const std::string _CHANGE_TABLE= "cg"; // changes(int32_t)
-		const std::string _CONDITIONAL_PROBABILITY_TABLE = "cpt"; // conditional probability table(float_t)
+#pragma endregion Private Field
+#pragma region Private Constant
+	private:
+		const std::string _CONTINGENCY_TABLE = "ct";	// int32_t
+		const std::string _INCREMENTAL_DIFF= "df";		// int32_t
+		const std::string _CONDITIONAL_PROBABILITY_TABLE = "cpt"; // float
 		const std::string _LAMBDA_VARIABLES = "lambda";
 		const std::string _KAPPA_VARIABLES = "kappa";
-
+#pragma endregion Private Constant
+#pragma region Constructor
 	public:/*コンストラクタ*/
 		MatrixLayerStorage(std::string fileName, LayerShape x, LayerShape y)
 			: GridMatrixStorage(fileName),
@@ -48,47 +51,35 @@ namespace monju {
 		{
 
 		}
-
+#pragma endregion Constructor
 	public:/*公開メンバ*/
-		void loadLambda(MatrixCm<float_t>& lambda)
+		void persistLambda(bool storing, MatrixCm<float_t>& lambda)
 		{
-			readGrid<MatrixCm<float_t>>(_LAMBDA_VARIABLES, lambda);
+			if (storing)	readGrid<MatrixCm<float_t>>(_LAMBDA_VARIABLES, lambda);
+			else			writeGrid<MatrixCm<float_t>>(_LAMBDA_VARIABLES, lambda);
+		}
+		void persistKappa(bool storing, MatrixCm<float_t>& kappa)
+		{
+			if (storing)	readGrid<MatrixCm<float_t>>(_KAPPA_VARIABLES, kappa);
+			else			writeGrid<MatrixCm<float_t>>(_KAPPA_VARIABLES, kappa);
+		}
+		void persistCpt(bool storing, MatrixCm<float_t>& cpt)
+		{
+			if (storing)	readGrid<MatrixCm<float_t>>(_CONDITIONAL_PROBABILITY_TABLE, cpt);
+			else			writeGrid<MatrixCm<float_t>>(_CONDITIONAL_PROBABILITY_TABLE, cpt);
 		}
 
-		void storeLambda(MatrixCm<float_t>& lambda)
+		std::future<void> asyncUpdateIncrementDiff(std::weak_ptr<MatrixRm<int32_t>> xLayerWinner, std::weak_ptr<MatrixRm<int32_t>> yLayerWinner)
 		{
-			writeGrid<MatrixCm<float_t>>(_LAMBDA_VARIABLES, lambda);
-		}
-
-		void loadKappa(MatrixCm<float_t>& kappa)
-		{
-			readGrid<MatrixCm<float_t>>(_KAPPA_VARIABLES, kappa);
-		}
-
-		void storeKappa(MatrixCm<float_t>& kappa)
-		{
-			writeGrid<MatrixCm<float_t>>(_KAPPA_VARIABLES, kappa);
-		}
-
-		void loadCpt(MatrixCm<float_t>& cpt)
-		{
-			readGrid<MatrixCm<float_t>>(_CONDITIONAL_PROBABILITY_TABLE, cpt);
-		}
-
-		void storeCpt(MatrixCm<float_t>& cpt)
-		{
-			writeGrid<MatrixCm<float_t>>(_CONDITIONAL_PROBABILITY_TABLE, cpt);
-		}
-
-		std::future<void> increment(std::weak_ptr<MatrixRm<int32_t>> winX, std::weak_ptr<MatrixRm<int32_t>> winY)
-		{
-			auto px = winX.lock();
-			auto py = winY.lock();
+			// 分割表を更新する。
+			auto px = xLayerWinner.lock();
+			auto py = yLayerWinner.lock();
 			auto ax = _toVector(*px);
 			auto ay = _toVector(*py);
 			auto wrapper = [&] {
+				// キャプチャー：ax, ay
 				this->coeffOp<int32_t>(
-					_CHANGE_TABLE,
+					_INCREMENTAL_DIFF,
 					ax,
 					ay,
 					[](const int32_t v)->int32_t {
@@ -98,17 +89,17 @@ namespace monju {
 			auto f = _conc.threadPool().submit(wrapper);
 			return f;
 		}
-		std::future<void> merge()
+		std::future<void> updateContingencyTable()
 		{
 			auto future = _conc.threadPool().submit([&] {
-				_merge();
+				_updateContingencyTableJoiningDiff();
 				});
 		}
-		std::future<void> mergeAndCptUpdate()
+		std::future<void> updateCpt()
 		{
 			auto topo = _cptTopologyTorus();
 			_conc.threadPool().submit([&] {
-				_mergeAndCptUpdate(topo);
+				_updateContingencyTableAndCpt(topo);
 				});
 		}
 
@@ -140,35 +131,35 @@ namespace monju {
 		void _prepareStorage()
 		{
 			this->prepare<int32_t>(_CONTINGENCY_TABLE, _gridExtent, kDensityRectangular, kColMajor, kColMajor);
-			this->prepare<int32_t>(_CHANGE_TABLE, _gridExtent, kDensityRectangular, kColMajor, kColMajor);
+			this->prepare<int32_t>(_INCREMENTAL_DIFF, _gridExtent, kDensityRectangular, kColMajor, kColMajor);
 			this->prepare<float_t>(_CONDITIONAL_PROBABILITY_TABLE, _gridExtent, kDensityRectangular, kColMajor, kColMajor);
 			this->prepare<float_t>(_LAMBDA_VARIABLES, _gridExtentLambda, kDensityRectangular, kColMajor, kColMajor);
 			this->prepare<float_t>(_KAPPA_VARIABLES, _gridExtentKappa, kDensityRectangular, kColMajor, kColMajor);
 		}
-		void _merge()
+		void _updateContingencyTableJoiningDiff()
 		{
-			_grid_matrix_t entryCt, entryCg;
+			_grid_matrix_t entryCt, entryDif;
 			if (!_findGridMatrix(_CONTINGENCY_TABLE, entryCt)) throw MonjuException();
-			if (!_findGridMatrix(_CHANGE_TABLE, entryCg)) throw MonjuException();
+			if (!_findGridMatrix(_INCREMENTAL_DIFF, entryDif)) throw MonjuException();
 
-			MatrixCm<int32_t> ct, cg;
+			MatrixCm<int32_t> ct, dif;
 			auto matShape = _gridExtent.matrix;
 			ct.resize(matShape.rows, matShape.cols);
-			cg.resizeLike(ct);
+			dif.resizeLike(ct);
 			for (int gcol = 0; gcol < _gridExtent.grid.cols; gcol++)
 			{
 				for (int grow = 0; grow < _gridExtent.grid.rows; grow++)
 				{
-					_cell_data_t cellCt, cellCg;
+					_cell_data_t cellCt, cellDif;
 					_getCellData(entryCt, grow, gcol, cellCt);
-					_getCellData(entryCg, grow, gcol, cellCg);
+					_getCellData(entryDif, grow, gcol, cellDif);
 					_readMatrixData(entryCt, cellCt, ct);
-					_readMatrixData(entryCg, cellCg, cg);
-					ct += cg;
+					_readMatrixData(entryDif, cellDif, dif);
+					ct += dif;
 					_writeMatrixData(entryCt, cellCt, ct);
 				}
 			}
-			_setCellDataZeros(entryCg);
+			_setCellDataZeros(entryDif);
 		}
 		std::function<int(int, int, int)> _cptTopologyTorus()
 		{
@@ -178,11 +169,11 @@ namespace monju {
 				return std::min(col - win, (win + cycle) - col);
 			};
 		}
-		void _mergeAndCptUpdate(const std::function<float_t(int, int, int)> cptTopology)
+		void _updateContingencyTableAndCpt(const std::function<float_t(int, int, int)> cptTopology)
 		{
 			_grid_matrix_t entryCt, entryCg, entryCpt;
 			if (!_findGridMatrix(_CONTINGENCY_TABLE, entryCt)) throw MonjuException();
-			if (!_findGridMatrix(_CHANGE_TABLE, entryCg)) throw MonjuException();
+			if (!_findGridMatrix(_INCREMENTAL_DIFF, entryCg)) throw MonjuException();
 			if (!_findGridMatrix(_CONDITIONAL_PROBABILITY_TABLE, entryCpt)) throw MonjuException();
 
 			MatrixCm<int32_t> ct, cg;
