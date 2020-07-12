@@ -48,7 +48,7 @@ namespace monju {
 
 	private: // ƒwƒ‹ƒp
 		std::string _dataFileName() const;
-		void _prepareStorage(GridMatrixStorage& storage);
+		void _persistStorage(bool storing);
 		void _initHostMemory();
 		void _setRandomProb(std::shared_ptr<MatrixRm<float_t>> m);
 

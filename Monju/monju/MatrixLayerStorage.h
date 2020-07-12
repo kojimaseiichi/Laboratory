@@ -17,9 +17,10 @@ namespace monju {
 
 	// 層間の勝者ユニットの分割表
 	// CPTを計算・更新
-	class MatrixLayerStorage : GridMatrixStorage
+	class MatrixLayerStorage : public GridMatrixStorage
 	{
 	private:
+		std::unique_ptr<GridMatrixStorage> _ps;
 		ConcurrencyContext _conc;
 		GridExtent _gridExtent;
 		GridExtent _gridExtentLambda;
@@ -134,6 +135,7 @@ namespace monju {
 			}
 		}
 
+#pragma region Helper
 	private:/*ヘルパ*/
 		void _prepareStorage()
 		{
@@ -236,7 +238,7 @@ namespace monju {
 				v.push_back(win(row, 0));
 			return std::move(v);
 		}
-
+#pragma endregion Helper
 	};
 }
 

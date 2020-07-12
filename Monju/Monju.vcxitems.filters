@@ -166,6 +166,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_ai.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -357,6 +358,7 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_ai.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">

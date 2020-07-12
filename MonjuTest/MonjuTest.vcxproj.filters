@@ -18,31 +18,10 @@
     <ClCompile Include="pch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="OpenCLComponentTest.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenCLOobpTest.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="CortexBasisStatTest.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskPenaltyCalcTest.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="GridCptUpdater.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="BayesianModTest.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="GridMatrixStorageTest.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="BelLayerTest.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="RBNTest.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="FullBayesianMatrixLayerTest.cpp">

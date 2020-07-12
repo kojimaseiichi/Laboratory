@@ -1,5 +1,5 @@
 #include "BelLayer.h"
-#include "GridMatrixStorage.h"
+#include "BelLayerStorage.h"
 
 // コンストラクタ
 
@@ -31,33 +31,19 @@ void monju::BelLayer::initVariables()
 
 void monju::BelLayer::store()
 {
-	GridMatrixStorage storage(_dataFileName());
-	_prepareStorage(storage);
-	storage.writeMatrix("lambda", *_lambda);
-	storage.writeMatrix("pi", *_pi);
-	storage.writeMatrix("rho", *_rho);
-	storage.writeMatrix("r", *_r);
-	storage.writeMatrix("bel", *_bel);
-	storage.writeMatrix("win", *_win);
+	_persistStorage(true);
 }
 
 void monju::BelLayer::load()
 {
-	GridMatrixStorage storage(_dataFileName());
-	_prepareStorage(storage);
-	storage.readMatrix("lambda", *_lambda);
-	storage.readMatrix("pi", *_pi);
-	storage.readMatrix("rho", *_rho);
-	storage.readMatrix("r", *_r);
-	storage.readMatrix("bel", *_bel);
-	storage.readMatrix("win", *_win);
+	_persistStorage(false);
 }
 
 void monju::BelLayer::findWinner()
 {
 	// ノードごとの最大のユニットを特定
 	// Eigenにおいて、行ごとのargmaxの計算はloopなしで実現できない
-	MatrixRm<float_t>::Index maxarg;
+	MatrixRm<float>::Index maxarg;
 	for (Eigen::Index row = 0; row < _bel->rows(); row++)
 	{
 		_bel->row(row).maxCoeff(&maxarg);
@@ -67,11 +53,11 @@ void monju::BelLayer::findWinner()
 
 bool monju::BelLayer::containsNan()
 {
-	bool a = util_eigen::contains_nan<MatrixRm<float_t>>(_lambda);
-	bool b = util_eigen::contains_nan<MatrixRm<float_t>>(_pi);
-	bool c = util_eigen::contains_nan<MatrixRm<float_t>>(_rho);
-	bool d = util_eigen::contains_nan<MatrixRm<float_t>>(_r);
-	bool e = util_eigen::contains_nan<MatrixRm<float_t>>(_bel);
+	bool a = util_eigen::contains_nan<MatrixRm<float>>(_lambda);
+	bool b = util_eigen::contains_nan<MatrixRm<float>>(_pi);
+	bool c = util_eigen::contains_nan<MatrixRm<float>>(_rho);
+	bool d = util_eigen::contains_nan<MatrixRm<float>>(_r);
+	bool e = util_eigen::contains_nan<MatrixRm<float>>(_bel);
 	bool f = util_eigen::contains_nan<MatrixRm<int32_t>>(_win);
 	return a || b || c || d || e || f;
 }
@@ -93,7 +79,7 @@ void monju::BelLayer::performBel()
 	findWinner();
 }
 
-void monju::BelLayer::_setRandomProb(std::shared_ptr<MatrixRm<float_t>> m)
+void monju::BelLayer::_setRandomProb(std::shared_ptr<MatrixRm<float>> m)
 {
 	util_eigen::set_stratum_prob_randmom(m.get());
 }
@@ -106,27 +92,26 @@ std::string monju::BelLayer::_dataFileName() const
 	return util_file::combine(_env->info().workFolder, _id, "dbm");
 }
 
-void monju::BelLayer::_prepareStorage(GridMatrixStorage& storage)
+void monju::BelLayer::_persistStorage(bool storing)
 {
-	Extent extent = _shape.flatten();
-	Extent extentWin(extent.rows, 1);
-
-	storage.prepare<float_t>("lambda", extent, kRowMajor);
-	storage.prepare<float_t>("pi", extent, kRowMajor);
-	storage.prepare<float_t>("rho", extent, kRowMajor);
-	storage.prepare<float_t>("r", extent, kRowMajor);
-	storage.prepare<float_t>("bel", extent, kRowMajor);
-	storage.prepare<int32_t>("win", extentWin, kRowMajor);
+	BelLayerStorage storage(_dataFileName(), _shape);
+	storage.prepareAll();
+	storage.persistLambda(storing, *_lambda);
+	storage.persistPi(storing, *_pi);
+	storage.persistRho(storing, *_rho);
+	storage.persistR(storing, *_r);
+	storage.persistBEL(storing, *_bel);
+	storage.persistWin(storing, *_win);
 }
 
 void monju::BelLayer::_initHostMemory()
 {
 	// 変数のメモリを確保
-	_lambda	= std::make_shared<MatrixRm<float_t>>();
-	_pi		= std::make_shared<MatrixRm<float_t>>();
-	_rho	= std::make_shared<MatrixRm<float_t>>();
-	_r		= std::make_shared<MatrixRm<float_t>>();
-	_bel	= std::make_shared<MatrixRm<float_t>>();
+	_lambda	= std::make_shared<MatrixRm<float>>();
+	_pi		= std::make_shared<MatrixRm<float>>();
+	_rho	= std::make_shared<MatrixRm<float>>();
+	_r		= std::make_shared<MatrixRm<float>>();
+	_bel	= std::make_shared<MatrixRm<float>>();
 	_win	= std::make_shared<MatrixRm<int32_t>>();
 
 	// Eigenの初期化
@@ -140,8 +125,8 @@ void monju::BelLayer::_initHostMemory()
 
 	// データファイルの使用準備
 	{
-		GridMatrixStorage storage(_dataFileName());
-		_prepareStorage(storage);
+		BelLayerStorage storage(_dataFileName(), _shape);
+		storage.prepareAll();
 	}
 }
 

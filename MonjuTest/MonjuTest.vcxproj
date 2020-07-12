@@ -166,16 +166,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BayesianModTest.cpp" />
     <ClCompile Include="BelLayerTest.cpp" />
-    <ClCompile Include="CortexBasisStatTest.cpp" />
     <ClCompile Include="FullBayesianMatrixLayerTest.cpp" />
-    <ClCompile Include="GridCptUpdater.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
-    <ClCompile Include="RBNTest.cpp" />
-    <ClCompile Include="TaskPenaltyCalcTest.cpp" />
-    <ClCompile Include="OpenCLComponentTest.cpp" />
-    <ClCompile Include="OpenCLOobpTest.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
