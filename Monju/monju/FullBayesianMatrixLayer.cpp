@@ -26,9 +26,9 @@ void monju::FullBayesianMatrixLayer::initVariables()
 
 void monju::FullBayesianMatrixLayer::store()
 {
-	_storage->storeLambda(*_lambda);
-	_storage->storeKappa(*_kappa);
-	_storage->storeCpt(*_cpt);
+	_storage->persistLambda(true, *_lambda);
+	_storage->persistKappa(true, *_kappa);
+	_storage->persistCpt(true, *_cpt);
 }
 
 void monju::FullBayesianMatrixLayer::store(std::string path)
@@ -38,9 +38,9 @@ void monju::FullBayesianMatrixLayer::store(std::string path)
 
 void monju::FullBayesianMatrixLayer::load()
 {
-	_storage->loadLambda(*_lambda);
-	_storage->loadKappa(*_kappa);
-	_storage->loadCpt(*_cpt);
+	_storage->persistLambda(false, *_lambda);
+	_storage->persistKappa(false, *_kappa);
+	_storage->persistCpt(false, *_cpt);
 }
 
 void monju::FullBayesianMatrixLayer::load(std::string path)

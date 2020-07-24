@@ -174,6 +174,14 @@ namespace monju
 			readGrid(name, g);
 		}
 
+		/// <summary>
+		/// グリッド全体のデータを読み込む
+		/// 下三角行列の場合は下三角部分と対角部分を読み込む。
+		/// 上三角部分は更新しないので注意！
+		/// </summary>
+		/// <typeparam name="Grid"></typeparam>
+		/// <param name="name"></param>
+		/// <param name="g"></param>
 		template <typename Grid>
 		void readGrid(const std::string name, Grid& g)
 		{
@@ -300,16 +308,21 @@ namespace monju
 				throw MonjuException();
 			for (int grow = 0; grow < rowInfo.size(); grow++)
 			{
-				for (int gcol = 0; gcol < rowInfo.size(); gcol++)
+				const int row = rowInfo[grow];
+				// インデックスがマイナスの場合はスキップ(Φ値ノードを想定)
+				if (row < 0) continue;
+				for (int gcol = 0; gcol < colInfo.size(); gcol++)
 				{
-					if (!_checkMatrixEntry(entry, grow, gcol, rowInfo[grow], colInfo[gcol])) throw MonjuException();
+					const int col = colInfo[gcol];
+					if (col < 0) continue;
+					if (!_checkMatrixEntry(entry, grow, gcol, row, col)) throw MonjuException();
 					_cell_data_t cell = { 0 };
 					if (!_findCellData(entry.rowid, grow, gcol, cell))
 					{
 						_makeCellData(entry, grow, gcol, cell);
 						_addCellData(entry, cell);
 					}
-					_manipulateMatrixCoeff<T>(entry, cell, rowInfo[grow], colInfo[gcol], f);
+					_manipulateMatrixCoeff<T>(entry, cell, row, col, f);
 				}
 			}
 		}
@@ -673,11 +686,13 @@ namespace monju
 		void _clearAllMatrices(const _grid_matrix_t& entry)
 		{
 			const std::string sql =
-				"update cell_data set data = NULL where grid_id = ?"
+				"update cell_data set data = ? where grid_id = ?"
 				;
 			{
 				sqlite::Statement stmt(_db, sql);
-				stmt.paramInt64(1, entry.rowid);
+				int pa = 1;
+				stmt.paramZeroBlob(pa++, entry.grid_extent.matrix.size() * entry.coeff_size);
+				stmt.paramInt64(pa++, entry.rowid);
 				stmt.step();
 			}
 		}

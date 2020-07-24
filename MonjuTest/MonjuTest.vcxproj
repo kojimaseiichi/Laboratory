@@ -166,6 +166,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BelLayerStorageTest.cpp" />
     <ClCompile Include="BelLayerTest.cpp" />
     <ClCompile Include="FullBayesianMatrixLayerTest.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
