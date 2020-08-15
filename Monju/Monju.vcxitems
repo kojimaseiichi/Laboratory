@@ -14,6 +14,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerFmcFp16.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_ai.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.cpp" />
@@ -51,8 +52,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\GridMatrixStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\ImageInputGridCpt.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MonjuException.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\OpenClException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PenaltyCalculation.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\PlatformContext.cpp" />
@@ -74,6 +73,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerFmcFp16.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_ai.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.h" />
@@ -115,8 +115,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\KernelData.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MonjuTypes.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\OpenClException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PenaltyCalculation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\PlatformContext.h" />

@@ -11,12 +11,12 @@
 #include "Extent.h"
 #include "Environment.h"
 
-namespace monju {
+namespace monju
+{
 
-	// 基底のデータをファイルに保存
-	// 保持するデータ
-	// ・ベイズ計算的の変数（OOBP）
-	// ・（予定）予測符号化（PredNet的な）
+	/// <summary>
+	/// BELレイヤーのホスト側メモリ
+	/// </summary>
 	class BelLayer : public Synchronizable
 	{
 	private: // ストレージ

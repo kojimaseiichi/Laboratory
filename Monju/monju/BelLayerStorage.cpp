@@ -20,11 +20,16 @@ monju::BelLayerStorage::~BelLayerStorage()
 void monju::BelLayerStorage::prepareAll()
 {
 	_prepareStorage();
-	if (this->findKey<float>(_COE_LATERAL_INHIBITION, _coefLateralInhibition) == false)
+	if (this->findKey<float>(_KV_COE_LATERAL_INHIBITION, _coefLateralInhibition) == false)
 	{
 		_coefLateralInhibition = 1.0f;
-		this->setKey<float>(_COE_LATERAL_INHIBITION, _coefLateralInhibition);
+		this->setKey<float>(_KV_COE_LATERAL_INHIBITION, _coefLateralInhibition);
 	}
+}
+
+void monju::BelLayerStorage::clearAll()
+{
+	_clearStorage();
 }
 
 /// <summary>
@@ -107,8 +112,8 @@ void monju::BelLayerStorage::persistWin(bool storing, MatrixRm<int32_t>& win)
 
 void monju::BelLayerStorage::persistCrossTab(bool storing, MatrixRm<int32_t>& crosstab)
 {
-	if (storing)	this->writeGrid<MatrixRm<int32_t>>(_CONTINGENCY_TABLE, crosstab);
-	else			this->readGrid<MatrixRm<int32_t>>(_CONTINGENCY_TABLE, crosstab);
+	if (storing)	this->writeGrid<MatrixRm<int32_t>>(_STAT_CONTINGENCY_TABLE, crosstab);
+	else			this->readGrid<MatrixRm<int32_t>>(_STAT_CONTINGENCY_TABLE, crosstab);
 }
 
 /// <summary>
@@ -119,8 +124,8 @@ void monju::BelLayerStorage::persistCrossTab(bool storing, MatrixRm<int32_t>& cr
 
 void monju::BelLayerStorage::persistCrossTabDiff(bool storing, MatrixRm<int32_t>& diff)
 {
-	if (storing)	this->writeGrid<MatrixRm<int32_t>>(_INCREMENTAL_DIFF, diff);
-	else			this->readGrid<MatrixRm<int32_t>>(_INCREMENTAL_DIFF, diff);
+	if (storing)	this->writeGrid<MatrixRm<int32_t>>(_STAT_INCREMENTAL_DIFF, diff);
+	else			this->readGrid<MatrixRm<int32_t>>(_STAT_INCREMENTAL_DIFF, diff);
 }
 
 /// <summary>
@@ -131,7 +136,39 @@ void monju::BelLayerStorage::persistCrossTabDiff(bool storing, MatrixRm<int32_t>
 
 void monju::BelLayerStorage::persistMi(bool storing, MatrixRm<float>& mi)
 {
-	if (storing)	this->writeMatrix<MatrixRm<float>>(_MUTUAL_INFORMATION, mi);
-	else			this->readMatrix<MatrixRm<float>>(_MUTUAL_INFORMATION, mi);
+	if (storing)	this->writeMatrix<MatrixRm<float>>(_STAT_MUTUAL_INFORMATION, mi);
+	else			this->readMatrix<MatrixRm<float>>(_STAT_MUTUAL_INFORMATION, mi);
+}
+
+void monju::BelLayerStorage::_prepareStorage()
+{
+	auto ext = _shape.flatten();
+	auto extWin = Extent(ext.rows, 1);
+	this->prepare<float>(_VAR_LAMBDA, ext, kRowMajor);
+	this->prepare<float>(_VAR_PI, ext, kRowMajor);
+	this->prepare<float>(_VAR_RHO, ext, kRowMajor);
+	this->prepare<float>(_VAR_R, ext, kRowMajor);
+	this->prepare<float>(_VAR_R_LI, ext, kRowMajor);
+	this->prepare<float>(_VAR_R_WR, ext, kRowMajor);
+	this->prepare<float>(_VAR_BEL, ext, kRowMajor);
+	this->prepare<int32_t>(_VAR_WIN, extWin, kRowMajor);
+	this->prepare<int32_t>(_STAT_CONTINGENCY_TABLE, _cross, kDensityLowerTriangular, kRowMajor, kRowMajor);
+	this->prepare<int32_t>(_STAT_INCREMENTAL_DIFF, _cross, kDensityLowerTriangular, kRowMajor, kRowMajor);
+	this->prepare<float>(_STAT_MUTUAL_INFORMATION, _cross.grid, kRowMajor);
+}
+
+void monju::BelLayerStorage::_clearStorage()
+{
+	this->clearGrid(_VAR_LAMBDA);
+	this->clearGrid(_VAR_PI);
+	this->clearGrid(_VAR_RHO);
+	this->clearGrid(_VAR_R);
+	this->clearGrid(_VAR_R_LI);
+	this->clearGrid(_VAR_R_WR);
+	this->clearGrid(_VAR_BEL);
+	this->clearGrid(_VAR_WIN);
+	this->clearGrid(_STAT_CONTINGENCY_TABLE);
+	this->clearGrid(_STAT_INCREMENTAL_DIFF);
+	this->clearGrid(_STAT_MUTUAL_INFORMATION);
 }
 

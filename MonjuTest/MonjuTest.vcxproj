@@ -168,6 +168,7 @@
   <ItemGroup>
     <ClCompile Include="BelLayerStorageTest.cpp" />
     <ClCompile Include="BelLayerTest.cpp" />
+    <ClCompile Include="EigenTest.cpp" />
     <ClCompile Include="FullBayesianMatrixLayerTest.cpp" />
     <ClCompile Include="GridMatrixStorageTest.cpp" />
     <ClCompile Include="pch.cpp">

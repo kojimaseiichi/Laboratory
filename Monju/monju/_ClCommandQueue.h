@@ -8,29 +8,41 @@ namespace monju {
 
 	class _ClCommandQueue
 	{
+#pragma region Private Field
 	private:
 		cl_context _context;
 		cl_device_id _deviceId;
 		cl_command_queue _commandQueue;	// 解放予定
+#pragma endregion
 
+#pragma region Helper
+	private:
 		cl_command_queue _createCommandQueue(cl_context context, cl_device_id deviceId);
 		void _releaseCommandQueue();
 		void _flush();
 		void _finish();
+#pragma endregion
 
+#pragma region Constructor
 	public:
 		_ClCommandQueue(cl_context context, cl_device_id deviceId);
 		~_ClCommandQueue();
+#pragma endregion
+
+#pragma region Public Method
 		cl_command_queue clCommandQueue() const;
 		void flush();
 		void finish();
+#pragma endregion
 
+#pragma region Removing default behavior
 		// コピー禁止・ムーブ禁止
 	public:
 		_ClCommandQueue(const _ClCommandQueue&) = delete;
 		_ClCommandQueue(_ClCommandQueue&&) = delete;
 		_ClCommandQueue& operator=(const _ClCommandQueue&) = delete;
 		_ClCommandQueue& operator=(_ClCommandQueue&&) = delete;
+#pragma endregion
 	};
 
 }

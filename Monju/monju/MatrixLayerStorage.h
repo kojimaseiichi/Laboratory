@@ -113,7 +113,7 @@ namespace monju {
 		/// <returns></returns>
 		std::future<void> asyncUpdateContingencyTable();
 		/// <summary>
-		/// 差分を分割表に反映してCPTを再計算
+		/// 差分を分割表に反映してCPTを再計算(多分使わない)
 		/// </summary>
 		/// <returns></returns>
 		std::future<void> asyncUpdateCpt();

@@ -11,27 +11,38 @@ namespace monju
 	{
 		TEST_CLASS(BelLayerStorageTest)
 		{
+			
+			void setWinTestData(MatrixRm<int32_t>* p)
+			{
+				p->coeffRef(0, 0) = 0;
+				p->coeffRef(1, 0) = 1;
+				p->coeffRef(2, 0) = 2;
+				p->coeffRef(3, 0) = 3;
+			}
+
 			TEST_METHOD_INITIALIZE(Init)
 			{
 			}
 
+			/// <summary>
+			/// 分割表の更新をテスト
+			/// </summary>
 			TEST_METHOD(IncrementDiffTest)
 			{
 				LayerShape shape(2, 2, 2, 2);
-				auto win = std::make_shared<MatrixRm<int32_t>>();
 				auto flat = shape.flatten();
+				// 勝者ユニット
+				auto win = std::make_shared<MatrixRm<int32_t>>();
 				win->resize(flat.rows, 1);
-				win->coeffRef(0, 0) = 0;
-				win->coeffRef(1, 0) = 1;
-				win->coeffRef(2, 0) = 2;
-				win->coeffRef(3, 0) = 3;
+				setWinTestData(win.get());
+				// 勝者データをストレージの分割表に反映
 				{
 					auto s = BelLayerStorage(R"(C:\monju\test\BelLayerStorage\test.db)", shape);
 					s.clearAll();
 					auto f = s.asyncIncrementDiff(win);
 					f.wait();
 				}
-
+				// 分割表を作成
 				MatrixRm<int32_t> dif;
 				GridExtent cross(shape, shape);
 				auto crossFlat = cross.flattenRm();
@@ -48,7 +59,7 @@ namespace monju
 						m(win->coeff(row, 0), win->coeff(col, 0)) += 1;
 					}
 				}
-
+				// ストレージから分割表を読み込み
 				MatrixRm<int32_t> mir;
 				mir.resizeLike(dif);
 				mir.setZero();
@@ -67,6 +78,10 @@ namespace monju
 						Assert::IsTrue(b1.isApprox(b2, 0));
 					}
 				}
+			}
+
+			TEST_METHOD(UpdateMiTest)
+			{
 			}
 		};
 	}

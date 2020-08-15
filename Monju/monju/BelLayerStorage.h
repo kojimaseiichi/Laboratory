@@ -9,21 +9,24 @@
 
 namespace monju
 {
+	/// <summary>
+	/// BELレイヤーの永続化データ
+	/// BelLayerクラスで保持するデータを永続化。
+	/// <br/>
+	/// </summary>
 	class BelLayerStorage : public GridMatrixStorage
 	{
 #pragma region Private Field
 	private:
-		ConcurrencyContext _conc;		// 同時実行コンテキスト
-		Synchronizable _syn;			// 同期オブジェクト
+		Synchronizable _syn;
+		ConcurrencyContext _conc;
 		LayerShape _shape;
 		GridExtent _cross;
-		/// <summary>
-		/// /側抑制の係数
-		/// </summary>
-		float _coefLateralInhibition;
+		float _coefLateralInhibition;	// 側抑制の係数
 #pragma endregion
-#pragma region Private Constant
+#pragma region Storage Key
 	private:
+		// モデルデータ
 		const std::string _VAR_LAMBDA = "lambda";					// λ(尤度)
 		const std::string _VAR_PI = "pi";							// π(事前分布)
 		const std::string _VAR_RHO = "rho";							// ρ(事後分布)
@@ -32,10 +35,12 @@ namespace monju
 		const std::string _VAR_R_WR = "r_wr";						// 勝率ペナルティ(Lateral Inhibition)
 		const std::string _VAR_BEL = "bel";							// BELIEVE
 		const std::string _VAR_WIN = "win";							// 勝ちユニット
-		const std::string _CONTINGENCY_TABLE = "ct";				// 分割表 ４階テンソル int32_t
-		const std::string _INCREMENTAL_DIFF = "df";					// 分割表の差分 ４階テンソル int32_t
-		const std::string _MUTUAL_INFORMATION = "mi";				// 層内のノード間相互情報量 行列 float
-		const std::string _COE_LATERAL_INHIBITION = "cli";			// 側抑制ペナルティの係数
+		// 統計量
+		const std::string _STAT_CONTINGENCY_TABLE = "ct";			// 分割表 ４階テンソル int32_t
+		const std::string _STAT_INCREMENTAL_DIFF = "df";			// 分割表の差分 ４階テンソル int32_t
+		const std::string _STAT_MUTUAL_INFORMATION = "mi";			// 層内のノード間相互情報量 行列 float
+		// Key-Value
+		const std::string _KV_COE_LATERAL_INHIBITION = "cli";		// 側抑制ペナルティの係数
 #pragma endregion
 #pragma region Constructor
 	public:
@@ -50,7 +55,7 @@ namespace monju
 		void setCoefLateralInhibition(float v)
 		{
 			_coefLateralInhibition = v;
-			this->setKey<float>(_COE_LATERAL_INHIBITION, v);
+			this->setKey<float>(_KV_COE_LATERAL_INHIBITION, v);
 		}
 #pragma endregion
 #pragma region Public Method
@@ -59,10 +64,7 @@ namespace monju
 		/// ストレージの使用準備
 		/// </summary>
 		void prepareAll();
-		void clearAll()
-		{
-			_clearStorage();
-		}
+		void clearAll();
 		/// <summary>
 		/// 勝者ユニットを分割表に反映
 		/// </summary>
@@ -76,7 +78,7 @@ namespace monju
 			auto wrapper = [&] (std::shared_ptr<std::vector<int32_t>> p){
 				// キャプチャー：ax, ay
 				this->coeffOp<int32_t>(
-					_INCREMENTAL_DIFF,
+					_STAT_INCREMENTAL_DIFF,
 					*p,
 					*p,
 					[](const int32_t v)->int32_t {
@@ -84,6 +86,30 @@ namespace monju
 					});
 			};
 			auto f = _conc.threadPool().submit(wrapper, std::move(a));
+			return f;
+		}
+		/// <summary>
+		/// 分割表から相互情報量を計算
+		/// </summary>
+		/// <returns></returns>
+		std::future<void> asyncUpdateMi()
+		{
+			auto wrapper = [&]() {
+				this->_updateMi();
+			};
+			auto f = _conc.threadPool().submit(wrapper);
+			return f;
+		}
+		/// <summary>
+		/// 分割表から側抑制ペナルティを計算
+		/// </summary>
+		/// <returns></returns>
+		std::future<void> asyncUpdateRli()
+		{
+			auto wrapper = [&]() {
+				this->_updateRLI();
+			};
+			auto f = _conc.threadPool().submit(wrapper);
 			return f;
 		}
 #pragma endregion
@@ -153,8 +179,8 @@ namespace monju
 		void _updateMi()
 		{
 			_grid_matrix_t entryCt, entryMi;
-			if (!_findGridMatrix(_CONTINGENCY_TABLE, entryCt)) throw MonjuException();
-			if (!_findGridMatrix(_MUTUAL_INFORMATION, entryMi)) throw MonjuException();
+			if (!_findGridMatrix(_STAT_CONTINGENCY_TABLE, entryCt)) throw MonjuException();
+			if (!_findGridMatrix(_STAT_MUTUAL_INFORMATION, entryMi)) throw MonjuException();
 
 			MatrixRm<float> crosstab;
 			MatrixRm<float> mi;
@@ -187,7 +213,7 @@ namespace monju
 		void _updateRLI()
 		{
 			_grid_matrix_t entryCt, entryRli;
-			if (!_findGridMatrix(_CONTINGENCY_TABLE, entryCt)) throw MonjuException();
+			if (!_findGridMatrix(_STAT_CONTINGENCY_TABLE, entryCt)) throw MonjuException();
 			if (!_findGridMatrix(_VAR_R_LI, entryRli)) throw MonjuException();
 
 			MatrixRm<float> crosstab;
@@ -227,36 +253,8 @@ namespace monju
 			_getCellData(entryRli, 0, 0, cellRli);
 			_writeMatrixData(entryRli, cellRli, rli);
 		}
-		void _prepareStorage()
-		{
-			auto ext = _shape.flatten();
-			auto extWin = Extent(ext.rows, 1);
-			this->prepare<float>(_VAR_LAMBDA, ext, kRowMajor);
-			this->prepare<float>(_VAR_PI, ext, kRowMajor);
-			this->prepare<float>(_VAR_RHO, ext, kRowMajor);
-			this->prepare<float>(_VAR_R, ext, kRowMajor);
-			this->prepare<float>(_VAR_R_LI, ext, kRowMajor);
-			this->prepare<float>(_VAR_R_WR, ext, kRowMajor);
-			this->prepare<float>(_VAR_BEL, ext, kRowMajor);
-			this->prepare<int32_t>(_VAR_WIN, extWin, kRowMajor);
-			this->prepare<int32_t>(_CONTINGENCY_TABLE, _cross, kDensityLowerTriangular, kRowMajor, kRowMajor);
-			this->prepare<int32_t>(_INCREMENTAL_DIFF, _cross, kDensityLowerTriangular, kRowMajor, kRowMajor);
-			this->prepare<float>(_MUTUAL_INFORMATION, _cross.grid, kRowMajor);
-		}
-		void _clearStorage()
-		{
-			this->clearGrid(_VAR_LAMBDA);
-			this->clearGrid(_VAR_PI);
-			this->clearGrid(_VAR_RHO);
-			this->clearGrid(_VAR_R);
-			this->clearGrid(_VAR_R_LI);
-			this->clearGrid(_VAR_R_WR);
-			this->clearGrid(_VAR_BEL);
-			this->clearGrid(_VAR_WIN);
-			this->clearGrid(_CONTINGENCY_TABLE);
-			this->clearGrid(_INCREMENTAL_DIFF);
-			this->clearGrid(_MUTUAL_INFORMATION);
-		}
+		void _prepareStorage();
+		void _clearStorage();
 		std::shared_ptr<std::vector<int32_t>> _toVector(MatrixRm<int32_t>& win) const
 		{
 			auto v = std::make_shared< std::vector<int32_t>>();

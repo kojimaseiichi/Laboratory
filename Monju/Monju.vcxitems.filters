@@ -22,12 +22,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\VariablesBase.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.cpp">
-      <Filter>BESOM</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.cpp">
-      <Filter>BESOM</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\DeviceMemory.cpp">
       <Filter>計算基盤%28OpenCL%29</Filter>
     </ClCompile>
@@ -100,9 +94,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\Environment.cpp">
       <Filter>共通</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.cpp">
-      <Filter>OpenCLコンベンション</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.cpp">
       <Filter>皮質モジュール</Filter>
     </ClCompile>
@@ -166,7 +157,15 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)monju\util_ai.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerFmcFp16.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.cpp">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.cpp">
+      <Filter>OpenCL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_eigen.h">
@@ -198,12 +197,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariablesBase.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpBuffer.h">
-      <Filter>BESOM</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\Oobp3UpKernel.h">
-      <Filter>BESOM</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\VariableKind.h">
       <Filter>計算基盤%28OpenCL%29</Filter>
@@ -283,9 +276,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\Environment.h">
       <Filter>共通</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.h">
-      <Filter>OpenCLコンベンション</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\FullConnectedGridCpt.h">
       <Filter>皮質モジュール</Filter>
     </ClInclude>
@@ -358,7 +348,15 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\MatrixLayerStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_ai.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerFmcFp16.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.h">
+      <Filter>皮質モジュールrebuild</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.h">
+      <Filter>OpenCL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">
@@ -370,9 +368,6 @@
     <Filter Include="行列データ永続化">
       <UniqueIdentifier>{55e423e4-bf82-4039-b80d-72cd0a659a58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="BESOM">
-      <UniqueIdentifier>{b62f59e6-0bd9-4881-a171-1d5ade8d1d21}</UniqueIdentifier>
-    </Filter>
     <Filter Include="計算基盤%28OpenCL%29">
       <UniqueIdentifier>{2e2f5d92-3a19-4a22-9544-efd498de59ed}</UniqueIdentifier>
     </Filter>
@@ -381,9 +376,6 @@
     </Filter>
     <Filter Include="OpenCL">
       <UniqueIdentifier>{2ee00878-87f9-4c7e-9994-99c102a79d6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="OpenCLコンベンション">
-      <UniqueIdentifier>{c7fff8c3-5555-4004-bd4a-a4593e96c2ac}</UniqueIdentifier>
     </Filter>
     <Filter Include="皮質モジュールrebuild">
       <UniqueIdentifier>{8caad650-3396-4a31-bafe-f9cf3610e021}</UniqueIdentifier>
