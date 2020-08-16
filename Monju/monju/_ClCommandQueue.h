@@ -6,6 +6,10 @@
 
 namespace monju {
 
+	/// <summary>
+	/// OpenCLのコマンドキュー
+	/// デバイスごとに作成
+	/// </summary>
 	class _ClCommandQueue
 	{
 #pragma region Private Field
