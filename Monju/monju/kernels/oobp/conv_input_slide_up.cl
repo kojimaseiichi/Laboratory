@@ -35,6 +35,8 @@ __kernel void conv_input_slide_up_W${W}_H${H}_FW${FW}_FH${FH}_SW${SW}_SH${SH}_X$
     __global float* og_x_lambda
 )
 {
+    // filter size: FW * FH
+    // CPT size: FW * FH * XU
     const float kEpsilon = 0.0001;
     const size_t kSlideRow = get_global_id(0);
     const size_t kSlideCol = get_global_id(1);
@@ -45,6 +47,7 @@ __kernel void conv_input_slide_up_W${W}_H${H}_FW${FW}_FH${FH}_SW${SW}_SH${SH}_X$
     const int input_length = ${FW} * ${FH}; // filter size
     float input[${FW} * ${FH}];
 
+    // load image fragment
     for (int h = 0; h < ${FH}; h ++)
     {
         for (int w = 0; w < ${FW}; w ++)
