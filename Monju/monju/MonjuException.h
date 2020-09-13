@@ -2,18 +2,19 @@
 #ifndef _MONJU_MONJU_EXCEPTION_H__
 #define _MONJU_MONJU_EXCEPTION_H__
 
-#include "MonjuTypes.h"
+#include <string>
 
 namespace monju {
 
-	/// <summary>ライブラリの例外クラス</summary>
+	/* 前方宣言 */
+	enum class ErrorCode;
+
 	class MonjuException
 	{
 	protected:
 		ErrorCode		_code;
 		std::string		_message;
 
-		// 初期化・生成
 	public:
 		MonjuException();
 		MonjuException(std::string message);
@@ -21,6 +22,7 @@ namespace monju {
 		MonjuException(ErrorCode code, std::string message);
 		~MonjuException();
 
+	public:
 		ErrorCode code() const { return _code; }
 		std::string message() const { return _message; }
 

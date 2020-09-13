@@ -2,51 +2,40 @@
 #ifndef _MONJU__CL_COMMAND_QUEUES_H__
 #define _MONJU__CL_COMMAND_QUEUES_H__
 
-#include "MonjuTypes.h"
+#include <CL/cl.h>
 
 namespace monju {
 
-	/// <summary>
-	/// OpenCLのコマンドキュー
-	/// デバイスごとに作成
-	/// </summary>
 	class _ClCommandQueue
 	{
-#pragma region Private Field
 	private:
 		cl_context _context;
 		cl_device_id _deviceId;
 		cl_command_queue _commandQueue;	// 解放予定
-#pragma endregion
 
-#pragma region Helper
 	private:
-		cl_command_queue _createCommandQueue(cl_context context, cl_device_id deviceId);
-		void _releaseCommandQueue();
+		cl_command_queue _create_command_queue(cl_context context, cl_device_id deviceId);
+		void _release_command_queue();
 		void _flush();
 		void _finish();
-#pragma endregion
 
-#pragma region Constructor
 	public:
 		_ClCommandQueue(cl_context context, cl_device_id deviceId);
 		~_ClCommandQueue();
-#pragma endregion
 
-#pragma region Public Method
+	public:
 		cl_command_queue clCommandQueue() const;
+
+	public:
 		void flush();
 		void finish();
-#pragma endregion
 
-#pragma region Removing default behavior
 		// コピー禁止・ムーブ禁止
 	public:
 		_ClCommandQueue(const _ClCommandQueue&) = delete;
 		_ClCommandQueue(_ClCommandQueue&&) = delete;
 		_ClCommandQueue& operator=(const _ClCommandQueue&) = delete;
 		_ClCommandQueue& operator=(_ClCommandQueue&&) = delete;
-#pragma endregion
 	};
 
 }

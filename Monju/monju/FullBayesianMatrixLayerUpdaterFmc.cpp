@@ -5,7 +5,7 @@
 monju::FullBayesianMatrixLayerUpdaterFmc::FullBayesianMatrixLayerUpdaterFmc(std::weak_ptr<Environment> env, LayerShape shapeX, LayerShape shapeY, std::weak_ptr<ClMachine> clMachine)
 {
 	_captureExternalResources(shapeX, shapeY, env, clMachine);
-	_createKernel();
+	_create_kernel();
 }
 
 monju::FullBayesianMatrixLayerUpdaterFmc::~FullBayesianMatrixLayerUpdaterFmc()
@@ -58,7 +58,7 @@ void monju::FullBayesianMatrixLayerUpdaterFmc::_captureExternalResources(LayerSh
 	_clMachine = clMachine.lock();
 }
 
-void monju::FullBayesianMatrixLayerUpdaterFmc::_createKernel()
+void monju::FullBayesianMatrixLayerUpdaterFmc::_create_kernel()
 {
 	param_map param_map; // カーネルのコンパイル時テンプレート変数
 	param_map["X"] = boost::lexical_cast<std::string>(_shapeX.nodes.size());
@@ -103,16 +103,16 @@ void monju::FullBayesianMatrixLayerUpdaterFmc::_upOobp1(std::weak_ptr<ClDeviceCo
 {
 	ClFunc func1(_clMachine, _kernelOobpUp1);
 
-	func1.pushArgument(layerY.clVariableSet().getClMemory(VariableKind::lambda));
-	func1.pushArgument(layerY.clVariableSet().getClMemory(VariableKind::pi));
-	func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::W));
-	func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::kappa));
-	func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::lambda));
+	func1.push_kernel_argument(layerY.clVariableSet().get_cl_memory(VariableKind::lambda));
+	func1.push_kernel_argument(layerY.clVariableSet().get_cl_memory(VariableKind::pi));
+	func1.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::W));
+	func1.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::kappa));
+	func1.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::lambda));
 
 	std::vector<size_t> global_work_size1 = { static_cast<size_t>(_shapeY.nodes.size()), static_cast<size_t>(_shapeX.nodes.size()) };
 	std::vector<size_t> local_work_size1 = { 1, static_cast<size_t>(_shapeX.nodes.size()) };
 
-	func1.execute(clDeviceContext, global_work_size1, local_work_size1, join);
+	func1.execute_kernel(clDeviceContext, global_work_size1, local_work_size1, join);
 	//matrixLayer.clVariableSet().enqueueRead(clDeviceContext, join, VariableKind::lambda);
 }
 
@@ -120,13 +120,13 @@ void monju::FullBayesianMatrixLayerUpdaterFmc::_upOobp2(std::weak_ptr<ClDeviceCo
 {
 	ClFunc func2(_clMachine, _kernelOobpUp2);
 
-	func2.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::lambda));
-	func2.pushArgument(layerX.clVariableSet().getClMemory(VariableKind::R));
-	func2.pushArgument(layerX.clVariableSet().getClMemory(VariableKind::lambda));
+	func2.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::lambda));
+	func2.push_kernel_argument(layerX.clVariableSet().get_cl_memory(VariableKind::R));
+	func2.push_kernel_argument(layerX.clVariableSet().get_cl_memory(VariableKind::lambda));
 
 	std::vector<size_t> global_work_size2 = { 1, static_cast<size_t>(_shapeX.nodes.size()) };
 
-	func2.execute(clDeviceContext, global_work_size2, join);
+	func2.execute_kernel(clDeviceContext, global_work_size2, join);
 	//layerX.clVariableSet().enqueueRead(clDeviceContext, join, VariableKind::lambda);
 }
 
@@ -140,15 +140,15 @@ void monju::FullBayesianMatrixLayerUpdaterFmc::_downOobp1(std::weak_ptr<ClDevice
 {
 	ClFunc func1(_clMachine, _kernelOobpDown1);
 
-	func1.pushArgument(layerX.clVariableSet().getClMemory(VariableKind::rho));
-	func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::W));
-	func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::lambda));
-	func1.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::kappa));
+	func1.push_kernel_argument(layerX.clVariableSet().get_cl_memory(VariableKind::rho));
+	func1.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::W));
+	func1.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::lambda));
+	func1.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::kappa));
 
 	std::vector<size_t> global_work_size1 = { static_cast<size_t>(_shapeY.nodes.size()) , static_cast<size_t>(_shapeX.nodes.size()) };
 	std::vector<size_t> local_work_size1 = { static_cast<size_t>(_shapeY.nodes.size()), 1 };
 
-	func1.execute(clDeviceContext, global_work_size1, local_work_size1, join);
+	func1.execute_kernel(clDeviceContext, global_work_size1, local_work_size1, join);
 	//edge.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::kappa);
 }
 
@@ -156,11 +156,11 @@ void monju::FullBayesianMatrixLayerUpdaterFmc::_downOobp2(std::weak_ptr<ClDevice
 {
 	ClFunc func2(_clMachine, _kernelOobpDown2);
 
-	func2.pushArgument(matrixLayer.clVariableSet().getClMemory(VariableKind::kappa));
-	func2.pushArgument(layerY.clVariableSet().getClMemory(VariableKind::pi));
+	func2.push_kernel_argument(matrixLayer.clVariableSet().get_cl_memory(VariableKind::kappa));
+	func2.push_kernel_argument(layerY.clVariableSet().get_cl_memory(VariableKind::pi));
 
 	std::vector<size_t> global_work_size2 = { static_cast<size_t>(_shapeY.nodes.size()), 1 };
 
-	func2.execute(clDeviceContext, global_work_size2, join);
+	func2.execute_kernel(clDeviceContext, global_work_size2, join);
 	//nodeX.clVariableSet().enqueueRead(clDeviceContext, pJoin, VariableKind::pi);
 }

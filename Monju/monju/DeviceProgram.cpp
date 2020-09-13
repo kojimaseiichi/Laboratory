@@ -40,7 +40,7 @@ std::string monju::DeviceProgram::_getEditedSource(std::string file_path, param_
 
 // プログラムを作成
 
-cl_program monju::DeviceProgram::_createProgram(cl_context context, std::string& edited_source)
+cl_program monju::DeviceProgram::_create_program(cl_context context, std::string& edited_source)
 {
 	const char* p_source = edited_source.c_str();
 	const size_t source_size = edited_source.size();
@@ -59,7 +59,7 @@ cl_program monju::DeviceProgram::_compileProgram(cl_context context, std::vector
 	// OpenCLカーネルソースを取得し、プレースホルダを値に置換する
 	std::string edited_source = _getEditedSource(file_path, params);
 	// プログラムのコンパイル
-	cl_program program = _createProgram(context, edited_source);
+	cl_program program = _create_program(context, edited_source);
 	cl_int error_code = clBuildProgram(program, static_cast<cl_uint>(device_id_set.size()), device_id_set.data(), nullptr, nullptr, nullptr);
 	// コンパイルに失敗した場合はエラー内容を表示
 	if (error_code != CL_SUCCESS)

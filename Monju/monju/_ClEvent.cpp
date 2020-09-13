@@ -1,6 +1,6 @@
+#include <vector>
 #include "_ClEvent.h"
 #include "OpenClException.h"
-#include <vector>
 
 monju::_ClEvent::_ClEvent(cl_event ev)
 {

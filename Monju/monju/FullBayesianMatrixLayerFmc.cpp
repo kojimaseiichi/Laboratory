@@ -1,4 +1,5 @@
 #include "FullBayesianMatrixLayerFmc.h"
+#include "ClMachine.h"
 
 monju::FullBayesianMatrixLayerFmc::FullBayesianMatrixLayerFmc(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<FullBayesianMatrixLayer> edge)
 {

@@ -160,9 +160,9 @@ namespace monju
 				layer2->performBel();
 				layer2->findWinner();
 				
-				fmc->clVariableSet().enqueueWriteAll(dc, join);
+				fmc->clVariableSet().enqueue_write_all(dc, join);
 				update->bel(dc, fmc, join);
-				fmc->clVariableSet().enqueueReadAll(dc, join);
+				fmc->clVariableSet().enqueue_read_all(dc, join);
 
 				float prec = 0.001f;
 				{

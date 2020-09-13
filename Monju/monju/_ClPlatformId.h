@@ -2,7 +2,8 @@
 #ifndef _MONJU__CL_PLATFORM_ID_H__
 #define _MONJU__CL_PLATFORM_ID_H__
 
-#include "MonjuTypes.h"
+#include <vector>
+#include <CL/cl.h>
 
 namespace monju {
 
@@ -14,13 +15,16 @@ namespace monju {
 		std::vector<cl_device_id> _deviceIds;
 		size_t selectedPlatformId;
 
-		void _getPlatformIds();
-		void _getDeviceIds(cl_platform_id platform);
+	private:
+		void _get_platform_ids();
+		void _get_device_ids(cl_platform_id platform);
 
 
 	public:
 		_ClPlatformId(int selectPlatform);
 		~_ClPlatformId();
+
+	public:
 		std::vector<cl_platform_id> clPlatformIds() const;
 		cl_platform_id clPlatformId() const;
 		std::vector<cl_device_id> clDeviceIds() const;

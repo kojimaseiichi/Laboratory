@@ -26,7 +26,7 @@ namespace monju {
 		cl_platform_id				_findPlatform(int platform_idx);
 		std::vector<cl_device_id>	_listDevices(cl_platform_id platform_id);
 		void						_releaseDevices(std::vector<cl_device_id>* p_device_id_vec);
-		cl_context					_createContext(cl_platform_id platform_id, std::vector<cl_device_id>& device_id_vec);
+		cl_context					_create_context(cl_platform_id platform_id, std::vector<cl_device_id>& device_id_vec);
 		std::vector<Device*>		_allocDeviceVec(cl_context context, std::vector<cl_device_id> device_id_vec);
 		void						_freeDeviceVec(std::vector<Device*>* p_device_vec);
 

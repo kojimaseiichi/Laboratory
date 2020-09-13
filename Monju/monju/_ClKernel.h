@@ -2,7 +2,8 @@
 #ifndef _MONJU__CL_KERNEL_H__
 #define _MONJU__CL_KERNEL_H__
 
-#include "MonjuTypes.h"
+#include <string>
+#include <CL/cl.h>
 
 namespace monju
 {
@@ -14,12 +15,15 @@ namespace monju
 		param_map _params;
 		cl_kernel _kernel;	// 解放予定
 
-		cl_kernel _createKernel(cl_program program, std::string& kernelName, param_map& params);
-		void _releaseKernel();
+	private:
+		cl_kernel _create_kernel(cl_program program, std::string& kernelName, param_map& params);
+		void _release_kernel();
 
 	public:
 		_ClKernel(cl_program program, std::string kernelName, param_map params);
 		~_ClKernel();
+
+	public:
 		cl_kernel clKernel() const;
 
 		// コピー禁止・ムーブ禁止

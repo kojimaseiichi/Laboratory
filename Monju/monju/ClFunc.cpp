@@ -9,6 +9,7 @@
 #include "ClDeviceContext.h"
 #include "ClEventJoiner.h"
 #include "OpenClException.h"
+#include "ClKernel.h"
 
 void monju::ClFunc::_execute(ClDeviceContext* pDeviceContext, std::vector<size_t> globalWorkSize, std::vector<size_t>* pLocalWorkSize, ClEventJoiner* pEvent)
 {
@@ -23,12 +24,12 @@ void monju::ClFunc::_execute(ClDeviceContext* pDeviceContext, std::vector<size_t
 	cl_event ev;
 	// ƒLƒ…[‚É’Ç‰Á
 	if (pLocalWorkSize == nullptr)
-		pDeviceContext->enqueueNDRangeKernel(
+		pDeviceContext->enqueue_ndrange_kernel_to_execute(
 			_clKernel,
 			globalWorkSize,
 			pEvent);
 	else
-		pDeviceContext->enqueueNDRangeKernel(
+		pDeviceContext->enqueue_ndrange_kernel_to_execute(
 			_clKernel,
 			globalWorkSize,
 			*pLocalWorkSize,
@@ -46,7 +47,7 @@ monju::ClFunc::~ClFunc()
 
 }
 
-void monju::ClFunc::pushArgument(float value)
+void monju::ClFunc::push_kernel_argument(float value)
 {
 	Arg a;
 	a.size = sizeof(float);
@@ -54,34 +55,34 @@ void monju::ClFunc::pushArgument(float value)
 	_args.push_back(a);
 }
 
-void monju::ClFunc::pushArgument(ClMemory& clMemory)
+void monju::ClFunc::push_kernel_argument(ClMemory& clMemory)
 {
 	auto p = clMemory.clBuffer().lock();
 	Arg a;
 	a.size = sizeof(cl_mem);
-	a.argValue.clMem = p->clMem();
+	a.argValue.clMem = p->mem_obj();
 	_args.push_back(a);
 }
 
-void monju::ClFunc::pushArgument(std::weak_ptr<ClMemory> clMemory)
+void monju::ClFunc::push_kernel_argument(std::weak_ptr<ClMemory> clMemory)
 {
 	auto p = clMemory.lock();
-	pushArgument(*p);
+	push_kernel_argument(*p);
 }
 
-void monju::ClFunc::clearArguments()
+void monju::ClFunc::clear_kernel_arguments()
 {
 	_args.clear();
 }
 
-void monju::ClFunc::execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::vector<size_t> localWorkSize, std::weak_ptr<ClEventJoiner> clEventJoiner)
+void monju::ClFunc::execute_kernel(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::vector<size_t> localWorkSize, std::weak_ptr<ClEventJoiner> clEventJoiner)
 {
 	auto pdc = clDeviceContext.lock();
 	auto pej = clEventJoiner.lock();
 	_execute(pdc.get(), globalWorkSize, &localWorkSize, pej.get());
 }
 
-void monju::ClFunc::execute(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::weak_ptr<ClEventJoiner> clEventJoiner)
+void monju::ClFunc::execute_kernel(std::weak_ptr<ClDeviceContext> clDeviceContext, std::vector<size_t> globalWorkSize, std::weak_ptr<ClEventJoiner> clEventJoiner)
 {
 	auto pdc = clDeviceContext.lock();
 	auto pej = clEventJoiner.lock();

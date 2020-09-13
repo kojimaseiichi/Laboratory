@@ -2,10 +2,22 @@
 #ifndef _MONJU_CL_DEVICE_CONTEXT_H__
 #define _MONJU_CL_DEVICE_CONTEXT_H__
 
-#include "MonjuTypes.h"
+#include <stdint.h>
+#include <memory>
+#include <vector>
+#include <CL/cl.h>
 
 namespace monju
 {
+	/* ëOï˚êÈåæ */
+	class _ClContext;
+	class _ClCommandQueue;
+	class _ClBuffer;
+	class ClMachine;
+	class ClEventJoiner;
+	class ClKernel;
+	class ClMemory;
+
 	class ClDeviceContext
 	{
 	private:
@@ -14,11 +26,12 @@ namespace monju
 		cl_device_id _deviceId;
 		std::unique_ptr<_ClCommandQueue> _commandQueue;	// âï˙ó\íË
 
-		void _createCommandQueue();
-		void _releaseCommandQueue();
-		void _enqueueReadBuffer(std::weak_ptr<_ClBuffer> clBuffer, void* pData, ClEventJoiner* pEvent);
-		void _enqueueWriteBuffer(std::weak_ptr<_ClBuffer> clBuffer, const void* pData, ClEventJoiner* pEvent);
-		void _enqueueNDRangeKernel(
+	private:
+		void _create_command_queue();
+		void _release_command_queue();
+		void _enqueue_read_buffer(std::weak_ptr<_ClBuffer> clBuffer, void* pData, ClEventJoiner* pEvent);
+		void _enqueue_write_buffer(std::weak_ptr<_ClBuffer> clBuffer, const void* pData, ClEventJoiner* pEvent);
+		void _enqueue_nd_range_kernel(
 			std::weak_ptr<ClKernel> kernel,
 			std::vector<size_t> globalWorkSize,
 			std::vector<size_t>* pLocalWorkSize,
@@ -27,19 +40,21 @@ namespace monju
 	public:
 		ClDeviceContext(std::weak_ptr<ClMachine> clMachine, cl_device_id deviceId);
 		~ClDeviceContext();
-		void enqueueReadBuffer(std::weak_ptr<ClMemory> clMemory, void* pData, ClEventJoiner* pEvent);
-		void readBuffer(std::weak_ptr<ClMemory> clMemory, void* pData);
-		void enqueueWriteBuffer(std::weak_ptr<ClMemory> clMemory, void* pData, ClEventJoiner* pEvent);
-		void writeBuffer(std::weak_ptr<ClMemory> clMemory, void* pData);
-		void enqueueNDRangeKernel(
+
+		void read_buffer(std::weak_ptr<ClMemory> clMemory, void* pData);
+		void write_buffer(std::weak_ptr<ClMemory> clMemory, void* pData);
+		void enqueue_read_buffer(std::weak_ptr<ClMemory> clMemory, void* pData, ClEventJoiner* pEvent);
+		void enqueue_write_buffer(std::weak_ptr<ClMemory> clMemory, void* pData, ClEventJoiner* pEvent);
+		void enqueue_ndrange_kernel_to_execute(
 			std::weak_ptr<ClKernel> kernel,
 			std::vector<size_t> globalWorkSize,
 			std::vector<size_t> localWorkSize,
 			ClEventJoiner* pEvent);
-		void enqueueNDRangeKernel(
+		void enqueue_ndrange_kernel_to_execute(
 			std::weak_ptr<ClKernel> kernel,
 			std::vector<size_t> globalWorkSize,
 			ClEventJoiner* pEvent);
+
 		void flush();
 		void finish();
 

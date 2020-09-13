@@ -89,15 +89,15 @@ namespace monju
 			std::weak_ptr<ClEventJoiner> join)
 		{
 			ClFunc func(_clMachine, _clKernel);
-			func.pushArgument(variables.getClMemory(VariableKind::IMAGE));
-			func.pushArgument(variables.getClMemory(VariableKind::W));
-			func.pushArgument(variables.getClMemory(VariableKind::lambda));
+			func.push_kernel_argument(variables.get_cl_memory(VariableKind::IMAGE));
+			func.push_kernel_argument(variables.get_cl_memory(VariableKind::W));
+			func.push_kernel_argument(variables.get_cl_memory(VariableKind::lambda));
 
 			std::vector<size_t> global_work_size = { 
 				static_cast<size_t>((_extentInput.rows - _extentFilter.rows) / _extentSlide.rows + 1), 
 				static_cast<size_t>((_extentInput.cols - _extentFilter.cols) / _extentSlide.cols + 1)
 			};
-			func.execute(clDeviceContext, global_work_size, join);
+			func.execute_kernel(clDeviceContext, global_work_size, join);
 
 		}
 

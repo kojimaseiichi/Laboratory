@@ -76,7 +76,7 @@ namespace monju {
 			LayerShape shapeY,
 			std::weak_ptr<Environment> env,
 			std::weak_ptr<ClMachine> clMachine);
-		void _createKernel();
+		void _create_kernel();
 		void _up(
 			std::weak_ptr<ClDeviceContext> clDeviceContext,
 			BelLayerFmc& layerX,

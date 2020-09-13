@@ -24,7 +24,7 @@ namespace monju {
 
 	protected:
 		// コンパイル済みカーネルプログラムをデバイスに配置して実行可能な状態に遷移
-		cl_kernel			_createKernel(cl_program program, std::string kernel_name, param_map& params);
+		cl_kernel			_create_kernel(cl_program program, std::string kernel_name, param_map& params);
 		// カーネルを実行可能な状態に遷移（_compileProgram、_createKernel）
 		void				_initKernel(cl_program program, std::string kernel_name, param_map& params);
 		// プログラムコンパイル(CLファイル)、カーネル生成

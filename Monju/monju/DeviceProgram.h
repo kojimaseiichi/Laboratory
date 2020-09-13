@@ -38,7 +38,7 @@ namespace monju {
 			param_map params);
 
 		// ƒvƒƒOƒ‰ƒ€‚ğì¬
-		cl_program			_createProgram(
+		cl_program			_create_program(
 			cl_context context,
 			std::string& edited_source);
 

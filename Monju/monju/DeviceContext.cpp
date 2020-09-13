@@ -57,7 +57,7 @@ void monju::DeviceContext::_releaseDevices(std::vector<cl_device_id>* p_device_i
 	p_device_id_vec->clear();
 }
 
-cl_context monju::DeviceContext::_createContext(cl_platform_id platform_id, std::vector<cl_device_id>& device_id_vec)
+cl_context monju::DeviceContext::_create_context(cl_platform_id platform_id, std::vector<cl_device_id>& device_id_vec)
 {
 	cl_int errorcode;
 	cl_context context = clCreateContext(nullptr, static_cast<cl_uint>(device_id_vec.size()), device_id_vec.data(), notify_error, this, &errorcode);
@@ -93,7 +93,7 @@ void monju::DeviceContext::create(int platform_idx)
 	// idからインスタンスを生成
 	_platform_id = _findPlatform(platform_idx);
 	_device_id_vec = _listDevices(_platform_id);
-	_context = _createContext(_platform_id, _device_id_vec);
+	_context = _create_context(_platform_id, _device_id_vec);
 	_device_vec = _allocDeviceVec(_context, _device_id_vec);
 }
 

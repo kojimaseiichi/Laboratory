@@ -1,10 +1,8 @@
-#include "_ClCommandQueue.h"
-
 #include "OpenClException.h"
-
+#include "_ClCommandQueue.h"
 #include "_ClPlatformId.h"
 
-cl_command_queue monju::_ClCommandQueue::_createCommandQueue(cl_context context, cl_device_id deviceId)
+cl_command_queue monju::_ClCommandQueue::_create_command_queue(cl_context context, cl_device_id deviceId)
 {
 	cl_int error;
 	cl_command_queue commandQueue = clCreateCommandQueueWithProperties(
@@ -17,7 +15,7 @@ cl_command_queue monju::_ClCommandQueue::_createCommandQueue(cl_context context,
 	return commandQueue;
 }
 
-void monju::_ClCommandQueue::_releaseCommandQueue()
+void monju::_ClCommandQueue::_release_command_queue()
 {
 	if (_commandQueue == nullptr)
 		return;
@@ -45,12 +43,12 @@ monju::_ClCommandQueue::_ClCommandQueue(cl_context context, cl_device_id deviceI
 {
 	_context = context;
 	_deviceId = deviceId;
-	_commandQueue = _createCommandQueue(context, deviceId);
+	_commandQueue = _create_command_queue(context, deviceId);
 }
 
 monju::_ClCommandQueue::~_ClCommandQueue()
 {
-	_releaseCommandQueue();
+	_release_command_queue();
 }
 
 cl_command_queue monju::_ClCommandQueue::clCommandQueue() const

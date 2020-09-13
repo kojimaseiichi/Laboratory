@@ -2,10 +2,15 @@
 #ifndef _MONJU__CL_PROGRAM_H__
 #define _MONJU__CL_PROGRAM_H__
 
-#include "MonjuTypes.h"
+#include <vector>
+#include <map>
+#include <string>
+#include <CL/cl.h>
 
 namespace monju
 {
+	using param_map = std::map<std::string, std::string>;
+
 	class _ClProgram
 	{
 	private:
@@ -15,20 +20,21 @@ namespace monju
 		param_map _params;
 		cl_program _program;	// 解放予定
 
-		std::string _getProgramBuildInfo(cl_program program, std::vector<cl_device_id> deviceIds);
-		std::string _getSource(std::string soucePath);
-		std::string _getEditedSource(std::string filePath, param_map params);
-		cl_program _createProgram(cl_context context, std::string& editedSource);
-		cl_program _compileProgram(cl_context context, std::vector<cl_device_id>& deviceIds, std::string filePath, param_map& params);
+	private:
+		std::string _get_program_build_info(cl_program program, std::vector<cl_device_id> deviceIds);
+		std::string _read_kernel_source_from_file(std::string soucePath);
+		std::string _specialize_source(std::string filePath, param_map params);
+		cl_program _create_kernel_program(cl_context context, std::string& editedSource);
+		cl_program _compile_kernel_program(cl_context context, std::vector<cl_device_id>& deviceIds, std::string filePath, param_map& params);
 		void _create(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, param_map params);
 		void _release();
-
 
 	public:
 		_ClProgram(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, param_map params);
 		~_ClProgram();
-		cl_program clProgram() const;
 
+	public:
+		cl_program clProgram() const;
 
 		// コピー禁止・ムーブ禁止
 	public:

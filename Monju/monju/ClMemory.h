@@ -2,10 +2,15 @@
 #ifndef _MONJU_CL_MEMORY_H__
 #define _MONJU_CL_MEMORY_H__
 
-#include "MonjuTypes.h"
+#include <memory>
+#include <stdint.h>
 
 namespace monju
 {
+	class ClMachine;
+	class _ClContext;
+	class _ClBuffer;
+
 	class ClMemory
 	{
 	protected:

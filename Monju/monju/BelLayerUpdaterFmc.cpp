@@ -53,13 +53,13 @@ void monju::BelLayerUpdaterFmc::_bel(std::weak_ptr<ClDeviceContext> clDeviceCont
 	auto pNode = layer.lock();
 
 	ClFunc func(_clMachine, _clKernel);
-	func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::lambda));
-	func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::pi));
-	func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::rho));
-	func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::BEL));
-	func.pushArgument(pNode->clVariableSet().getClMemory(VariableKind::WIN));
+	func.push_kernel_argument(pNode->clVariableSet().get_cl_memory(VariableKind::lambda));
+	func.push_kernel_argument(pNode->clVariableSet().get_cl_memory(VariableKind::pi));
+	func.push_kernel_argument(pNode->clVariableSet().get_cl_memory(VariableKind::rho));
+	func.push_kernel_argument(pNode->clVariableSet().get_cl_memory(VariableKind::BEL));
+	func.push_kernel_argument(pNode->clVariableSet().get_cl_memory(VariableKind::WIN));
 
 	std::vector<size_t> global_work_size = { static_cast<size_t>(_shape.nodes.size()) };
 
-	func.execute(clDeviceContext, global_work_size, clEventJoiner);
+	func.execute_kernel(clDeviceContext, global_work_size, clEventJoiner);
 }

@@ -180,14 +180,14 @@ namespace monju
 				m2->performUp(*lx2, *ly2);
 				lx2->performBel();
 				// デバイス
-				fmc_m->clVariableSet().enqueueWriteAll(dc, join);
-				fmc_lx->clVariableSet().enqueueWriteAll(dc, join);
-				fmc_ly->clVariableSet().enqueueWriteAll(dc, join);
+				fmc_m->clVariableSet().enqueue_write_all(dc, join);
+				fmc_lx->clVariableSet().enqueue_write_all(dc, join);
+				fmc_ly->clVariableSet().enqueue_write_all(dc, join);
 				update->up(dc, fmc_lx, fmc_ly, fmc_m, join);
 				update_x->bel(dc, fmc_lx, join);
-				fmc_m->clVariableSet().enqueueReadAll(dc, join);
-				fmc_lx->clVariableSet().enqueueReadAll(dc, join);
-				fmc_ly->clVariableSet().enqueueReadAll(dc, join);
+				fmc_m->clVariableSet().enqueue_read_all(dc, join);
+				fmc_lx->clVariableSet().enqueue_read_all(dc, join);
+				fmc_ly->clVariableSet().enqueue_read_all(dc, join);
 				join->join();
 				// 検証
 				{
@@ -223,9 +223,9 @@ namespace monju
 				// デバイス
 				update->down(dc, fmc_lx, fmc_ly, fmc_m, join);
 				update_y->bel(dc, fmc_ly, join);
-				fmc_m->clVariableSet().enqueueReadAll(dc, join);
-				fmc_lx->clVariableSet().enqueueReadAll(dc, join);
-				fmc_ly->clVariableSet().enqueueReadAll(dc, join);
+				fmc_m->clVariableSet().enqueue_read_all(dc, join);
+				fmc_lx->clVariableSet().enqueue_read_all(dc, join);
+				fmc_ly->clVariableSet().enqueue_read_all(dc, join);
 				join->join();
 				// 検証
 				{

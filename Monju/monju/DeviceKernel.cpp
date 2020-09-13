@@ -21,7 +21,7 @@ monju::DeviceKernel::~DeviceKernel()
 
 // コンパイル済みカーネルプログラムをデバイスに配置して実行可能な状態に遷移
 
-cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string kernel_name, param_map& params)
+cl_kernel monju::DeviceKernel::_create_kernel(cl_program program, std::string kernel_name, param_map& params)
 {
 	std::string parameterized_kernel_name = util_str::parameterizePlaceholders(kernel_name, params);
 	cl_int error_code;
@@ -35,7 +35,7 @@ cl_kernel monju::DeviceKernel::_createKernel(cl_program program, std::string ker
 
 void monju::DeviceKernel::_initKernel(cl_program program, std::string kernel_name, param_map& params)
 {
-	_kernel = _createKernel(program, kernel_name, params);
+	_kernel = _create_kernel(program, kernel_name, params);
 }
 
 // プログラムコンパイル(CLファイル)、カーネル生成

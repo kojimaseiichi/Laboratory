@@ -1,14 +1,12 @@
-#include "_ClContext.h"
-
 #include "OpenClException.h"
-
+#include "_ClContext.h"
 #include "_ClPlatformId.h"
 
 void CL_CALLBACK monju::cl_context_notify_error(const char* errinfo, const void* private_info, size_t cb, void* user_data)
 {
 }
 
-void monju::_ClContext::_createContext(std::vector<cl_device_id>& deviceIds)
+void monju::_ClContext::_create_context(std::vector<cl_device_id>& deviceIds)
 {
 	cl_int error;
 	_context = clCreateContext(
@@ -22,7 +20,7 @@ void monju::_ClContext::_createContext(std::vector<cl_device_id>& deviceIds)
 		throw OpenClException(error, "clCreateContext");
 }
 
-void monju::_ClContext::_releaseContext()
+void monju::_ClContext::_release_context()
 {
 	if (_context == nullptr)
 		return;
@@ -35,12 +33,12 @@ void monju::_ClContext::_releaseContext()
 monju::_ClContext::_ClContext(const std::vector<cl_device_id> deviceIds)
 {
 	_deviceIds = deviceIds;
-	_createContext(_deviceIds);
+	_create_context(_deviceIds);
 }
 
 monju::_ClContext::~_ClContext()
 {
-	_releaseContext();
+	_release_context();
 }
 
 cl_context monju::_ClContext::context() const

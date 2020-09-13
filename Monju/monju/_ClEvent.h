@@ -2,7 +2,7 @@
 #ifndef _MONJU__CL_EVENT_H__
 #define _MONJU__CL_EVENT_H__
 
-#include "MonjuTypes.h"
+#include <CL/cl.h>
 #include "Synchronizable.h"
 
 namespace monju
@@ -15,6 +15,8 @@ namespace monju
 	public:
 		_ClEvent(cl_event ev);
 		~_ClEvent();
+
+	public:
 		cl_event clEvent() const;
 
 	// コピー禁止・ムーブ禁止

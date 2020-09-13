@@ -3,7 +3,7 @@
 #include "util_str.h"
 #include "_ClContext.h"
 
-std::string monju::_ClProgram::_getProgramBuildInfo(cl_program program, std::vector<cl_device_id> deviceIds)
+std::string monju::_ClProgram::_get_program_build_info(cl_program program, std::vector<cl_device_id> deviceIds)
 {
 	std::string message;
 	for (auto device_id : deviceIds)
@@ -20,22 +20,23 @@ std::string monju::_ClProgram::_getProgramBuildInfo(cl_program program, std::vec
 	return message;
 }
 
-std::string monju::_ClProgram::_getSource(std::string soucePath)
+std::string monju::_ClProgram::_read_kernel_source_from_file(std::string soucePath)
 {
 	std::ifstream input(soucePath, std::ifstream::in | std::ifstream::binary);
 	std::string cl_source_original((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
 	return cl_source_original;
 }
 
-std::string monju::_ClProgram::_getEditedSource(std::string filePath, param_map params)
+std::string monju::_ClProgram::_specialize_source(std::string filePath, param_map params)
 {
-	std::string plain_source = _getSource(filePath);
+	std::string plain_source = _read_kernel_source_from_file(filePath);
 	std::string edited_source = util_str::parameterizePlaceholders(plain_source, params);
 	return edited_source;
 }
 
-cl_program monju::_ClProgram::_createProgram(cl_context context, std::string& editedSource)
+cl_program monju::_ClProgram::_create_kernel_program(cl_context context, std::string& editedSource)
 {
+	// OpenCLのプログラムを生成
 	const char* p_source = editedSource.c_str();
 	const size_t source_size = editedSource.size();
 	cl_int error_code;
@@ -45,17 +46,16 @@ cl_program monju::_ClProgram::_createProgram(cl_context context, std::string& ed
 	return program;
 }
 
-cl_program monju::_ClProgram::_compileProgram(cl_context context, std::vector<cl_device_id>& deviceIds, std::string filePath, param_map& params)
+cl_program monju::_ClProgram::_compile_kernel_program(cl_context context, std::vector<cl_device_id>& deviceIds, std::string filePath, param_map& params)
 {
 	// OpenCLカーネルソースを取得し、プレースホルダを値に置換する
-	std::string edited_source = _getEditedSource(filePath, params);
-	// プログラムのコンパイル
-	cl_program program = _createProgram(context, edited_source);
+	std::string edited_source = _specialize_source(filePath, params);
+	cl_program program = _create_kernel_program(context, edited_source);
 	cl_int error_code = clBuildProgram(program, static_cast<cl_uint>(deviceIds.size()), deviceIds.data(), nullptr, nullptr, nullptr);
 	// コンパイルに失敗した場合はエラー内容を表示
 	if (error_code != CL_SUCCESS)
 	{
-		std::string message = _getProgramBuildInfo(program, deviceIds);
+		std::string message = _get_program_build_info(program, deviceIds);
 		throw OpenClException(error_code, message);
 	}
 	return program;
@@ -63,7 +63,7 @@ cl_program monju::_ClProgram::_compileProgram(cl_context context, std::vector<cl
 
 void monju::_ClProgram::_create(cl_context context, std::vector<cl_device_id> deviceIds, std::string sourcePath, param_map params)
 {
-	_program = _compileProgram(context, deviceIds, sourcePath, params);
+	_program = _compile_kernel_program(context, deviceIds, sourcePath, params);
 }
 
 void monju::_ClProgram::_release()

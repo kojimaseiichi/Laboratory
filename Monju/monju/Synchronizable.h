@@ -6,6 +6,7 @@
 
 namespace monju {
 
+	/* ‘O•ûéŒ¾ */
 	class Synchronizable;
 	class ReadGuard;
 	class WriteGuard;

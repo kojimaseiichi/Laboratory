@@ -1,7 +1,7 @@
 #include "_ClPlatformId.h"
 #include "OpenClException.h"
 
-void monju::_ClPlatformId::_getPlatformIds()
+void monju::_ClPlatformId::_get_platform_ids()
 {
 	cl_platform_id platforms[100];
 	cl_uint retNum;
@@ -14,7 +14,7 @@ void monju::_ClPlatformId::_getPlatformIds()
 		_platformIds.push_back(platforms[n]);
 }
 
-void monju::_ClPlatformId::_getDeviceIds(cl_platform_id platform)
+void monju::_ClPlatformId::_get_device_ids(cl_platform_id platform)
 {
 	cl_device_id devices[100];
 	cl_uint retNum;
@@ -27,12 +27,12 @@ void monju::_ClPlatformId::_getDeviceIds(cl_platform_id platform)
 
 monju::_ClPlatformId::_ClPlatformId(int selectPlatform)
 {
-	_getPlatformIds();
+	_get_platform_ids();
 	if (selectPlatform < 0 || selectPlatform >= _platformIds.size())
 		throw MonjuException("selectPlatform‚ª”ÍˆÍŠO");
 	selectedPlatformId = static_cast<size_t>(selectPlatform);
 
-	_getDeviceIds(_platformIds.at(selectedPlatformId));
+	_get_device_ids(_platformIds.at(selectedPlatformId));
 }
 
 monju::_ClPlatformId::~_ClPlatformId()

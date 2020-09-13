@@ -2,11 +2,17 @@
 #ifndef _MONJU_CL_EVENT_JOINER_H__
 #define _MONJU_CL_EVENT_JOINER_H__
 
-#include "MonjuTypes.h"
+#include <vector>
+#include <memory>
+#include <CL/cl.h>
 #include "Synchronizable.h"
 
 namespace monju
 {
+	/* forward decleration */
+	class _ClEvent;
+	class ClEventJoiner;
+
 	class ClEventJoiner : public Synchronizable
 	{
 	private:
@@ -15,6 +21,8 @@ namespace monju
 	public:
 		ClEventJoiner();
 		~ClEventJoiner();
+
+	public:
 		void push(cl_event ev);
 		void join();
 		void merge(ClEventJoiner& obj);

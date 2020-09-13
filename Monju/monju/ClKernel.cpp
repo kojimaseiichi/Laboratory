@@ -9,7 +9,7 @@
 
 #include "ClMachine.h"
 
-void monju::ClKernel::_createProgram()
+void monju::ClKernel::_create_program()
 {
 	_clProgram = std::make_shared<_ClProgram>(
 		_clContext->context(),
@@ -18,7 +18,7 @@ void monju::ClKernel::_createProgram()
 		_params);
 }
 
-void monju::ClKernel::_createKernel()
+void monju::ClKernel::_create_kernel()
 {
 	_clKernel = std::make_shared<_ClKernel>(
 		_clProgram->clProgram(),
@@ -26,7 +26,7 @@ void monju::ClKernel::_createKernel()
 		_params);
 }
 
-void monju::ClKernel::_releaseProgram()
+void monju::ClKernel::_release_pogram()
 {
 
 	bool unique = _clProgram.use_count() == 1;
@@ -35,7 +35,7 @@ void monju::ClKernel::_releaseProgram()
 		throw MonjuException("_clProgram");
 }
 
-void monju::ClKernel::_releaseKernel()
+void monju::ClKernel::_release_kernel()
 {
 	bool unique = _clKernel.use_count() == 1;
 	_clKernel.reset();
@@ -43,7 +43,7 @@ void monju::ClKernel::_releaseKernel()
 		throw MonjuException("_clKernel");
 }
 
-monju::ClKernel::ClKernel(std::weak_ptr<monju::ClMachine> clMachine, std::string sourcePath, std::string kernelName, param_map params)
+monju::ClKernel::ClKernel(std::weak_ptr<monju::ClMachine> clMachine, std::string sourcePath, std::string kernelName, monju::param_map params)
 {
 	_clMachine = clMachine.lock();
 	_clContext = _clMachine->clContext().lock();
@@ -51,11 +51,11 @@ monju::ClKernel::ClKernel(std::weak_ptr<monju::ClMachine> clMachine, std::string
 	_kernelName = kernelName;
 	_params = params;
 
-	_createProgram();
-	_createKernel();
+	_create_program();
+	_create_kernel();
 }
 
-monju::ClKernel::ClKernel(std::weak_ptr<monju::ClMachine> clMachine, std::filesystem::path sourcePath, std::string kernelName, param_map params)
+monju::ClKernel::ClKernel(std::weak_ptr<monju::ClMachine> clMachine, std::filesystem::path sourcePath, std::string kernelName, monju::param_map params)
 {
 	_clMachine = clMachine.lock();
 	_clContext = _clMachine->clContext().lock();
@@ -63,14 +63,14 @@ monju::ClKernel::ClKernel(std::weak_ptr<monju::ClMachine> clMachine, std::filesy
 	_kernelName = kernelName;
 	_params = params;
 
-	_createProgram();
-	_createKernel();
+	_create_program();
+	_create_kernel();
 }
 
 monju::ClKernel::~ClKernel()
 {
-	_releaseKernel();
-	_releaseProgram();
+	_release_kernel();
+	_release_pogram();
 }
 
 cl_program monju::ClKernel::clProgram() const

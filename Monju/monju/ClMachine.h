@@ -2,10 +2,15 @@
 #ifndef _MONJU_CL_MACHINE_H__
 #define _MONJU_CL_MACHINE_H__
 
-#include "MonjuTypes.h"
+#include <memory>
+#include <vector>
+#include <CL/cl.h>
 
 namespace monju
 {
+	class _ClPlatformId;
+	class _ClContext;
+
 	/*
 	platformIdで各マシンのOpenCL実装を選択する。
 	*/
@@ -16,14 +21,17 @@ namespace monju
 		std::shared_ptr<_ClPlatformId> _clPlatformId;	// 解放予定
 		std::shared_ptr<_ClContext> _clContext;			// 解放予定
 
-		void _createPlatformId();
-		void _createContext();
-		void _releasePlatformId();
-		void _releaseContext();
+	private:
+		void _create_platform_id();
+		void _create_context();
+		void _release_platform_id();
+		void _release_context();
 
 	public:
 		ClMachine(int platformId);
 		~ClMachine();
+
+	public:
 		std::weak_ptr<_ClPlatformId> clPlatformId() const;
 		std::weak_ptr<_ClContext> clContext() const;
 		std::vector<cl_device_id> deviceIds() const;
