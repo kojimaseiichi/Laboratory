@@ -13,11 +13,22 @@ monju::BelLayerStorage::~BelLayerStorage()
 {
 }
 
+float monju::BelLayerStorage::coef_lateral_inhibition()
+{
+	return _coefLateralInhibition;
+}
+
+void monju::BelLayerStorage::coef_lateral_inhibition(float v)
+{
+	_coefLateralInhibition = v;
+	this->setKey<float>(_KV_COE_LATERAL_INHIBITION, v);
+}
+
 /// <summary>
 /// ストレージの使用準備
 /// </summary>
 
-void monju::BelLayerStorage::prepareAll()
+void monju::BelLayerStorage::PrepareAllStorageKeys()
 {
 	_prepareStorage();
 	if (this->findKey<float>(_KV_COE_LATERAL_INHIBITION, _coefLateralInhibition) == false)
@@ -27,9 +38,43 @@ void monju::BelLayerStorage::prepareAll()
 	}
 }
 
-void monju::BelLayerStorage::clearAll()
+void monju::BelLayerStorage::ClearAllStorageKeys()
 {
 	_clearStorage();
+}
+
+/// <summary>
+/// 勝者ユニットを分割表に反映
+/// </summary>
+/// <param name="winner"></param>
+/// <returns></returns>
+
+std::future<void> monju::BelLayerStorage::IncrementDiffMatrixAsync(std::weak_ptr<MatrixRm<int32_t>> winner)
+{
+	// 非同期処理の準備として勝者ユニットのデータをコピー
+	auto px = winner.lock();
+	auto a = _toVector(*px);
+	auto wrapper = [&](std::shared_ptr<std::vector<int32_t>> p) {
+		// キャプチャー：ax, ay
+		this->coeffOp<int32_t>(
+			_STAT_INCREMENTAL_DIFF,
+			*p,
+			*p,
+			[](const int32_t v)->int32_t {
+				return v + 1;
+			});
+	};
+	auto f = _conc.threadPool().submit(wrapper, std::move(a));
+	return f;
+}
+
+std::future<void> monju::BelLayerStorage::ComputeMutualInfoOfContingencyTableAsync()
+{
+	auto wrapper = [&]() {
+		this->_updateMi();
+	};
+	auto f = _conc.threadPool().submit(wrapper);
+	return f;
 }
 
 /// <summary>

@@ -1,4 +1,12 @@
 #include "BelLayerUpdaterFmc.h"
+#include "VariableKind.h"
+#include "ClDeviceContext.h"
+#include "BelLayerFmc.h"
+#include "ClFunc.h"
+#include "Environment.h"
+#include "ClKernel.h"
+
+
 
 /*コンストラクタ*/
 
@@ -40,7 +48,7 @@ void monju::BelLayerUpdaterFmc::_createClKernel()
 	param_map["X"] = boost::lexical_cast<std::string>(_shape.nodes.size());
 	param_map["XU"] = boost::lexical_cast<std::string>(_shape.units.size());
 
-	std::filesystem::path kernelPathBase = _env->info().kernelFolder;
+	std::filesystem::path kernelPathBase = _env->info().kernel_folder;
 	_clKernel = std::make_shared<ClKernel>(
 		_clMachine,
 		(kernelPathBase / _kSrcOobpBel).string(),

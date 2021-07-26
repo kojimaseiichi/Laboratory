@@ -1,4 +1,10 @@
 #include "FullBayesianMatrixLayer.h"
+#include "util_eigen.h"
+#include "FullConnectedGridCpt.h"
+#include "MatrixLayerStorage.h"
+#include "Environment.h"
+#include "BelLayer.h"
+
 
 monju::FullBayesianMatrixLayer::FullBayesianMatrixLayer(std::weak_ptr<Environment> env, std::string id, LayerShape shapeX, LayerShape shapeY)
 {
@@ -139,7 +145,7 @@ void monju::FullBayesianMatrixLayer::performDown(BelLayer& x, BelLayer& y)
 
 std::string monju::FullBayesianMatrixLayer::_dataFileName() const
 {
-	return util_file::combine(_env->info().workFolder, _id, "dbm");
+	return util_file::combine(_env->info().work_folder, _id, "dbm");
 }
 
 void monju::FullBayesianMatrixLayer::_makeGridExtent(GridExtent& cpt, GridExtent& lambda, GridExtent& kappa)

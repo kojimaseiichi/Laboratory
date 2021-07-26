@@ -17,8 +17,8 @@ void monju::Environment::_saveJson(const std::string workFolder) const
 	std::ofstream o;
 	o.open(fileName, std::ofstream::out | std::ofstream::binary);
 	nlohmann::json j;
-	j["workFolder"] = _info.workFolder;
-	j["kernelFolder"] = _info.kernelFolder;
+	j["workFolder"] = _info.work_folder;
+	j["kernelFolder"] = _info.kernel_folder;
 	j["platformId"] = _info.platformId;
 	o << j;
 }

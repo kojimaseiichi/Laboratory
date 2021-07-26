@@ -76,14 +76,6 @@ namespace monju {
 
 	using param_map = std::map<std::string, std::string>;
 
-	// 行列　種類
-	const int kDensityRectangular = 1;	// 行列
-	const int kDensityLowerTriangular = 2;	// 下三角行列（正方行列）
-
-	// 行列　優先方向
-	const int kRowMajor = 1;
-	const int kColMajor = 2;
-
 	// 前方宣言
 	class Synchronizable;
 	class OpenClException;

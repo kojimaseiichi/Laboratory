@@ -73,6 +73,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)sqlite\sqlite_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)eigentypes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerFmcFp16.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\BelLayerStorage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\util_ai.h" />

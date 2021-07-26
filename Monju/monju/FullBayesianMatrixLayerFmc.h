@@ -2,11 +2,14 @@
 #ifndef _MONJU_FULL_BAYESIAN_MATRIX_LAYER_FMC_H__
 #define _MONJU_FULL_BAYESIAN_MATRIX_LAYER_FMC_H__
 
-#include "MonjuTypes.h"
-#include "FullBayesianMatrixLayer.h"
+#include <memory>
 #include "ClVariableSet.h"
 
 namespace monju {
+
+	class ClMachine;
+	class FullBayesianMatrixLayer;
+	class ClMemory;
 
 	// マトリックス層のデバイスのメモリを供給
 	class FullBayesianMatrixLayerFmc
@@ -14,7 +17,7 @@ namespace monju {
 	/*フィールド*/
 	private:
 		std::shared_ptr<ClMachine> _clMachine;
-		std::shared_ptr< FullBayesianMatrixLayer> _edge;
+		std::shared_ptr<FullBayesianMatrixLayer> _edge;
 		std::shared_ptr<ClMemory> 
 			_clLambda, 
 			_clKappa, 

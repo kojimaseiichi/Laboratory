@@ -12,8 +12,13 @@
 #include "Environment.h"
 #include "Extent.h"
 #include "ClEventJoiner.h"
+#include "ClKernel.h"
 
 namespace monju {
+	
+	class ClDeviceContext;
+
+
 	// fast massive compute
 	class FullBayesianMatrixLayerUpdaterFmc
 	{

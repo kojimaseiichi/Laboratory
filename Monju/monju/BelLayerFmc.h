@@ -2,14 +2,14 @@
 #ifndef _MONJU_BEL_LAYER_FMC_H__
 #define _MONJU_BEL_LAYER_FMC_H__
 
-#include "MonjuTypes.h"
-#include "BelLayer.h"
-#include "ClMachine.h"
-#include "ClDeviceContext.h"
-#include "ClMemory.h"
+#include <memory>
 #include "ClVariableSet.h"
 
 namespace monju {
+
+	class ClMachine;
+	class BelLayer;
+	class ClMemory;
 
 	// デバイスのメモリを供給
 	class BelLayerFmc

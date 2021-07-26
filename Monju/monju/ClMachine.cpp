@@ -64,6 +64,7 @@ cl_device_id monju::ClMachine::defaultDeviceId() const
 {
 	if (_clContext->deviceIds().size() == 0)
 		throw MonjuException();
-	return _clContext->deviceIds().at(0);
+	auto ids = _clContext->deviceIds();
+	return ids.at(0);
 }
 

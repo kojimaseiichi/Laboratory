@@ -2,11 +2,11 @@
 #ifndef _MONJU_EXTENT_H__
 #define _MONJU_EXTENT_H__
 
-#include "MonjuTypes.h"
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/nvp.hpp>
+#include "eigentypes.h"
 
 namespace monju
 {

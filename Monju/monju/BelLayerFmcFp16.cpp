@@ -1,4 +1,8 @@
 #include "BelLayerFmcFp16.h"
+#include "ClMachine.h"
+#include "BelLayer.h"
+#include "ClMemory.h"
+#include "VariableKind.h"
 
 monju::BelLayerFmcFp16::BelLayerFmcFp16(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<BelLayer> node)
 {

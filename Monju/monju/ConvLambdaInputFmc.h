@@ -15,6 +15,7 @@
 #include "ConvLambdaInput.h"
 #include "ConvLambdaInputDevice.h"
 #include "Extent.h"
+#include "ClKernel.h"
 
 namespace monju
 {
@@ -61,7 +62,7 @@ namespace monju
 			params["X"] = boost::lexical_cast<std::string>(_shape.nodes.size());
 			params["XU"] = boost::lexical_cast<std::string>(_shape.units.size());
 
-			std::filesystem::path kernelPathBase = env.info().kernelFolder;
+			std::filesystem::path kernelPathBase = env.info().kernel_folder;
 			_clKernel = std::make_shared<ClKernel>(
 				_clMachine,
 				(kernelPathBase / _kSrcFile).string(),

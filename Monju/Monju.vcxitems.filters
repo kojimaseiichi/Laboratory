@@ -357,6 +357,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)monju\ClVariableSet.h">
       <Filter>OpenCL</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)eigentypes.h">
+      <Filter>タイプ</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ユーティリティ">
@@ -382,6 +385,9 @@
     </Filter>
     <Filter Include="SQLite">
       <UniqueIdentifier>{45db0289-cba6-4894-9e58-7d680b19bb61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="タイプ">
+      <UniqueIdentifier>{70779a48-ea05-4c6e-938f-dd6d493fd5cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

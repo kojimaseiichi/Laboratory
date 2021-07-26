@@ -2,12 +2,17 @@
 #ifndef _MONJU_BEL_LAYER_UPDATE_FMC_H__
 #define _MONJU_BEL_LAYER_UPDATE_FMC_H__
 
-#include "MonjuTypes.h"
-#include "BelLayerFmc.h"
-#include "ClFunc.h"
-#include "Environment.h"
+#include <memory>
+#include "Extent.h"
 
 namespace monju {
+
+	class ClDeviceContext;
+	class Environment;
+	class ClMachine;
+	class ClKernel;
+	class BelLayerFmc;
+	class ClEventJoiner;
 
 	class BelLayerUpdaterFmc
 	{

@@ -38,8 +38,8 @@ namespace monju
 				// 勝者データをストレージの分割表に反映
 				{
 					auto s = BelLayerStorage(R"(C:\monju\test\BelLayerStorage\test.db)", shape);
-					s.clearAll();
-					auto f = s.asyncIncrementDiff(win);
+					s.ClearAllStorageKeys();
+					auto f = s.IncrementDiffMatrixAsync(win);
 					f.wait();
 				}
 				// 分割表を作成

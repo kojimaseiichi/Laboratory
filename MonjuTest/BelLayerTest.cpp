@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
+#include "monju/ClMachine.h"
 #include "monju/GridMatrixStorage.h"
 #include <boost/filesystem.hpp>
 
@@ -7,6 +8,8 @@
 #include "monju/BelLayerFmc.h"
 #include "monju/BelLayerUpdaterFmc.h"
 #include "monju/ClEventJoiner.h"
+#include "monju/ClDeviceContext.h"
+#include "monju/Environment.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -49,7 +52,7 @@ namespace monju
 				win.setRandom();
 				{
 					BelLayer belLayer(env, id, shape);
-					belLayer.initVariables();
+					belLayer.InitializeVariables();
 					{
 						auto p = belLayer.lambda().lock();
 						*p = lambda;
@@ -115,7 +118,7 @@ namespace monju
 				LayerShape shape(5, 10, 5, 10);
 				Extent ext = shape.flatten();
 				BelLayer belLayer(env, id, shape);
-				belLayer.initVariables();
+				belLayer.InitializeVariables();
 				MatrixRm<float_t> one(ext.rows, 1);
 				one.setOnes();
 				float_t prec = 0.001f;
@@ -143,7 +146,7 @@ namespace monju
 				std::string id2 = "t2";
 				LayerShape shape(5, 10, 5, 10);
 				Extent ext = shape.flatten();
-				const int platformId = 1;
+				const int platformId = 0;
 				
 				std::shared_ptr<ClMachine> machine = std::make_shared<ClMachine>(platformId);
 				std::shared_ptr<ClDeviceContext> dc = std::make_shared<ClDeviceContext>(machine, machine->defaultDeviceId());
@@ -155,10 +158,10 @@ namespace monju
 				std::shared_ptr<BelLayerUpdaterFmc> update = std::make_shared<BelLayerUpdaterFmc>(env, shape, machine);
 
 				
-				layer->initVariables();
-				layer2->copyData(*layer);
-				layer2->performBel();
-				layer2->findWinner();
+				layer->InitializeVariables();
+				layer2->CopyFrom(*layer);
+				layer2->ComputeBel();
+				layer2->ComputeToFindWinners();
 				
 				fmc->clVariableSet().enqueue_write_all(dc, join);
 				update->bel(dc, fmc, join);

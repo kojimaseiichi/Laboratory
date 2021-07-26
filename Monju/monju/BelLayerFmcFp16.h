@@ -2,16 +2,19 @@
 #ifndef _MONJU_BEL_LAYER_FMC_FP16_H__
 #define _MONJU_BEL_LAYER_FMC_FP16_H__
 
-#include "MonjuTypes.h"
-#include "BelLayer.h"
-#include "ClMachine.h"
-#include "ClDeviceContext.h"
-#include "ClMemory.h"
+#include <memory>
+#include "eigentypes.h"
 #include "ClVariableSet.h"
 
 namespace monju
 {
-	// デバイスのメモリを供給
+	class ClMachine;
+	class ClMemory;
+	class BelLayer;
+
+	typedef unsigned __int16        cl_half;
+	
+		// デバイスのメモリを供給
 	class BelLayerFmcFp16
 	{
 #pragma region Private Field

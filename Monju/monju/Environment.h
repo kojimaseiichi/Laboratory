@@ -11,8 +11,8 @@ namespace monju
 	public:
 		struct Info
 		{
-			std::string workFolder;
-			std::string kernelFolder;
+			std::string work_folder;
+			std::string kernel_folder;
 			int platformId;
 		};
 	private:

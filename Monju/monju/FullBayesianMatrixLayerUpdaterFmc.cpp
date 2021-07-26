@@ -1,4 +1,6 @@
 #include "FullBayesianMatrixLayerUpdaterFmc.h"
+#include "ClDeviceContext.h"
+#include "VariableKind.h"
 
 // コンストラクタ
 
@@ -66,7 +68,7 @@ void monju::FullBayesianMatrixLayerUpdaterFmc::_create_kernel()
 	param_map["XU"] = boost::lexical_cast<std::string>(_shapeX.units.size());
 	param_map["YU"] = boost::lexical_cast<std::string>(_shapeY.units.size());
 
-	std::filesystem::path kernelPathBase = _env->info().kernelFolder; // カーネルファイルのフォルダ
+	std::filesystem::path kernelPathBase = _env->info().kernel_folder; // カーネルファイルのフォルダ
 
 	_kernelOobpUp1 = std::make_shared<ClKernel>(
 		_clMachine,

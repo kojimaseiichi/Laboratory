@@ -2,8 +2,9 @@
 #ifndef _MONJU_BEL_LAYER_STORAGE_H__
 #define _MONJU_BEL_LAYER_STORAGE_H__
 
-#include "Extent.h"
+#include <string>
 #include "GridMatrixStorage.h"
+#include "Extent.h"
 #include "ConcurrencyContext.h"
 #include "Synchronizable.h"
 
@@ -25,16 +26,17 @@ namespace monju
 		float _coefLateralInhibition;	// 側抑制の係数
 #pragma endregion
 #pragma region Storage Key
+		// ストレージキー
 	private:
 		// モデルデータ
-		const std::string _VAR_LAMBDA = "lambda";					// λ(尤度)
-		const std::string _VAR_PI = "pi";							// π(事前分布)
-		const std::string _VAR_RHO = "rho";							// ρ(事後分布)
-		const std::string _VAR_R = "r";								// ペナルティ
-		const std::string _VAR_R_LI = "r_li";						// 側抑制ペナルティ(Win-Rate)
-		const std::string _VAR_R_WR = "r_wr";						// 勝率ペナルティ(Lateral Inhibition)
-		const std::string _VAR_BEL = "bel";							// BELIEVE
-		const std::string _VAR_WIN = "win";							// 勝ちユニット
+		const std::string _VAR_LAMBDA	= "lambda";		// λ(尤度)
+		const std::string _VAR_PI		= "pi";			// π(事前分布)
+		const std::string _VAR_RHO		= "rho";		// ρ(事後分布)
+		const std::string _VAR_R		= "r";			// ペナルティ
+		const std::string _VAR_R_LI		= "r_li";		// 側抑制ペナルティ(Win-Rate)
+		const std::string _VAR_R_WR		= "r_wr";		// 勝率ペナルティ(Lateral Inhibition)
+		const std::string _VAR_BEL		= "bel";		// BELIEVE
+		const std::string _VAR_WIN		= "win";		// 勝ちユニット
 		// 統計量
 		const std::string _STAT_CONTINGENCY_TABLE = "ct";			// 分割表 ４階テンソル int32_t
 		const std::string _STAT_INCREMENTAL_DIFF = "df";			// 分割表の差分 ４階テンソル int32_t
@@ -48,58 +50,16 @@ namespace monju
 		~BelLayerStorage();
 #pragma endregion
 #pragma region Public Properties
-		float getCoefLateralInhibition()
-		{
-			return _coefLateralInhibition;
-		}
-		void setCoefLateralInhibition(float v)
-		{
-			_coefLateralInhibition = v;
-			this->setKey<float>(_KV_COE_LATERAL_INHIBITION, v);
-		}
+		float	coef_lateral_inhibition();
+		void	coef_lateral_inhibition(float v);
 #pragma endregion
 #pragma region Public Method
 	public:
-		/// <summary>
-		/// ストレージの使用準備
-		/// </summary>
-		void prepareAll();
-		void clearAll();
-		/// <summary>
-		/// 勝者ユニットを分割表に反映
-		/// </summary>
-		/// <param name="winner"></param>
-		/// <returns></returns>
-		std::future<void> asyncIncrementDiff(std::weak_ptr<MatrixRm<int32_t>> winner)
-		{
-			// 非同期処理の準備として勝者ユニットのデータをコピー
-			auto px = winner.lock();
-			auto a = _toVector(*px);
-			auto wrapper = [&] (std::shared_ptr<std::vector<int32_t>> p){
-				// キャプチャー：ax, ay
-				this->coeffOp<int32_t>(
-					_STAT_INCREMENTAL_DIFF,
-					*p,
-					*p,
-					[](const int32_t v)->int32_t {
-						return v + 1;
-					});
-			};
-			auto f = _conc.threadPool().submit(wrapper, std::move(a));
-			return f;
-		}
-		/// <summary>
-		/// 分割表から相互情報量を計算
-		/// </summary>
-		/// <returns></returns>
-		std::future<void> asyncUpdateMi()
-		{
-			auto wrapper = [&]() {
-				this->_updateMi();
-			};
-			auto f = _conc.threadPool().submit(wrapper);
-			return f;
-		}
+		void PrepareAllStorageKeys();
+		void ClearAllStorageKeys();
+
+		std::future<void> IncrementDiffMatrixAsync(std::weak_ptr<MatrixRm<int32_t>> winner);
+		std::future<void> ComputeMutualInfoOfContingencyTableAsync();
 		/// <summary>
 		/// 分割表から側抑制ペナルティを計算
 		/// </summary>

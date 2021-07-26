@@ -10,6 +10,7 @@
 #include "monju/FullBayesianMatrixLayerUpdaterFmc.h"
 #include "monju/ClMachine.h"
 #include "monju/ClEventJoiner.h"
+#include "monju/ClDeviceContext.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -140,7 +141,7 @@ namespace monju
 				GridExtent gextCpt(shapeX, shapeY), gextLambda(shapeX, shapeY), gextKappa(shapeX, shapeY);
 				gextLambda.matrix.rows = 1;
 				gextKappa.matrix.cols = 1;
-				const int platformId = 1;
+				const int platformId = 0;
 
 				std::shared_ptr<ClMachine> machine = std::make_shared<ClMachine>(platformId);
 				std::shared_ptr<ClDeviceContext> dc = std::make_shared<ClDeviceContext>(machine, machine->defaultDeviceId());
@@ -164,13 +165,13 @@ namespace monju
 				std::shared_ptr<BelLayerUpdaterFmc> update_y = std::make_shared<BelLayerUpdaterFmc>(env, shapeY, machine);
 
 				// 変数を乱数的に初期化
-				lx->initVariables();
-				ly->initVariables();
+				lx->InitializeVariables();
+				ly->InitializeVariables();
 				m->initVariables();
 
 				// コピー
-				lx2->copyData(*lx);
-				ly2->copyData(*ly);
+				lx2->CopyFrom(*lx);
+				ly2->CopyFrom(*ly);
 				m2->copyData(*m);
 
 				float prec = 0.001f;
@@ -178,7 +179,7 @@ namespace monju
 				// UP
 				// ホスト
 				m2->performUp(*lx2, *ly2);
-				lx2->performBel();
+				lx2->ComputeBel();
 				// デバイス
 				fmc_m->clVariableSet().enqueue_write_all(dc, join);
 				fmc_lx->clVariableSet().enqueue_write_all(dc, join);
@@ -219,7 +220,7 @@ namespace monju
 				// DOWN
 				// ホスト
 				m2->performDown(*lx2, *ly2);
-				ly2->performBel();
+				ly2->ComputeBel();
 				// デバイス
 				update->down(dc, fmc_lx, fmc_ly, fmc_m, join);
 				update_y->bel(dc, fmc_ly, join);

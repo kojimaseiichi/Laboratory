@@ -2,21 +2,20 @@
 #ifndef _MONJU_BEL_LAYER_H__
 #define _MONJU_BEL_LAYER_H__
 
-#include "MonjuTypes.h"
+#include <memory>
+#include <string>
+#include <stdint.h>
+#include "eigentypes.h"
 #include "Synchronizable.h"
-#include "MonjuTypes.h"
-#include "VariableKind.h"
-#include "util_eigen.h"
-#include "DeviceMemory.h"
 #include "Extent.h"
-#include "Environment.h"
+
 
 namespace monju
 {
+	// 前方宣言
+	class Environment;
 
-	/// <summary>
-	/// BELレイヤーのホスト側メモリ
-	/// </summary>
+	// BELレイヤーのホスト側メモリ
 	class BelLayer : public Synchronizable
 	{
 	private: // ストレージ
@@ -24,7 +23,7 @@ namespace monju
 		std::shared_ptr<Environment> _env;
 		std::string _id;
 		LayerShape _shape;
-		std::shared_ptr<MatrixRm<float_t>>
+		std::shared_ptr<MatrixRm<float>>
 			_lambda,	// λ_X(x) shape:(nodes, units)
 			_pi,		// π_X(x) shape:(nodes, units)
 			_rho,		// ρ_X(x) shape:(nodes, units)
@@ -37,30 +36,32 @@ namespace monju
 		BelLayer(std::weak_ptr<Environment> env, std::string id, LayerShape shape);
 		~BelLayer();
 
+	public: // 公開プロパティ
+		std::string							id() const;
+		LayerShape							shape() const;
+		std::weak_ptr<MatrixRm<float>>		lambda() const;
+		std::weak_ptr<MatrixRm<float>>		pi() const;;
+		std::weak_ptr<MatrixRm<float>>		rho() const;
+		std::weak_ptr<MatrixRm<float>>		r() const;
+		std::weak_ptr<MatrixRm<float>>		bel() const;
+		std::weak_ptr<MatrixRm<int32_t>>	win() const;
+
 	public: // 公開メンバ
-		void initVariables();
+		void InitializeVariables();
+		void ComputeBel();
+		void ComputeToFindWinners();
 		void store();
 		void load();
-		void findWinner();
-		bool containsNan();
-		void copyData(const BelLayer& o);
-		void performBel();
+		void CopyFrom(const BelLayer& o);
+		bool TestContainsNan();
+
+	private: // プライベートプロパティ
+		std::string _data_file_name() const;
 
 	private: // ヘルパ
-		std::string _dataFileName() const;
-		void _persistStorage(bool storing);
-		void _initHostMemory();
-		void _setRandomProb(std::shared_ptr<MatrixRm<float_t>> m);
-
-	public: // プロパティ
-		std::string id() const { return _id; }
-		LayerShape shape() const { return _shape; }
-		std::weak_ptr<MatrixRm<float_t>> lambda() const { return _lambda; }
-		std::weak_ptr<MatrixRm<float_t>> pi() const { return _pi; };
-		std::weak_ptr<MatrixRm<float_t>> rho() const { return _rho; }
-		std::weak_ptr<MatrixRm<float_t>> r() const { return _r; }
-		std::weak_ptr<MatrixRm<float_t>> bel() const { return _bel; }
-		std::weak_ptr<MatrixRm<int32_t>> win() const { return _win; }
+		void _PersistStorage(bool storing);
+		void _InitHostMemory();
+		void _SetRandomProb(std::shared_ptr<MatrixRm<float>> m);
 
 		// コピー禁止・ムーブ禁止
 	public:

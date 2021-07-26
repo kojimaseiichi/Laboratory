@@ -59,7 +59,7 @@ namespace monju
 			_deltaCpt = std::make_shared<SparseMatrixCm<float_t>>();
 			
 			// ストレージ確保
-			auto fileName = util_file::combine(_pEnv->info().workFolder, _id, "dbm");
+			auto fileName = util_file::combine(_pEnv->info().work_folder, _id, "dbm");
 			_storage = std::make_unique<GridMatrixStorage>(fileName);
 
 			// CPT
@@ -96,14 +96,14 @@ namespace monju
 		}
 		void _store()
 		{
-			util_eigen::write_binary(_pEnv->info().workFolder, _id, "incidence", "mat", *_incidence);
-			util_eigen::write_binary(_pEnv->info().workFolder, _id, "edges", "mat", *_edgeArray);
+			util_eigen::write_binary(_pEnv->info().work_folder, _id, "incidence", "mat", *_incidence);
+			util_eigen::write_binary(_pEnv->info().work_folder, _id, "edges", "mat", *_edgeArray);
 			_storeCpt(true);
 		}
 		void _load()
 		{
-			util_eigen::write_binary(_pEnv->info().workFolder, _id, "incidence", "mat", *_incidence);
-			util_eigen::write_binary(_pEnv->info().workFolder, _id, "edges", "mat", *_edgeArray);
+			util_eigen::write_binary(_pEnv->info().work_folder, _id, "incidence", "mat", *_incidence);
+			util_eigen::write_binary(_pEnv->info().work_folder, _id, "edges", "mat", *_edgeArray);
 			_storeCpt(false);
 			_deltaCpt->setZero();
 		}

@@ -7,6 +7,7 @@
 #include "util_math.h"
 #include "Extent.h"
 #include "GridMatrixStorage.h"
+#include "ClDeviceContext.h"
 
 namespace monju {
 

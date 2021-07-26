@@ -2,16 +2,18 @@
 #ifndef _MONJU_FULL_BAYESIAN_MATRIX_LAYER_H__
 #define _MONJU_FULL_BAYESIAN_MATRIX_LAYER_H__
 
-#include "MonjuTypes.h"
+#include <string>
+#include "eigentypes.h"
 #include "Synchronizable.h"
 #include "VariableKind.h"
-#include "util_eigen.h"
-#include "FullConnectedGridCpt.h"
-#include "MatrixLayerStorage.h"
-#include "Environment.h"
-#include "BelLayer.h"
+#include "Extent.h"
 
 namespace monju {
+
+	class Environment;
+	class MatrixLayerStorage;
+	class BelLayer;
+	class GridMatrixStorage;
 
 	// 基底間のデータをフィルニ保存
 	// 保持するデータ
@@ -23,7 +25,7 @@ namespace monju {
 		std::string _id;
 		LayerShape _shapeX, _shapeY;
 		GridExtent _gridExtent;
-		std::shared_ptr<MatrixCm<float_t>>
+		std::shared_ptr<MatrixCm<float>>
 			_lambda,				// λ（ノード数Y * ユニット数Y, ノード数X）
 			_kappa,					// κ（ノード数Y * ユニット数X, ノード数X）
 			_cpt;					// 重み行列（ユニット数Y * ユニット数X * ノード数Y, ノード数X）
@@ -34,9 +36,9 @@ namespace monju {
 		std::string id() const { return _id; }
 		LayerShape shapeX() const { return _shapeX; }
 		LayerShape shapeY() const { return _shapeY; }
-		std::weak_ptr<MatrixCm<float_t>> lambda() { return _lambda; }
-		std::weak_ptr<MatrixCm<float_t>> kappa() { return _kappa; }
-		std::weak_ptr<MatrixCm<float_t>> cpt() { return _cpt; }
+		std::weak_ptr<MatrixCm<float>> lambda() { return _lambda; }
+		std::weak_ptr<MatrixCm<float>> kappa() { return _kappa; }
+		std::weak_ptr<MatrixCm<float>> cpt() { return _cpt; }
 
 	public:
 		FullBayesianMatrixLayer(

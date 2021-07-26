@@ -1,4 +1,10 @@
 #include "BelLayerFmc.h"
+#include "VariableKind.h"
+#include "BelLayer.h"
+#include "ClMachine.h"
+#include "ClDeviceContext.h"
+#include "ClMemory.h"
+#include "ClVariableSet.h"
 
 monju::BelLayerFmc::BelLayerFmc(std::weak_ptr<ClMachine> clMachine, std::weak_ptr<BelLayer> node)
 {
